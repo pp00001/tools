@@ -1,0 +1,150 @@
+-- RADWin-POE MIB  
+-- Version:   1.01
+-- Date:      Nov 18, 2008
+-- By:        Yossi Appleboum
+
+
+-- Change History
+
+-- 1.01		  Root OID fixed.
+
+-- 1.00		  BDU version.
+
+
+RADWIN-POE-MIB DEFINITIONS ::= BEGIN
+
+IMPORTS
+      OBJECT-TYPE                    FROM SNMPv2-SMI;
+	       
+      
+--  BDU sub tree  
+enterprises     OBJECT IDENTIFIER ::= { iso org(3) dod(6) internet(1) private(4) 1 }
+radwin          OBJECT IDENTIFIER ::= { enterprises 4458 }   
+bdu             OBJECT IDENTIFIER ::= { radwin 7300 }
+bduStd 	    	OBJECT IDENTIFIER ::= { bdu 1}
+bduGeneral OBJECT IDENTIFIER ::= { bduStd 1 }
+bduPoE     OBJECT IDENTIFIER ::= { bduGeneral 5 } 	 
+
+--
+------------------------------------------------------------------------------
+--   PoE group       
+------------------------------------------------------------------------------
+poEModuleType OBJECT-TYPE
+        SYNTAX        INTEGER
+		{
+			ciscoPoE(1),
+	  		dot3af(2)
+		} 
+        MAX-ACCESS    read-only
+        STATUS        current
+        DESCRIPTION   "PoE module type."
+        ::= { bduPoE 1 }
+
+poEDCvoltage OBJECT-TYPE
+        SYNTAX        INTEGER
+        MAX-ACCESS    read-only
+        STATUS        current
+        DESCRIPTION   "Input voltage in millivolts."
+        ::= { bduPoE 2 }
+
+poEPSUrating OBJECT-TYPE
+        SYNTAX        INTEGER
+        MAX-ACCESS    read-only
+        STATUS        current
+        DESCRIPTION   "poE power supply unit rating in Watts."
+        ::= { bduPoE 3 }
+
+portPoETable OBJECT-TYPE
+	SYNTAX SEQUENCE OF PortPoEEntry
+	MAX-ACCESS not-accessible
+	STATUS current
+	DESCRIPTION 	"A table that contains all traps"
+	::= { bduPoE 10 }
+
+portPoEEntry OBJECT-TYPE
+	SYNTAX PortPoEEntry
+	MAX-ACCESS not-accessible
+	STATUS current
+	DESCRIPTION 	" A trap entry to the trap table"
+	INDEX  { poEPortIx  }
+
+	::= { portPoETable 1 }
+ 
+PortPoEEntry ::=
+	SEQUENCE {
+	  poEPortIx     		INTEGER,          
+	  poEAdminStatus   		INTEGER,               
+	  poEOperStatus   		INTEGER,               
+	  poEDeviceType	    	INTEGER,               
+	  poEDeviceConsumption 	INTEGER,
+  	  poEDisconectType	 	INTEGER
+	}
+
+poEPortIx OBJECT-TYPE
+	SYNTAX INTEGER 
+	MAX-ACCESS read-only
+	STATUS current
+	DESCRIPTION 	 "Port index in table."
+	::= { portPoEEntry 1 }
+
+poEAdminStatus OBJECT-TYPE
+	SYNTAX INTEGER
+	{
+	  na(1), 
+	  portOn(2),
+	  portOff(3),
+  	  portReset(4),
+  	  forceOn(5)  	  
+	} 
+	MAX-ACCESS read-write
+	STATUS current
+	DESCRIPTION      "Admin status of PoE port."
+	::= { portPoEEntry 2 }
+
+poEOperStatus OBJECT-TYPE
+	SYNTAX INTEGER
+	{
+	  na(1), 
+	  portOn(2),
+	  portOff(3)
+	} 
+	MAX-ACCESS read-only
+	STATUS current
+	DESCRIPTION      "Oper status of PoE port."
+	::= { portPoEEntry 3 }
+
+poEDeviceType OBJECT-TYPE
+	SYNTAX INTEGER
+	{
+	  ciscoCompatible(1),
+	  dot3afClass0(2),
+	  dot3afClass1(3),
+	  dot3afClass2(4),
+	  dot3afClass3(5),
+	  dot3afClass4(6),
+  	  other(9)
+	} 
+	MAX-ACCESS read-only
+	STATUS current
+	DESCRIPTION      "Device discovered on PoE port."
+	::= { portPoEEntry 4 }
+
+poEDeviceConsumption OBJECT-TYPE
+	SYNTAX INTEGER
+	MAX-ACCESS read-only
+	STATUS current
+	DESCRIPTION      "Device consumption in mW."
+	::= { portPoEEntry 5 }
+
+poEDisconectType OBJECT-TYPE
+	SYNTAX INTEGER
+	{
+	  acDisconnect(1),
+	  dcDisconnect(2)
+	} 
+	MAX-ACCESS read-write
+	STATUS current
+	DESCRIPTION      "Port disconnection mode."
+	::= { portPoEEntry 6 }
+	
+END

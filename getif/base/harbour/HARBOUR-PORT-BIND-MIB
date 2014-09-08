@@ -1,0 +1,146 @@
+-- =======================================================================
+-- Version info 
+--
+-- This MIB is established by Liyan in 2002.11.18. 
+--
+-- Copyright(c) 2000-2002 by Harbour Networks Limited. 
+-- =======================================================================
+
+HARBOUR-PORT-BIND-MIB DEFINITIONS ::= BEGIN
+
+    IMPORTS
+        MODULE-IDENTITY,
+	OBJECT-TYPE        FROM SNMPv2-SMI
+        DisplayString      FROM RFC1213-MIB
+        harbourAgent       FROM HARBOUR-BASE-MIB;
+		
+    harbourPortBind  MODULE-IDENTITY
+        LAST-UPDATED  "20021118"
+        ORGANIZATION  "Harbour Networks Limited."
+        CONTACT-INFO  "www.harbournetworks.com"
+        DESCRIPTION   "harbour port bind objects"
+    ::= { harbourAgent 23 }
+	
+    harbourPortBindTable  OBJECT-TYPE
+        SYNTAX          SEQUENCE OF harbourPortBindEntry
+        MAX-ACCESS      not-accessible
+        STATUS          current
+        DESCRIPTION     "Bind mode and bind objects of a port."
+    ::= { harbourPortBind 1 }
+
+    harbourPortBindEntry  OBJECT-TYPE
+	SYNTAX          harbourPortBindEntry
+	MAX-ACCESS      not-accessible
+        STATUS          current
+	DESCRIPTION     "An entry in the harbourPortBindTable."
+	INDEX           { harbourBindPort }
+    ::= { harbourPortBindTable 1 }
+
+    harbourPortBindEntry ::=
+        SEQUENCE {
+        harbourBindPort              INTEGER,
+        harbourBindIpStatus          INTEGER,
+        harbourBindIpList            DisplayString,
+        harbourBindMacStatus         INTEGER,
+        harbourBindMacList           DisplayString,
+        harbourBindPppoeMacStatus    INTEGER,
+        harbourBindPppoeMacList      DisplayString,
+        harbourBindUserStatus        INTEGER,
+        harbourBindUserList          DisplayString,
+        harbourBind802dot1xStatus    INTEGER,
+        harbourBindPppoeStatus    INTEGER
+        }
+  
+    harbourBindPort  OBJECT-TYPE
+	SYNTAX          INTEGER
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION     
+            "The port number of physical port."
+    ::= { harbourPortBindEntry 1 }
+
+    harbourBindIpStatus  OBJECT-TYPE
+	SYNTAX          INTEGER { enable (1), disable (2) } 
+        MAX-ACCESS      read-write
+        STATUS          current
+        DESCRIPTION     
+            "Enable or disable port bind to IP address."
+    ::= { harbourPortBindEntry 2 }
+
+    harbourBindIpList  OBJECT-TYPE
+	SYNTAX          DisplayString
+        MAX-ACCESS      read-write
+        STATUS          current
+        DESCRIPTION     
+            "List of IP address of port want to bind.
+             Format likes 'IP1,IP2,...,IPn'"
+    ::= { harbourPortBindEntry 3 }
+
+    harbourBindMacStatus  OBJECT-TYPE
+	SYNTAX          INTEGER { enable (1), disable (2) }
+        MAX-ACCESS      read-write
+        STATUS          current
+        DESCRIPTION     
+            "TEnable or disable port bind to MAC address."
+    ::= { harbourPortBindEntry 4 }
+
+    harbourBindMacList  OBJECT-TYPE
+	SYNTAX          DisplayString
+        MAX-ACCESS      read-write
+        STATUS          current
+        DESCRIPTION     
+            "List of MAC address of port want to bind.
+             Format likes 'MAC1,MAC2,...,MACn'"
+    ::= { harbourPortBindEntry 5 }
+
+    harbourBindPppoeMacStatus  OBJECT-TYPE
+	SYNTAX          INTEGER { enable (1), disable (2) }
+        MAX-ACCESS      read-write
+        STATUS          current
+        DESCRIPTION     
+            "Enable or disable port bind to PPPOE MAC address."
+    ::= { harbourPortBindEntry 6 }
+
+    harbourBindPppoeMacList  OBJECT-TYPE
+	SYNTAX          DisplayString
+        MAX-ACCESS      read-write
+        STATUS          current
+        DESCRIPTION     
+            "List of PPPOE MAC address of port want to bind.
+             Format likes 'MAC1,MAC2,...,MACn'"
+    ::= { harbourPortBindEntry 7 }
+
+    harbourBindUserStatus  OBJECT-TYPE
+	SYNTAX          INTEGER { enable (1), disable (2) }
+        MAX-ACCESS      read-write
+        STATUS          current
+        DESCRIPTION     
+            "Enable or disable port bind to user name."
+    ::= { harbourPortBindEntry 8 }
+
+    harbourBindUserList  OBJECT-TYPE
+	SYNTAX          DisplayString
+        MAX-ACCESS      read-write
+        STATUS          current
+        DESCRIPTION     
+            "List of user name of port want to bind.
+             Format likes 'user1,user2,...,usern'"
+    ::= { harbourPortBindEntry 9 }
+    
+    harbourBind802dot1xStatus OBJECT-TYPE
+	SYNTAX          INTEGER { enable (1), disable (2) }
+        MAX-ACCESS      read-write
+        STATUS          current
+        DESCRIPTION     
+            "Enable or disable port using 802.1x ."
+    ::= { harbourPortBindEntry 10 }
+    
+        harbourBindPppoeStatus    OBJECT-TYPE
+	SYNTAX          INTEGER { enable (1), disable (2) }
+        MAX-ACCESS      read-write
+        STATUS          current
+        DESCRIPTION     
+            "Enable or disable port using PPPOE."
+    ::= { harbourPortBindEntry 11 }
+END
+

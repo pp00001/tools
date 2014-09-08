@@ -1,0 +1,120 @@
+-- ********************************************************************
+--  UnitransMib-MS-common.mib
+--  Copyright (c) 2008 ZTE CORPORATION.All rights reserved.
+--  Description: This file includes common definition for the Unitrans mibs
+--  Version     v1.0
+--  Modification Record:
+--********************************************************************
+UnitransMib-MS-common 
+DEFINITIONS ::= BEGIN
+IMPORTS
+    MODULE-IDENTITY, OBJECT-TYPE, NOTIFICATION-TYPE,
+    enterprises, Integer32, Unsigned32, IpAddress
+        FROM SNMPv2-SMI
+    TEXTUAL-CONVENTION, DisplayString, TimeStamp, DateAndTime
+        FROM SNMPv2-TC  
+    MODULE-COMPLIANCE, OBJECT-GROUP, NOTIFICATION-GROUP
+        FROM SNMPv2-CONF
+     zteUnitransMS
+        FROM 
+        UnitransMib-MS-root;  
+		
+   zteuCommon MODULE-IDENTITY
+        LAST-UPDATED   "0602130000Z"
+        ORGANIZATION   "ZTE"
+        CONTACT-INFO   "
+           ZTE Corporation
+           
+           Postal: 518057      
+           
+           via the WEB:  http://www.zte.com.cn                           
+            
+           via phone:    86-755-26773000"
+   DESCRIPTION
+      "The module describing ZTE Unitrans MIB."
+::= { zteUnitransMS 1 }
+
+
+-- ********************************************************************
+-- TEXTUAL-CONVENTION Definition
+-- ********************************************************************
+   ObjectId-TC ::= TEXTUAL-CONVENTION
+   STATUS current
+   DESCRIPTION "
+   This textual convention presents object Identifier"
+   SYNTAX  OBJECT IDENTIFIER 
+     
+     
+   BOOL-TC ::= TEXTUAL-CONVENTION
+   STATUS current
+   DESCRIPTION "
+   This textual convention presents type of boolean
+   "   
+   SYNTAX INTEGER(0..1)
+    
+   Time-TC ::= TEXTUAL-CONVENTION 
+   STATUS current
+   DESCRIPTION "This textual convention presents 
+   an octet string which length is 14 and it's display format is:
+   yyyymmddhhmmss
+   which yyyy presents year,mm presents month,dd presents date,
+   hh presents hour,mm presents minute,ss presents second.
+   "   
+   SYNTAX  OCTET STRING (SIZE (14))    
+   
+   Unit-TC ::=  TEXTUAL-CONVENTION
+    STATUS current
+        DESCRIPTION "
+        This textual convention presents the unit of the object's value
+        "
+        SYNTAX OCTET STRING(SIZE (10))   
+    
+    
+    ObjectNVSList-T   ::= TEXTUAL-CONVENTION
+    STATUS current
+        DESCRIPTION "
+        This textual convention,a zip format string list,represented in name-value pairs format: name='',value=''[,name='',value='',......]		
+         "
+        SYNTAX OCTET STRING   
+        
+   NamingAttributes-T ::= TEXTUAL-CONVENTION
+    STATUS current
+        DESCRIPTION " 
+        This textual convention presents a zip format string list,It 
+		can represent an object's name which is formatted in naming 
+		rule.        
+        "
+        SYNTAX  OCTET STRING  
+		
+	CommunicationState-TC ::= TEXTUAL-CONVENTION
+	   STATUS current
+	   DESCRIPTION "
+	   This textual convention presents
+	   communication state
+	   cs-CONNECTED(1)    available
+	   cs-BROKEN(2)			unavailable
+	   cs-UNKNOWN(3)        unknown
+		  " 
+	   SYNTAX INTEGER 
+	   {
+		  cs-CONNECTED(1),
+		  cs-BROKEN(2),
+		  cs-UNKNOWN(3)       
+	   }
+
+		LayeredParameterList-T ::= TEXTUAL-CONVENTION
+	    STATUS current
+        DESCRIPTION 
+		"This textual convention presents layered parameter list
+        "
+        SYNTAX  OCTET STRING
+
+   
+   LayerRate-TC ::= TEXTUAL-CONVENTION
+   STATUS current
+   DESCRIPTION "
+   This textual convention presents object's layer rate.
+   "
+   SYNTAX  OCTET STRING
+  
+ END

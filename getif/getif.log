@@ -1,0 +1,1073 @@
+Did not find 'IANAifType' in module #-1
+Textual convention doesn't map to real type(CHOICE): At line 5 in Z:\dev\getif\mibs/SNMPv2-PDU
+:(is a reserved word): At line 5 in Z:\dev\getif\mibs/SNMPv2-PDU
+Bad operator({): At line 5 in Z:\dev\getif\mibs/SNMPv2-PDU
+OBJECT-GROUP(is a reserved word): At line 8 in Z:\dev\getif\mibs/SNMPv2-CONF
+Bad operator(MACRO): At line 8 in Z:\dev\getif\mibs/SNMPv2-CONF
+Did not find 'statistics' in module #-1
+Did not find 'history' in module #-1
+Did not find 'hosts' in module #-1
+Did not find 'matrix' in module #-1
+Did not find 'filter' in module #-1
+Did not find 'etherStatsEntry' in module #-1
+Did not find 'historyControlEntry' in module #-1
+Did not find 'hostControlEntry' in module #-1
+Did not find 'matrixControlEntry' in module #-1
+Did not find 'filterEntry' in module #-1
+Did not find 'channelEntry' in module #-1
+Did not find 'tokenRing' in module #-1
+Did not find 'tokenRingMLStatsEntry' in module #-1
+Did not find 'tokenRingPStatsEntry' in module #-1
+Did not find 'ringStationControlEntry' in module #-1
+Did not find 'sourceRoutingStatsEntry' in module #-1
+Unlinked OID in RMON2-MIB: etherStats2Entry ::= { etherStats2Table 1 }
+Unlinked OID in RMON2-MIB: sourceRoutingStats2Entry ::= { sourceRoutingStats2Table 1 }
+Unlinked OID in RMON2-MIB: filter2Table ::= { filter 4 }
+Unlinked OID in RMON2-MIB: channel2Table ::= { filter 3 }
+Unlinked OID in RMON2-MIB: historyControl2Table ::= { history 5 }
+Unlinked OID in RMON2-MIB: tokenRingMLStats2Entry ::= { tokenRingMLStats2Table 1 }
+Unlinked OID in RMON2-MIB: channel2Entry ::= { channel2Table 1 }
+Unlinked OID in RMON2-MIB: matrixControl2Table ::= { matrix 4 }
+Unlinked OID in RMON2-MIB: ringStationControlCreateTime ::= { ringStationControl2Entry 2 }
+Unlinked OID in RMON2-MIB: ringStationControlDroppedFrames ::= { ringStationControl2Entry 1 }
+Unlinked OID in RMON2-MIB: hostControlCreateTime ::= { hostControl2Entry 2 }
+Unlinked OID in RMON2-MIB: hostControlDroppedFrames ::= { hostControl2Entry 1 }
+Unlinked OID in RMON2-MIB: tokenRingPStats2Entry ::= { tokenRingPStats2Table 1 }
+Unlinked OID in RMON2-MIB: etherStatsCreateTime ::= { etherStats2Entry 2 }
+Unlinked OID in RMON2-MIB: etherStatsDroppedFrames ::= { etherStats2Entry 1 }
+Unlinked OID in RMON2-MIB: sourceRoutingStatsCreateTime ::= { sourceRoutingStats2Entry 2 }
+Unlinked OID in RMON2-MIB: sourceRoutingStatsDroppedFrames ::= { sourceRoutingStats2Entry 1 }
+Unlinked OID in RMON2-MIB: hostControl2Table ::= { hosts 4 }
+Unlinked OID in RMON2-MIB: tokenRingMLStatsCreateTime ::= { tokenRingMLStats2Entry 2 }
+Unlinked OID in RMON2-MIB: tokenRingMLStatsDroppedFrames ::= { tokenRingMLStats2Entry 1 }
+Unlinked OID in RMON2-MIB: channelCreateTime ::= { channel2Entry 2 }
+Unlinked OID in RMON2-MIB: channelDroppedFrames ::= { channel2Entry 1 }
+Unlinked OID in RMON2-MIB: filter2Entry ::= { filter2Table 1 }
+Unlinked OID in RMON2-MIB: tokenRingPStats2Table ::= { statistics 6 }
+Unlinked OID in RMON2-MIB: tokenRingMLStats2Table ::= { statistics 5 }
+Unlinked OID in RMON2-MIB: etherStats2Table ::= { statistics 4 }
+Unlinked OID in RMON2-MIB: historyControl2Entry ::= { historyControl2Table 1 }
+Unlinked OID in RMON2-MIB: matrixControl2Entry ::= { matrixControl2Table 1 }
+Unlinked OID in RMON2-MIB: sourceRoutingStats2Table ::= { tokenRing 8 }
+Unlinked OID in RMON2-MIB: ringStationControl2Table ::= { tokenRing 7 }
+Unlinked OID in RMON2-MIB: tokenRingPStatsCreateTime ::= { tokenRingPStats2Entry 2 }
+Unlinked OID in RMON2-MIB: tokenRingPStatsDroppedFrames ::= { tokenRingPStats2Entry 1 }
+Unlinked OID in RMON2-MIB: filterProtocolDirLocalIndex ::= { filter2Entry 2 }
+Unlinked OID in RMON2-MIB: filterProtocolDirDataLocalIndex ::= { filter2Entry 1 }
+Unlinked OID in RMON2-MIB: ringStationControl2Entry ::= { ringStationControl2Table 1 }
+Unlinked OID in RMON2-MIB: historyControlDroppedFrames ::= { historyControl2Entry 1 }
+Unlinked OID in RMON2-MIB: hostControl2Entry ::= { hostControl2Table 1 }
+Unlinked OID in RMON2-MIB: matrixControlCreateTime ::= { matrixControl2Entry 2 }
+Unlinked OID in RMON2-MIB: matrixControlDroppedFrames ::= { matrixControl2Entry 1 }
+Did not find 'PrtCoverStatusTC' in module #-1
+Did not find 'PrtGeneralResetTC' in module #-1
+Did not find 'PrtChannelTypeTC' in module #-1
+Did not find 'PrtInterpreterLangFamilyTC' in module #-1
+Did not find 'PrtInputTypeTC' in module #-1
+Did not find 'PrtOutputTypeTC' in module #-1
+Did not find 'PrtMarkerMarkTechTC' in module #-1
+Did not find 'PrtMarkerSuppliesTypeTC' in module #-1
+Did not find 'PrtConsoleColorTC' in module #-1
+Did not find 'PrtConsoleDisableTC' in module #-1
+Did not find 'PrtMediaPathTypeTC' in module #-1
+Did not find 'PrtAlertGroupTC' in module #-1
+Did not find 'PrtAlertTrainingLevelTC' in module #-1
+Did not find 'PrtAlertCodeTC' in module #-1
+Did not find 'IANACharset' in module #-1
+Did not find 'IANAipRouteProtocol' in module #-1
+Did not find 'InetAddress' in module #-1
+Did not find 'InetAddressType' in module #-1
+Did not find 'InetAddressPrefixLength' in module #-1
+Did not find 'InetAutonomousSystemNumber' in module #-1
+Did not find 'SnmpAdminString' in module #-1
+Did not find 'CounterBasedGauge64' in module #-1
+Unlinked OID in RMON2-MIB: etherStats2Entry ::= { etherStats2Table 1 }
+Unlinked OID in RMON2-MIB: sourceRoutingStats2Entry ::= { sourceRoutingStats2Table 1 }
+Unlinked OID in RMON2-MIB: channel2Table ::= { filter 3 }
+Unlinked OID in RMON2-MIB: filter2Table ::= { filter 4 }
+Unlinked OID in RMON2-MIB: historyControl2Table ::= { history 5 }
+Unlinked OID in RMON2-MIB: channel2Entry ::= { channel2Table 1 }
+Unlinked OID in RMON2-MIB: tokenRingMLStats2Entry ::= { tokenRingMLStats2Table 1 }
+Unlinked OID in RMON2-MIB: matrixControl2Table ::= { matrix 4 }
+Unlinked OID in RMON2-MIB: ringStationControlDroppedFrames ::= { ringStationControl2Entry 1 }
+Unlinked OID in RMON2-MIB: ringStationControlCreateTime ::= { ringStationControl2Entry 2 }
+Unlinked OID in RMON2-MIB: hostControlDroppedFrames ::= { hostControl2Entry 1 }
+Unlinked OID in RMON2-MIB: hostControlCreateTime ::= { hostControl2Entry 2 }
+Unlinked OID in RMON2-MIB: tokenRingPStats2Entry ::= { tokenRingPStats2Table 1 }
+Unlinked OID in RMON2-MIB: etherStatsDroppedFrames ::= { etherStats2Entry 1 }
+Unlinked OID in RMON2-MIB: etherStatsCreateTime ::= { etherStats2Entry 2 }
+Unlinked OID in RMON2-MIB: sourceRoutingStatsDroppedFrames ::= { sourceRoutingStats2Entry 1 }
+Unlinked OID in RMON2-MIB: sourceRoutingStatsCreateTime ::= { sourceRoutingStats2Entry 2 }
+Unlinked OID in RMON2-MIB: hostControl2Table ::= { hosts 4 }
+Unlinked OID in RMON2-MIB: channelDroppedFrames ::= { channel2Entry 1 }
+Unlinked OID in RMON2-MIB: channelCreateTime ::= { channel2Entry 2 }
+Unlinked OID in RMON2-MIB: tokenRingMLStatsDroppedFrames ::= { tokenRingMLStats2Entry 1 }
+Unlinked OID in RMON2-MIB: tokenRingMLStatsCreateTime ::= { tokenRingMLStats2Entry 2 }
+Unlinked OID in RMON2-MIB: filter2Entry ::= { filter2Table 1 }
+Unlinked OID in RMON2-MIB: etherStats2Table ::= { statistics 4 }
+Unlinked OID in RMON2-MIB: tokenRingMLStats2Table ::= { statistics 5 }
+Unlinked OID in RMON2-MIB: tokenRingPStats2Table ::= { statistics 6 }
+Unlinked OID in RMON2-MIB: historyControl2Entry ::= { historyControl2Table 1 }
+Unlinked OID in RMON2-MIB: matrixControl2Entry ::= { matrixControl2Table 1 }
+Unlinked OID in RMON2-MIB: ringStationControl2Table ::= { tokenRing 7 }
+Unlinked OID in RMON2-MIB: sourceRoutingStats2Table ::= { tokenRing 8 }
+Unlinked OID in RMON2-MIB: tokenRingPStatsDroppedFrames ::= { tokenRingPStats2Entry 1 }
+Unlinked OID in RMON2-MIB: tokenRingPStatsCreateTime ::= { tokenRingPStats2Entry 2 }
+Unlinked OID in RMON2-MIB: filterProtocolDirDataLocalIndex ::= { filter2Entry 1 }
+Unlinked OID in RMON2-MIB: filterProtocolDirLocalIndex ::= { filter2Entry 2 }
+Unlinked OID in RMON2-MIB: ringStationControl2Entry ::= { ringStationControl2Table 1 }
+Unlinked OID in RMON2-MIB: historyControlDroppedFrames ::= { historyControl2Entry 1 }
+Unlinked OID in RMON2-MIB: hostControl2Entry ::= { hostControl2Table 1 }
+Unlinked OID in RMON2-MIB: matrixControlDroppedFrames ::= { matrixControl2Entry 1 }
+Unlinked OID in RMON2-MIB: matrixControlCreateTime ::= { matrixControl2Entry 2 }
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises
+sub-identifier not found: enterprises

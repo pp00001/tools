@@ -1,0 +1,167 @@
+-- ********************************************************************
+
+--  UnitransMib-MS-topologicallink.mib
+
+--  Copyright (c) 2008 ZTE CORPORATION.All rights reserved.
+
+--  Description: TopologicalLink management related difinitions 
+
+--  Version     v1.0
+
+--  Modification Record:
+
+--********************************************************************
+UnitransMib-MS-topologicallink 
+DEFINITIONS ::= BEGIN
+IMPORTS
+    MODULE-IDENTITY, OBJECT-TYPE, NOTIFICATION-TYPE,
+    enterprises, Integer32, Unsigned32, IpAddress
+        FROM SNMPv2-SMI
+    TEXTUAL-CONVENTION, DisplayString, TimeStamp, DateAndTime
+        FROM SNMPv2-TC  
+    MODULE-COMPLIANCE, OBJECT-GROUP, NOTIFICATION-GROUP
+        FROM SNMPv2-CONF        
+        zteUnitransMS
+	FROM 
+	UnitransMib-MS-root	 
+        ObjectNVSList-T,NamingAttributes-T,LayerRate-TC
+        FROM 
+        UnitransMib-MS-common;   
+        
+--*********************************************************************
+--
+--*********************************************************************         
+zteuTopoLogicalLink MODULE-IDENTITY
+        LAST-UPDATED   "0602130000Z"
+        ORGANIZATION   "ZTE"
+        CONTACT-INFO   "
+           ZTE Corporation
+           
+           Postal: 518057      
+           
+           via the WEB:  http://www.zte.com.cn                           
+            
+           via phone:    86-755-26773000"
+   DESCRIPTION
+      "This module describes ZTE Unitrans MIB."
+::= { zteUnitransMS 17 }
+
+-- ********************************************************************
+-- Table And Object  Definition
+-- ********************************************************************
+
+    zteuTopoLogicalLinkTable OBJECT-TYPE
+        SYNTAX          SEQUENCE OF ZTEUTopoLogicalLinkEntry
+        MAX-ACCESS      not-accessible
+        STATUS          current
+        DESCRIPTION
+                "This object presents TopoLogicalLink table"
+        ::= { zteuTopoLogicalLink 1 }
+    
+    zteuTopoLogicalLinkEntry  OBJECT-TYPE
+        SYNTAX      ZTEUTopoLogicalLinkEntry
+        MAX-ACCESS  not-accessible
+        STATUS  current
+        DESCRIPTION
+                "This object presents EMS Entry"        
+    INDEX{tlName}
+        ::= { zteuTopoLogicalLinkTable 1 }    
+        
+    ZTEUTopoLogicalLinkEntry  ::= 
+    SEQUENCE
+        {
+                tlName                 NamingAttributes-T,
+                tlUserLabel            DisplayString, 
+                tlDirection            INTEGER,      
+                tlLayerRate            LayerRate-TC,
+                tlAEnd				   NamingAttributes-T,
+				tlZEnd				   NamingAttributes-T,
+                tlAdditionalInfo   	   ObjectNVSList-T             
+        }     
+
+     tlName OBJECT-TYPE
+     SYNTAX NamingAttributes-T
+     MAX-ACCESS read-only
+     STATUS current
+     DESCRIPTION "
+     This variable presents the object identifier of topological link.
+     For details,please refer NamingAttributes-T's definition
+     "
+     ::= {zteuTopoLogicalLinkEntry 1}    
+    
+     
+     tlUserLabel OBJECT-TYPE
+     SYNTAX DisplayString
+     MAX-ACCESS read-write
+     STATUS current
+     DESCRIPTION "
+     This variable presents user label    
+     "
+     ::= {zteuTopoLogicalLinkEntry 2}     
+     
+     tlDirection OBJECT-TYPE
+     SYNTAX INTEGER
+	 {
+		d-Unidirection(1),
+		d-Bidirection(2)
+	 }
+     MAX-ACCESS read-only
+     STATUS current
+     DESCRIPTION "
+     This variable presents the directionality of the topological link.
+     "
+     ::= {zteuTopoLogicalLinkEntry 3} 
+     
+     tlLayerRate OBJECT-TYPE
+     SYNTAX LayerRate-TC
+     MAX-ACCESS read-only
+     STATUS current
+     DESCRIPTION "
+     This variable presents the layer rate of the topological link.
+     "     
+     ::= {zteuTopoLogicalLinkEntry 4}          
+     
+     tlAEnd  OBJECT-TYPE
+     SYNTAX NamingAttributes-T
+     MAX-ACCESS read-only
+     STATUS current
+     DESCRIPTION "
+     This variable presents the a-end of the topological link.    
+     "
+     ::= {zteuTopoLogicalLinkEntry 5}
+
+	 tlZEnd  OBJECT-TYPE
+     SYNTAX NamingAttributes-T
+     MAX-ACCESS read-only
+     STATUS current
+     DESCRIPTION "
+     This variable presents the z-end of the topological link.    
+     "
+     ::= {zteuTopoLogicalLinkEntry 6}
+     
+    tlAdditionalInfo  OBJECT-TYPE
+     SYNTAX ObjectNVSList-T
+     MAX-ACCESS read-write
+     STATUS current
+     DESCRIPTION "
+     This variable presents additional information,reserved.
+     "
+     ::= {zteuTopoLogicalLinkEntry 7}
+     
+     zteuTopoLogicalLinkEntryGroup    OBJECT-GROUP
+             OBJECTS {
+				tlName,
+                tlUserLabel, 
+                tlDirection,      
+                tlLayerRate,
+                tlAEnd,
+				tlZEnd,
+                tlAdditionalInfo   
+                }
+             STATUS     current
+             DESCRIPTION
+                 "A collection of objects of TopoLogicalLinkEntry."
+    ::= { zteuTopoLogicalLink 20 }         
+    
+		
+    END

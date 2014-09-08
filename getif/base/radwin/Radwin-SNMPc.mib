@@ -1,0 +1,171 @@
+--
+-- Generated Mon 12/01/2008  07:08 PM
+--
+	RADWIN-SNMPc-MIB- DEFINITIONS ::= BEGIN
+
+	IMPORTS 
+		enterprises, IpAddress, Counter, Gauge
+			FROM RFC1155-SMI
+		OBJECT-TYPE
+			FROM RFC-1212
+		DisplayString, ifIndex
+			FROM RFC1213-MIB;
+
+
+	radwin			OBJECT IDENTIFIER ::= { enterprises 4458 }
+	winlink1000		OBJECT IDENTIFIER ::= { radwin 1000 }
+	
+
+	
+
+winlink1000CustomTables OBJECT IDENTIFIER ::= { winlink1000 5 }
+
+--  #################    AIR     ################
+  AirRSS OBJECT-TYPE
+    SYNTAX        ExpressionGauge
+    ACCESS        read-only
+    STATUS        mandatory
+    EVALUATE   "0+[winlink1000OduAirRxPower]"
+    DESCRIPTION   
+    "Air Received Signal Strength(RSS)"
+    ::= { winlink1000CustomTables 1 }
+    
+    AirPER OBJECT-TYPE
+    SYNTAX        ExpressionGauge
+    ACCESS        read-only
+    STATUS        mandatory
+    EVALUATE   "0+({winlink1000OduAirBadFrames}/{winlink1000OduAirTotalFrames})"
+    DESCRIPTION   
+    "Air Packet Error Rate"
+    ::= { winlink1000CustomTables 2 }
+	
+AirPerMonTable ::= SEQUENCE {
+      AirRSS Gauge,
+      AirPER Gauge
+  }
+  
+--  #################    TDM    #################
+	
+	TDM_BER_ OBJECT-TYPE
+    SYNTAX        ExpressionGauge
+    ACCESS        read-only
+    STATUS        mandatory
+    EVALUATE   "{winlink1000IduTdmCurrentDrops}/{winlink1000IduTdmCurrentBlocks}"
+    DESCRIPTION   
+    "TDM Block Error Rate"
+    ::= { winlink1000CustomTables 10 }
+  
+     TdmPerMonTable ::= SEQUENCE {
+ 
+      TDM_BER_ Gauge
+	  } 
+ 
+  -- ############      ETHERNET      #############
+
+	EthRemainingTpMbps OBJECT-TYPE
+    SYNTAX        ExpressionGauge
+    ACCESS        read-only
+    STATUS        mandatory
+    EVALUATE   "[winlink1000IduSrvEthThroughput]/1000000"
+    DESCRIPTION   
+    "Ethernet Remaining Throughput [Mbps]"
+    ::= { winlink1000CustomTables 20 }
+	
+	PortInputTpMbps OBJECT-TYPE
+    SYNTAX        ExpressionGauge
+    ACCESS        read-only
+    STATUS        mandatory
+    EVALUATE   "({winlink1000OduBridgeTpPortInBytes}*(8/1000000))/{$time}"
+    DESCRIPTION   
+    "Input Throughput [Mbps] "
+    ::= { winlink1000CustomTables 21 }
+	
+	PortOutputTpMbps OBJECT-TYPE
+    SYNTAX        ExpressionGauge
+    ACCESS        read-only
+    STATUS        mandatory
+    EVALUATE   "({winlink1000OduBridgeTpPortOutBytes}*(8/1000000))/{$time}"
+    DESCRIPTION   
+    "Output Throughput [Mbps] "
+    ::= { winlink1000CustomTables 22 }
+
+	
+	PortInputFrames OBJECT-TYPE
+    SYNTAX        ExpressionGauge
+    ACCESS        read-only
+    STATUS        mandatory
+    EVALUATE   "{winlink1000OduBridgeTpPortInFrames}/{$time}"
+    DESCRIPTION   
+    "Input Frames "
+    ::= { winlink1000CustomTables 23 }
+	
+	PortOutputFrames OBJECT-TYPE
+    SYNTAX        ExpressionGauge
+    ACCESS        read-only
+    STATUS        mandatory
+    EVALUATE   "{winlink1000OduBridgeTpPortOutFrames}/{$time}"
+    DESCRIPTION   
+    "Output Frames "
+    ::= { winlink1000CustomTables 24 }
+	
+	
+	  
+EthPerMonTable ::= SEQUENCE {
+      PortInputFrames Gauge,
+      PortOutputFrames Gauge,
+      PortInputTpMbps Gauge,
+      PortOutputTpMbps Gauge,
+	  EthRemainingTpMbps Gauge
+	  }	  
+	  	  
+
+-- ##############   Inventory #######################		  
+		  
+    Frequency_GHz OBJECT-TYPE  
+    SYNTAX        ExpressionGauge
+    ACCESS        read-only
+    STATUS        mandatory
+    EVALUATE   "[winlink1000OduAirCurrentFreq]/1000"
+    DESCRIPTION   
+    "Current Link Frequency [GHz] (in case of BRS product frequency is represented in MHz) "
+    ::= { winlink1000CustomTables 30 }
+	
+	Channel_BW_MHz OBJECT-TYPE  
+    SYNTAX        ExpressionGauge
+    ACCESS        read-only
+    STATUS        mandatory
+    EVALUATE   "[winlink1000OduAirChannelBandwidth]/1000"
+    DESCRIPTION   
+    "Current Link Channel Bandwidth [MHz]"
+    ::= { winlink1000CustomTables 31 }
+	
+	AirTxPower_dBm OBJECT-TYPE  
+    SYNTAX        ExpressionGauge
+    ACCESS        read-only
+    STATUS        mandatory
+    EVALUATE   "0+[winlink1000OduAirCurrentTxPower]"
+    DESCRIPTION   
+    "Transmission power"
+    ::= { winlink1000CustomTables 32 }
+	
+	
+		  
+InventoryCustomTable ::= SEQUENCE {
+      sysUpTime TimeTicks,
+	  sysName DisplayString,
+	  sysLocation DisplayString, 
+	  winlink1000IduAdmProductType DisplayString,
+	  winlink1000IduAdmHwRev DisplayString
+	  winlink1000IduAdmSwRev DisplayString
+	  winlink1000OduAdmProductName DisplayString, 
+	  winlink1000OduAdmSwRev DisplayString,
+	  winlink1000OduAdmHwRev DisplayString,
+	  winlink1000OduAdmLinkName DisplayString,
+	  Frequency_GHz Gauge,
+	  Channel_BW_MHz Gauge,
+	  AirTxPower_dBm Gauge
+	  
+	  
+     }
+
+	END

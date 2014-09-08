@@ -1,0 +1,1076 @@
+HARBOUR-RADIUS-MIB DEFINITIONS ::= BEGIN
+
+	IMPORTS
+       		harbourAgent
+			FROM HARBOUR-BASE-MIB
+		OBJECT-TYPE
+			FROM SNMPv2-SMI			
+		DisplayString   
+			FROM RFC1213-MIB
+		IpAddress
+                      	FROM RFC1155-SMI;
+
+		
+	-- All representations of MAC addresses in this MIB Module
+                -- use, as a textual convention (i.e. this convention does
+          	-- not affect their encoding), the data type:
+
+         	MacAddress ::= OCTET STRING (SIZE (6))    -- a 6 octet address
+                                                    -- in the
+                                                    -- "canonical"
+                                                    -- order
+                -- defined by IEEE 802.1a, i.e., as if it were transmitted
+                -- least significant bit first, even though 802.5 (in
+          	-- contrast to other n802.x protocoRadius) requires MAC
+          	-- addresses to be transmitted most significant bit first.
+          	--
+          	-- 16-bit addresses, if needed, are represented by setting
+          	-- their upper 4 octets to all 0's, i.e., AAFF would be
+          	-- represented as 00000000AAFF.
+
+
+	--The RowStatus textual convention is used to manage
+	-- the creation and deletion of conceptual rows, and 
+	--is used as the value of the SYNTAX clause for the 
+	--status column of a conceptual row. 
+
+	RowStatus::=	INTEGER{	
+				active(1),
+				notInServer(2),
+				notReady(3),
+				creatAndGo(4),
+				creatAndWait(5),
+				destroy(6)
+			}
+
+ 
+   	harbourRadius 	OBJECT IDENTIFIER 		::= {harbourAgent 30}
+
+	harbourRadiusDomainGroup OBJECT IDENTIFIER 	::= {harbourRadius 1}
+
+	harbourRadiusAuthGroup OBJECT IDENTIFIER 	::= {harbourRadius 2}
+
+	harbourRadiusAcctGroup OBJECT IDENTIFIER 	::= {harbourRadius 3}
+
+	harbourRadiusCutGroup OBJECT IDENTIFIER 	::= {harbourRadius 4}
+
+	harbourRadiusAttrGroup OBJECT IDENTIFIER 	::= {harbourRadius 5}
+	
+	
+--DomainGroup
+	harbourRadiusMaxWaitingMsgs 	OBJECT-TYPE
+		SYNTAX INTEGER 
+		 
+		ACCESS  read-only
+		STATUS mandatory
+		DESCRIPTION
+			"The  maximum of waiting messages."
+		::= {harbourRadiusDomainGroup 1}
+
+	harbourRadiusServerSwitchNotify OBJECT-TYPE 
+
+		SYNTAX  INTEGER {
+		  	disable(0),
+		  	enable(1)
+		}
+		
+		ACCESS  read-write 
+		STATUS  mandatory
+		DESCRIPTION 
+			" Read get 0 means harbour Radius switchs server without notifying dot1x.
+			  Read get 1 means harbour Radius switchs server  notifying dot1x.
+			  Set to 0 means harbour Radius switchs server without notifying dot1x.
+			  Set to 1 means harbour Radius switchs server notifying dot1x."
+		::= {harbourRadiusDomainGroup 2}
+
+	harbourRadiusDomainTable 	OBJECT-TYPE
+		SYNTAX SEQUENCE OF harbourRadiusDomainEntry
+		ACCESS not-accessible
+		STATUS mandatory
+		DESCRIPTION
+			"The table of users, recording  the operator who ever used Radius service
+	                 	."
+		::= {harbourRadiusDomainGroup 3}
+		
+
+	harbourRadiusDomainEntry 	OBJECT-TYPE
+		SYNTAX  	harbourRadiusDomainEntry
+		MAX-ACCESS  	not-accessible
+		STATUS 		mandatory
+		DESCRIPTION
+				"A table entry containing information about the module in 
+				each user of the server."
+		INDEX	  	{ 
+					harbourRadiusDomainId		
+		}
+		::= { harbourRadiusDomainTable 1 }	                        
+
+ 	harbourRadiusDomainEntry ::= 
+	   	SEQUENCE {
+	   		
+			harbourRadiusDomainId	    				INTEGER,
+			harbourRadiusDomainName 				DisplayString,
+			harbourRadiusDomainRowStatus				RowStatus,
+			harbourRadiusDomainAuthStatus				INTEGER,
+			harbourRadiusDomainAuthType				INTEGER,
+			harbourRadiusDomainAuthMode				INTEGER,
+			harbourRadiusDomainAcctStatus				INTEGER,
+			harbourRadiusDomainAcctMode				INTEGER,
+			harbourRadiusDomainUserNameComplete			INTEGER,
+			harbourRadiusDomainSuppUpgradeForceStatus		INTEGER,
+			harbourRadiusDomainSuppUpgradeURL			DisplayString,
+			harbourRadiusDomainAcctInterimUpdateStatus		INTEGER,
+			harbourRadiusDomainAcctInterimUpdateInterval		INTEGER,
+			harbourRadiusDomainAcctSyncStatus			INTEGER,
+			harbourRadiusDomainAcctStartNeedIpStatus		INTEGER,
+			harbourRadiusDomainAcctWaitIp				INTEGER
+	 	}
+      	
+	harbourRadiusDomainId OBJECT-TYPE 
+
+		SYNTAX  INTEGER  
+		ACCESS  read-only 
+		STATUS  mandatory
+		DESCRIPTION 
+			"   
+			  It specify Auth Protocol to specific domain."
+		
+		::= {harbourRadiusDomainEntry 1}
+
+	harbourRadiusDomainName   	OBJECT-TYPE		
+		SYNTAX  	DisplayString (SIZE(1..19))	
+		MAX-ACCESS  	read-create
+		STATUS 		mandatory
+		DESCRIPTION
+				"A name of the Radius client user, identifying the particular hlink client one,
+				such as username1 or username2 and so on."
+		::= { harbourRadiusDomainEntry 2 }
+
+	harbourRadiusDomainRowStatus OBJECT-TYPE 
+
+		SYNTAX  RowStatus 
+		ACCESS  read-create
+		STATUS  mandatory
+		DESCRIPTION 
+			"   
+			  It specify Auth Protocol to specific domain."
+		
+		::= {harbourRadiusDomainEntry 3}
+
+	harbourRadiusDomainAuthStatus OBJECT-TYPE 
+
+		SYNTAX  INTEGER{disable(0),enable(1)}
+		ACCESS  read-write 
+		STATUS  mandatory
+		DESCRIPTION 
+			"   
+			  It enable or disable the Auth to specific domain."
+
+		::= {harbourRadiusDomainEntry 4}
+
+	harbourRadiusDomainAuthType OBJECT-TYPE 
+
+		SYNTAX  INTEGER {chap(0),eap-md5(1),pap(2)}
+		ACCESS  read-write
+		STATUS  mandatory
+		DESCRIPTION 
+			"   
+			  It specify Auth Protocol to specific domain."
+		
+		::= {harbourRadiusDomainEntry 5}
+		
+	harbourRadiusDomainAuthMode OBJECT-TYPE 
+
+		SYNTAX  INTEGER{independent (0),primarybackup(1)}
+		ACCESS  read-write 
+		STATUS  mandatory
+		DESCRIPTION 
+			"   
+			  It enable or disable the Auth to specific domain."
+		
+		::= {harbourRadiusDomainEntry 6}
+		
+	harbourRadiusDomainAcctStatus OBJECT-TYPE 
+
+		SYNTAX  INTEGER{disable(0),enable(1)}
+		ACCESS  read-write 
+		STATUS  mandatory
+		DESCRIPTION 
+			"   
+			  It enable or disable the Auth to specific domain."
+		
+		::= {harbourRadiusDomainEntry 7}	
+		
+	harbourRadiusDomainAcctMode OBJECT-TYPE 
+
+		SYNTAX  INTEGER{
+			independent(0),
+			multi(1),
+			primarybackup(2)
+		}
+		ACCESS  read-write 
+		STATUS  mandatory
+		DESCRIPTION 
+			"   
+			  It enable or disable the Auth to specific domain."
+		
+		::= {harbourRadiusDomainEntry 8}
+		
+	harbourRadiusDomainUserNameComplete OBJECT-TYPE 
+
+		SYNTAX  INTEGER{
+		  	complete(0),
+		  	incpmplete(1)
+		}
+		
+		ACCESS  read-write 
+		STATUS  mandatory
+		DESCRIPTION 
+			"   
+			  It denotes if NAS deliver the comlete user name (abc@domain)to  RADIUS.
+			  when set to 0 ,it means IS ,otherwise it means NOT."
+		
+		::= {harbourRadiusDomainEntry 9}
+
+	harbourRadiusDomainSuppUpgradeForceStatus OBJECT-TYPE
+
+		SYNTAX  INTEGER{
+		  	disable(0),
+		  	enable(1)
+		}
+		
+		ACCESS  read-write 
+		STATUS  mandatory
+		DESCRIPTION 
+			"   
+			  It denotes if you will force the supplicant to update when users get online.
+			  0 means NOT,1 means YES.
+			  This object is only used in nas v1.0"
+		
+		::= {harbourRadiusDomainEntry 10}
+
+	harbourRadiusDomainSuppUpgradeURL   	OBJECT-TYPE		
+		SYNTAX  	DisplayString (SIZE(1..100))
+		MAX-ACCESS  	read-write
+		STATUS 		mandatory
+		DESCRIPTION
+				"It denotes the URL where you can update you supplicant software,
+				such as :www.harbournetworks.com.cn/supplicant.exe.when it is set null,
+				you cannot update.
+				This object is only used in nas v1.0"
+		::= { harbourRadiusDomainEntry 11}
+		
+	harbourRadiusDomainAcctInterimUpdateStatus OBJECT-TYPE 
+
+		SYNTAX  INTEGER{
+		  	disable(0),
+		  	enable(1)
+		}
+		ACCESS  read-write 
+		STATUS  mandatory
+		DESCRIPTION 
+			"This object is only used in nas v1.0"
+		
+		::= {harbourRadiusDomainEntry 12}
+		
+	harbourRadiusDomainAcctInterimUpdateInterval OBJECT-TYPE 
+
+		SYNTAX  INTEGER( 10..65535 )
+		ACCESS  read-write 
+		STATUS  mandatory
+		DESCRIPTION 
+			"This object is only used in nas v1.0"
+		
+		::= {harbourRadiusDomainEntry 13}
+
+	harbourRadiusDomainAcctSyncStatus OBJECT-TYPE 
+
+		SYNTAX  INTEGER{
+		  	disable(0),
+		  	enable(1)
+		}
+		
+		ACCESS  read-write 
+		STATUS  mandatory
+		DESCRIPTION 
+			"This object is only used in nas v1.0"
+		
+		::= {harbourRadiusDomainEntry 14}
+
+	harbourRadiusDomainAcctStartNeedIpStatus  OBJECT-TYPE 
+
+		SYNTAX  INTEGER{
+			disable(0),
+			enable(1)
+		}
+		ACCESS  read-write 
+		STATUS  mandatory
+		DESCRIPTION 
+			"   
+			  It decides if it need the IP when domain start accounting.
+			  This object is only used in nas v1.0"
+		
+		::= {harbourRadiusDomainEntry 15}
+		
+	harbourRadiusDomainAcctWaitIp OBJECT-TYPE 
+
+		SYNTAX  INTEGER(100..600)
+		ACCESS  read-write 
+		STATUS  mandatory
+		DESCRIPTION 
+			"   
+			  It denotes the time when  domain waits for ip to start 
+			  accounting function.
+			  This object is only used in nas v1.0"
+		
+		::= {harbourRadiusDomainEntry 16}
+
+	harbourRadiusDomainAuthServerTable 	OBJECT-TYPE
+		SYNTAX SEQUENCE OF harbourRadiusDomainAuthServerEntry
+		ACCESS not-accessible
+		STATUS mandatory
+		DESCRIPTION
+			"The table of authentication servers in certain domain."
+		::= {harbourRadiusDomainGroup 4}
+		
+
+	harbourRadiusDomainAuthServerEntry 	OBJECT-TYPE
+		SYNTAX  	harbourRadiusDomainAuthServerEntry
+		MAX-ACCESS  	not-accessible
+		STATUS 		mandatory
+		DESCRIPTION
+			"A table entry containing information about the authentication
+			 server in certain domain." 
+		INDEX	  	{ 
+					harbourRadiusDomainId,
+					harbourRadiusAuthId		
+		}
+		::= { harbourRadiusDomainAuthServerTable 1 }
+		
+	harbourRadiusDomainAuthServerEntry ::= 
+	   	SEQUENCE {
+			harbourRadiusDomainAuthServerType 			INTEGER,
+			harbourRadiusDomainAuthServerRowStatus			RowStatus
+	 	}
+
+
+	harbourRadiusDomainAuthServerType OBJECT-TYPE 
+
+		SYNTAX  INTEGER{primary(0), backup(1)}
+		ACCESS  read-write 
+		STATUS  mandatory
+		DESCRIPTION 
+			"   
+			  It specify the type of the Auth server in certain domain."
+		
+		::= {harbourRadiusDomainAuthServerEntry 1 }
+
+
+	harbourRadiusDomainAuthServerRowStatus OBJECT-TYPE 
+
+		SYNTAX  RowStatus 
+		ACCESS  read-create
+		STATUS  mandatory
+		DESCRIPTION 
+			""
+		
+		::= {harbourRadiusDomainAuthServerEntry 2 }
+
+
+	harbourRadiusDomainAcctServerTable 	OBJECT-TYPE
+		SYNTAX SEQUENCE OF harbourRadiusDomainAcctServerEntry
+		ACCESS not-accessible
+		STATUS mandatory
+		DESCRIPTION
+			"The table of accounting servers in certain domain."
+		::= {harbourRadiusDomainGroup 5}
+		
+
+	harbourRadiusDomainAcctServerEntry 	OBJECT-TYPE
+		SYNTAX  	harbourRadiusDomainAcctServerEntry
+		MAX-ACCESS  	not-accessible
+		STATUS 		mandatory
+		DESCRIPTION
+			"A table entry containing information about the accounting
+			 server in certain domain." 
+		INDEX	  	{ 
+					harbourRadiusDomainId,
+					harbourRadiusAcctId		
+		}
+		::= { harbourRadiusDomainAcctServerTable 1 }
+		
+	harbourRadiusDomainAcctServerEntry ::= 
+	   	SEQUENCE {
+			harbourRadiusDomainAcctServerType		INTEGER,
+			harbourRadiusDomainAcctServerRowStatus		RowStatus
+	 	}
+
+
+	harbourRadiusDomainAcctServerType OBJECT-TYPE 
+
+		SYNTAX  INTEGER{primary(0),multi(1),backup(2)}
+		ACCESS  read-write 
+		STATUS  mandatory
+		DESCRIPTION 
+			""
+		
+		::= {harbourRadiusDomainAcctServerEntry 1 }
+
+
+	harbourRadiusDomainAcctServerRowStatus OBJECT-TYPE 
+
+		SYNTAX  RowStatus 
+		ACCESS  read-create
+		STATUS  mandatory
+		DESCRIPTION 
+			""
+		
+		::= {harbourRadiusDomainAcctServerEntry 2 }
+
+--DomainGroupEnd
+
+--AuthGroup
+	harbourRadiusAuthStatus OBJECT-TYPE 
+
+		SYNTAX  INTEGER {
+		  	disable(0),
+		  	enable(1)
+		}
+		
+		ACCESS  read-write 
+		STATUS  mandatory
+		DESCRIPTION 
+			" Read get 0 means harbour Radius Auth service is not running.
+			  Read get 1 means Radius Auth service is running.
+			  Set to 0 means to disable Radius Auth  service.
+			  Set to 1 means to enable Radius Auth  service."
+		::= {harbourRadiusAuthGroup 1}
+
+	harbourRadiusAuthServerSwitchStatus OBJECT-TYPE 
+
+		SYNTAX  INTEGER {
+		  	disable(0),
+		  	enable(1)
+		}
+		
+		ACCESS  read-write 
+		STATUS  mandatory
+		DESCRIPTION 
+			""
+		::= {harbourRadiusAuthGroup 2}
+		
+	harbourRadiusAuthTable 	OBJECT-TYPE
+		SYNTAX SEQUENCE OF harbourRadiusAuthEntry
+		ACCESS not-accessible
+		STATUS mandatory
+		DESCRIPTION
+			"The table of Radius Auth, recording  the Auth server."
+		::= {harbourRadiusAuthGroup 3}
+		
+
+	harbourRadiusAuthEntry 	OBJECT-TYPE
+		SYNTAX  	harbourRadiusAuthEntry
+		MAX-ACCESS  	not-accessible
+		STATUS 		mandatory
+		DESCRIPTION
+				"A table entry containing information about the module in 
+				each user of the server."
+		INDEX	  	{ 
+				harbourRadiusAuthId	
+		}
+		::= { harbourRadiusAuthTable 1 }	                        
+
+ 	harbourRadiusAuthEntry ::= 
+	   	SEQUENCE {
+	   		
+			harbourRadiusAuthId			INTEGER,
+			harbourRadiusAuthServerIp    		IpAddress,
+			harbourRadiusAuthClientIp    		IpAddress,
+			harbourRadiusAuthUdpPort		INTEGER,			
+			harbourRadiusAuthRowStatus		RowStatus,
+			harbourRadiusAuthServerStatus  		INTEGER,
+			harbourRadiusAuthSharedSecret		DisplayString,
+			harbourRadiusAuthRetranInterval 	INTEGER,
+			harbourRadiusAuthMaxRetranCount 	INTEGER,
+			harbourRadiusAuthMaxSendFailCount	INTEGER,
+			harbourRadiusAuthMaxRetranDropCount	INTEGER
+	 	}
+
+	harbourRadiusAuthId   	OBJECT-TYPE		
+		SYNTAX  	INTEGER	
+		MAX-ACCESS  	read-only
+		STATUS 		mandatory
+		DESCRIPTION
+				""
+		::= { harbourRadiusAuthEntry 1 }
+	harbourRadiusAuthServerIp   	OBJECT-TYPE		
+		SYNTAX  	IpAddress 	
+		MAX-ACCESS  	read-create
+		STATUS 		mandatory
+		DESCRIPTION
+				"the IpAddress of the RadiusAuthServer."
+		::= { harbourRadiusAuthEntry 2 }
+	harbourRadiusAuthClientIp   	OBJECT-TYPE		
+		SYNTAX  	IpAddress 	
+		MAX-ACCESS  	read-create
+		STATUS 		mandatory
+		DESCRIPTION
+				"A IpAddress of the Radius Auth Client."
+		::= { harbourRadiusAuthEntry 3 }
+
+	harbourRadiusAuthUdpPort	OBJECT-TYPE		
+		SYNTAX  	INTEGER	 
+		MAX-ACCESS  	read-create
+		STATUS 		mandatory
+		DESCRIPTION
+				"It specify the udp port."
+		::= { harbourRadiusAuthEntry 4 }
+		
+	harbourRadiusAuthRowStatus 	OBJECT-TYPE	
+		SYNTAX  			RowStatus 
+		ACCESS  			read-create
+		STATUS 				mandatory
+		DESCRIPTION
+			"This object indicates the status of this entry."
+		::={ harbourRadiusAuthEntry 5 }
+
+	harbourRadiusAuthServerStatus  	OBJECT-TYPE		
+		SYNTAX  	INTEGER	{ 
+				deleted(0),
+			 	active(1),
+			 	inactive(2),
+			 	dead(3),
+			 	unknown(4)
+		}
+		MAX-ACCESS  	read-write
+		STATUS 		mandatory
+		DESCRIPTION
+				""
+		::= { harbourRadiusAuthEntry 6 }
+		
+	harbourRadiusAuthSharedSecret		OBJECT-TYPE		
+		SYNTAX  	DisplayString (SIZE(1..128))		
+		MAX-ACCESS  	read-write
+		STATUS 		mandatory
+		DESCRIPTION
+				""
+		::= { harbourRadiusAuthEntry 7 }
+		
+	harbourRadiusAuthRetranInterval 	OBJECT-TYPE		
+		SYNTAX  	INTEGER(5..300)	
+		MAX-ACCESS  	read-write
+		STATUS 		mandatory
+		DESCRIPTION
+				""
+		::= { harbourRadiusAuthEntry 8 }
+		
+	harbourRadiusAuthMaxRetranCount OBJECT-TYPE		
+		SYNTAX  	INTEGER	(2..10)
+		MAX-ACCESS  	read-write
+		STATUS 		mandatory
+		DESCRIPTION
+				""
+		::= { harbourRadiusAuthEntry 9 }
+		
+	harbourRadiusAuthMaxSendFailCount	OBJECT-TYPE		
+		SYNTAX  	INTEGER	(2..30)
+		MAX-ACCESS  	read-write
+		STATUS 		mandatory
+		DESCRIPTION
+				""
+		::= { harbourRadiusAuthEntry 10 }
+		
+	harbourRadiusAuthMaxRetranDropCount	OBJECT-TYPE		
+		SYNTAX  	INTEGER	(2..30)
+		MAX-ACCESS  	read-write
+		STATUS 		mandatory
+		DESCRIPTION
+				""
+		::= { harbourRadiusAuthEntry 11 }
+--AuthGroupEnd
+
+--AcctGroup
+	harbourRadiusAcctStatus OBJECT-TYPE 
+
+		SYNTAX  INTEGER {
+		  	disable(0),
+		  	enable(1)
+		}
+		
+		ACCESS  read-write 
+		STATUS  mandatory
+		DESCRIPTION 
+			" Read get 0 means harbour Radius Accounting service is not running.
+			  Read get 1 means Radius Accounting service is running.
+			  Set to 0 means to disable Radius Accounting  service.
+			  Set to 1 means to enable Radius Accounting  service."
+		::= {harbourRadiusAcctGroup 1}
+
+	harbourRadiusAcctServerSwitchStatus OBJECT-TYPE 
+
+		SYNTAX  INTEGER {
+		  	disable(0),
+		  	enable(1)
+		}
+		
+		ACCESS  read-write 
+		STATUS  mandatory
+		DESCRIPTION 
+			""
+		::= {harbourRadiusAcctGroup 2}
+
+	harbourRadiusAcctSessionTimeoutType OBJECT-TYPE 
+
+		SYNTAX  INTEGER {
+		  	logoff(0),
+		  	reauthenticate(1)
+		}
+		
+		ACCESS  read-write 
+		STATUS  mandatory
+		DESCRIPTION 
+			""
+		::= {harbourRadiusAcctGroup 3}
+				
+	harbourRadiusAcctInterimUpdateStatus OBJECT-TYPE 
+
+		SYNTAX  INTEGER{
+		  	disable(0),
+		  	enable(1)
+		}
+		ACCESS  read-write 
+		STATUS  mandatory
+		DESCRIPTION 
+			"This object is only used in nas v2.0"
+		
+		::= {harbourRadiusAcctGroup 4}
+		
+	harbourRadiusAcctInterimUpdateInterval OBJECT-TYPE 
+
+		SYNTAX  INTEGER( 10..65535 )
+		ACCESS  read-write 
+		STATUS  mandatory
+		DESCRIPTION 
+			"This object is only used in nas v2.0"
+		
+		::= {harbourRadiusAcctGroup 5}
+
+	harbourRadiusAcctSyncStatus OBJECT-TYPE 
+
+		SYNTAX  INTEGER{
+		  	disable(0),
+		  	enable(1)
+		}
+		
+		ACCESS  read-write 
+		STATUS  mandatory
+		DESCRIPTION 
+			"This object is only used in nas v2.0"
+		
+		::= {harbourRadiusAcctGroup 6}
+
+	harbourRadiusAcctStartNeedIpStatus  OBJECT-TYPE 
+
+		SYNTAX  INTEGER{
+			disable(0),
+			enable(1)
+		}
+		ACCESS  read-write 
+		STATUS  mandatory
+		DESCRIPTION 
+			"   
+			  It decides if it need the IP when domain start accounting.
+			  This object is only used in nas v2.0"
+		
+		::= {harbourRadiusAcctGroup 7}
+		
+	harbourRadiusAcctWaitIp OBJECT-TYPE 
+
+		SYNTAX  INTEGER(100..600)
+		ACCESS  read-write 
+		STATUS  mandatory
+		DESCRIPTION 
+			"   
+			  It denotes the time when  domain waits for ip to start 
+			  accounting function.
+			  This object is only used in nas v2.0"
+		
+		::= {harbourRadiusAcctGroup 8}
+
+	harbourRadiusAcctTable 	OBJECT-TYPE
+		SYNTAX SEQUENCE OF harbourRadiusAcctEntry
+		ACCESS not-accessible
+		STATUS mandatory
+		DESCRIPTION
+			"The table of Radius Accounting, recording  the Accounting server."
+		::= {harbourRadiusAcctGroup 9}
+
+	harbourRadiusAcctEntry 	OBJECT-TYPE
+		SYNTAX  	harbourRadiusAcctEntry
+		MAX-ACCESS  	not-accessible
+		STATUS 		mandatory
+		DESCRIPTION
+				"A table entry containing information about the module in 
+				each user of the server."
+		INDEX	  	{ 
+				harbourRadiusAcctId	
+		}
+		::= { harbourRadiusAcctTable 1 }	                        
+
+ 	harbourRadiusAcctEntry ::= 
+	   	SEQUENCE {
+			harbourRadiusAcctId			INTEGER,
+			harbourRadiusAcctServerIp    		IpAddress,
+			harbourRadiusAcctClientIp    		IpAddress,
+			harbourRadiusAcctUdpPort		INTEGER,			
+			harbourRadiusAcctRowStatus		RowStatus,
+			harbourRadiusAcctServerStatus   	INTEGER,
+			harbourRadiusAcctSharedSecret		DisplayString,
+			harbourRadiusAcctRetranInterval 	INTEGER,
+			harbourRadiusAcctMaxRetranCount 	INTEGER,
+			harbourRadiusAcctMaxSendFailCount	INTEGER,
+			harbourRadiusAcctMaxRetranDropCount	INTEGER
+	 	}
+
+	harbourRadiusAcctId   	OBJECT-TYPE		
+		SYNTAX  	INTEGER	
+		MAX-ACCESS  	read-only
+		STATUS 		mandatory
+		DESCRIPTION
+				""
+		::= { harbourRadiusAcctEntry 1 }
+		
+	harbourRadiusAcctServerIp   	OBJECT-TYPE		
+		SYNTAX  	IpAddress 	
+		MAX-ACCESS  	read-create
+		STATUS 		mandatory
+		DESCRIPTION
+				"the IpAddress of the RadiusAccountingServer."
+		::= { harbourRadiusAcctEntry 2 }
+		
+	harbourRadiusAcctClientIp   	OBJECT-TYPE		
+		SYNTAX  	IpAddress 	
+		MAX-ACCESS  	read-create
+		STATUS 		mandatory
+		DESCRIPTION
+				"A IpAddress of the Radius Accounting Client."
+		::= { harbourRadiusAcctEntry 3 }
+
+	harbourRadiusAcctUdpPort	OBJECT-TYPE		
+		SYNTAX  	INTEGER	 
+		MAX-ACCESS  	read-create
+		STATUS 		mandatory
+		DESCRIPTION
+				""
+		::= { harbourRadiusAcctEntry 4 }
+		
+	harbourRadiusAcctRowStatus 	OBJECT-TYPE	
+		SYNTAX  			RowStatus 
+		ACCESS  			read-create
+		STATUS 				mandatory
+		DESCRIPTION
+			"This object indicates the status of this entry."
+		::={ harbourRadiusAcctEntry 5 }	
+	
+	harbourRadiusAcctServerStatus   	OBJECT-TYPE		
+		SYNTAX  	INTEGER	{deleted(0),
+			 	active(1),
+			 	inactive(2),
+			 	dead(3),
+			 	unknown(4)
+		}
+		MAX-ACCESS  	read-write
+		STATUS 		mandatory
+		DESCRIPTION
+				""
+		::= { harbourRadiusAcctEntry 6 }
+		
+	harbourRadiusAcctSharedSecret		OBJECT-TYPE		
+		SYNTAX  	DisplayString (SIZE(1..128))	
+		MAX-ACCESS  	read-write
+		STATUS 		mandatory
+		DESCRIPTION
+				""
+		::= { harbourRadiusAcctEntry 7 }
+		
+	harbourRadiusAcctRetranInterval 	OBJECT-TYPE		
+		SYNTAX  	INTEGER(5..300)	
+		MAX-ACCESS  	read-write
+		STATUS 		mandatory
+		DESCRIPTION
+				""
+		::= { harbourRadiusAcctEntry 8 }
+		
+	harbourRadiusAcctMaxRetranCount OBJECT-TYPE		
+		SYNTAX  	INTEGER	(2..10)
+		MAX-ACCESS  	read-write
+		STATUS 		mandatory
+		DESCRIPTION
+				""
+		::= { harbourRadiusAcctEntry 9 }
+	
+		
+	harbourRadiusAcctMaxSendFailCount	OBJECT-TYPE		
+		SYNTAX  	INTEGER	(2..30)
+		MAX-ACCESS  	read-write
+		STATUS 		mandatory
+		DESCRIPTION
+				""
+		::= { harbourRadiusAcctEntry 10 }
+		
+	harbourRadiusAcctMaxRetranDropCount	OBJECT-TYPE		
+		SYNTAX  	INTEGER	(2..30)
+		MAX-ACCESS  	read-write
+		STATUS 		mandatory
+		DESCRIPTION
+				""
+		::= { harbourRadiusAcctEntry 11 }
+--AcctGroupEnd	
+
+--CutGroup
+	harbourRadiusCutStatus 	OBJECT-TYPE
+		SYNTAX INTEGER{disable(0),enable(1)
+		}
+		ACCESS  read-write 
+		STATUS mandatory
+		DESCRIPTION
+			"The table of users, recording  the operator who ever used Radius service
+	                 	."
+		::= {harbourRadiusCutGroup 1}
+		
+	harbourRadiusCutVerifyBy 	OBJECT-TYPE
+		SYNTAX INTEGER{ authenticator(0),
+				message-authenticator(1),
+				none(2)
+		}
+		ACCESS  read-write 
+		STATUS mandatory
+		DESCRIPTION
+			"It configs by what it  will verify the cut packet."
+		::= {harbourRadiusCutGroup 2}
+		
+	harbourRadiusCutProcessBy 	OBJECT-TYPE
+		SYNTAX INTEGER{ logoff(0),
+				reauthentication(1)
+		}
+		ACCESS  read-write 
+		STATUS mandatory
+		DESCRIPTION
+			"It configs how to deal with the cut packets when failed."
+		::= {harbourRadiusCutGroup 3}
+		
+	harbourRadiusCutAuthTable 	OBJECT-TYPE
+		SYNTAX SEQUENCE OF harbourRadiusCutAuthEntry
+		ACCESS not-accessible
+		STATUS mandatory
+		DESCRIPTION
+			"The table of users, recording  the operator who ever used Radius service
+	                 	."
+		::= {harbourRadiusCutGroup 4}
+		
+
+	harbourRadiusCutAuthEntry 	OBJECT-TYPE
+		SYNTAX  	harbourRadiusCutAuthEntry
+		MAX-ACCESS  	not-accessible
+		STATUS 		mandatory
+		DESCRIPTION
+				"A table entry containing information about the module in 
+				each user of the server."
+		INDEX	  	{ 
+					harbourRadiusAuthCutServerId		
+		}
+		::= { harbourRadiusCutAuthTable 1 }	                        
+
+ 	harbourRadiusCutAuthEntry ::= 
+	   	SEQUENCE {
+	   		
+			harbourRadiusAuthCutServerId 	INTEGER,
+			harbourRadiusAuthCutRowStatus	RowStatus
+	 	}
+
+	harbourRadiusAuthCutServerId 	OBJECT-TYPE
+		SYNTAX INTEGER(0..4)
+		ACCESS read-create
+		STATUS mandatory
+		DESCRIPTION
+			""
+		::= {harbourRadiusCutAuthEntry 1}	
+		
+	 
+	harbourRadiusAuthCutRowStatus 	OBJECT-TYPE
+		SYNTAX RowStatus
+		ACCESS read-create
+		STATUS mandatory
+		DESCRIPTION
+			""
+		::= {harbourRadiusCutAuthEntry 2}
+		
+	harbourRadiusCutAcctTable 	OBJECT-TYPE
+		SYNTAX SEQUENCE OF harbourRadiusCutAcctEntry
+		ACCESS not-accessible
+		STATUS mandatory
+		DESCRIPTION
+			""
+		::= {harbourRadiusCutGroup 5}
+		
+
+	harbourRadiusCutAcctEntry 	OBJECT-TYPE
+		SYNTAX  	harbourRadiusCutAcctEntry
+		MAX-ACCESS  	not-accessible
+		STATUS 		mandatory
+		DESCRIPTION
+				"A table entry containing information about the module in 
+				each user of the server."
+		INDEX	  	{ 
+					harbourRadiusAcctCutServerId		
+		}
+		::= { harbourRadiusCutAcctTable 1 }	                        
+
+ 	harbourRadiusCutAcctEntry ::= 
+	   	SEQUENCE {
+			harbourRadiusAcctCutServerId 	INTEGER,
+			harbourRadiusAcctCutRowStatus	RowStatus
+	 	}
+
+	harbourRadiusAcctCutServerId 	OBJECT-TYPE
+		SYNTAX INTEGER(0..4)
+		ACCESS read-create
+		STATUS mandatory
+		DESCRIPTION
+			""
+		::= {harbourRadiusCutAcctEntry 1}	
+		
+	 
+	harbourRadiusAcctCutRowStatus 	OBJECT-TYPE
+		SYNTAX RowStatus
+		ACCESS read-create
+		STATUS mandatory
+		DESCRIPTION
+			""
+		::= {harbourRadiusCutAcctEntry 2}
+--CutGroupEnd
+
+--AttrGroup
+	harbourRadiusAttrAllDefault 	OBJECT-TYPE
+		SYNTAX INTEGER{ 
+			ready(0),
+			set(1)
+		}
+		ACCESS  read-write 
+		STATUS mandatory
+		DESCRIPTION
+			""
+		::= {harbourRadiusAttrGroup 1}
+
+	harbourRadiusAttrBindWidthUnit 	OBJECT-TYPE
+		SYNTAX INTEGER{ 
+			bps(0),
+			kbps(1)
+		}
+		ACCESS  read-write 
+		STATUS mandatory
+		DESCRIPTION
+			""
+		::= {harbourRadiusAttrGroup 2}
+
+	harbourRadiusAttrTable 	OBJECT-TYPE
+		SYNTAX SEQUENCE OF harbourRadiusAttrEntry
+		ACCESS not-accessible
+		STATUS mandatory
+		DESCRIPTION
+			""
+		::= {harbourRadiusAttrGroup 3}
+		
+
+	harbourRadiusAttrEntry 	OBJECT-TYPE
+		SYNTAX  	harbourRadiusAttrEntry
+		MAX-ACCESS  	not-accessible
+		STATUS 		mandatory
+		DESCRIPTION
+				"A table entry containing information about the module in 
+				each user of the server."
+		INDEX	  	{ 
+				harbourRadiusAttrId		
+		}
+		::= { harbourRadiusAttrTable 1 }	                        
+
+ 	harbourRadiusAttrEntry ::= 
+	   	SEQUENCE {
+			harbourRadiusAttrId 		INTEGER,
+			harbourRadiusAttrDescr 		DisplayString,
+			harbourRadiusAttrMode		INTEGER,
+			harbourRadiusAttrVendorType	INTEGER,
+			harbourRadiusAttrVendorId	INTEGER
+	 	}
+
+	harbourRadiusAttrId 		OBJECT-TYPE
+		SYNTAX INTEGER
+		ACCESS read-only
+		STATUS mandatory
+		DESCRIPTION
+			""
+		::= {harbourRadiusAttrEntry 1}	
+
+	harbourRadiusAttrDescr 		OBJECT-TYPE
+		SYNTAX DisplayString(SIZE(1 .. 32))
+		ACCESS read-only
+		STATUS mandatory
+		DESCRIPTION
+			""
+		::= {harbourRadiusAttrEntry 2}	
+
+	harbourRadiusAttrMode 		OBJECT-TYPE
+		SYNTAX INTEGER{
+			standard(0),
+			vendor-specific(1),
+			default-value(2)
+		}
+		ACCESS read-write
+		STATUS mandatory
+		DESCRIPTION
+			""
+		::= {harbourRadiusAttrEntry 3}
+
+	harbourRadiusAttrVendorType	OBJECT-TYPE
+		SYNTAX INTEGER( 1.. 255 )
+		ACCESS read-write
+		STATUS mandatory
+		DESCRIPTION
+			""
+		::= {harbourRadiusAttrEntry 4}
+
+	harbourRadiusAttrVendorId 	OBJECT-TYPE
+		SYNTAX INTEGER
+		ACCESS read-write
+		STATUS mandatory
+		DESCRIPTION
+			""
+		::= {harbourRadiusAttrEntry 5}
+
+	harbourRadiusAttrFrameProtocol 	OBJECT-TYPE
+		SYNTAX INTEGER( 0.. 255 )
+		ACCESS read-write 
+		STATUS mandatory
+		DESCRIPTION
+			""
+		::= {harbourRadiusAttrGroup 4}
+
+	harbourRadiusAttrNasPortType 	OBJECT-TYPE
+		SYNTAX INTEGER( 0.. 255 )
+		ACCESS read-write 
+		STATUS mandatory
+		DESCRIPTION
+			""
+		::= {harbourRadiusAttrGroup 5}
+
+	harbourRadiusAttrSourceMacStandard	OBJECT-TYPE
+		SYNTAX INTEGER( 100.. 255 )
+		ACCESS read-write 
+		STATUS mandatory
+		DESCRIPTION
+			""
+		::= {harbourRadiusAttrGroup 6}
+--AttrGroupEnd
+
+
+END

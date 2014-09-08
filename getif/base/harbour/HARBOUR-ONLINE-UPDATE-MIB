@@ -1,0 +1,172 @@
+-- =========================================================
+-- Copyright (c) 2001-2003, Harbour Networks Limited
+-- All rights reserved.
+--
+-- Name     : HARBOUR-ONLINE-UPDATE-MIB
+-- Intro    : The MIB definition for software online-update.
+-- History  : When          Who         What & Why
+--            2001.12.13    Liyan       Create
+--            2003.11.12    Lida        Clean up for Hos
+-- =========================================================
+
+HARBOUR-ONLINE-UPDATE-MIB DEFINITIONS ::= BEGIN
+
+IMPORTS
+    MODULE-IDENTITY,
+    OBJECT-TYPE         FROM SNMPv2-SMI
+    DisplayString       FROM SNMPv2-TC
+    harbourAgent        FROM HARBOUR-BASE-MIB;
+
+
+harbourOnlineUpdate MODULE-IDENTITY
+    LAST-UPDATED    "200311120000Z"
+    ORGANIZATION    "Harbour Networks Limited"
+    CONTACT-INFO    "www.harbournetworks.com"
+    DESCRIPTION     "Online-update MIB Module."
+    ::= { harbourAgent 13 }
+
+
+harbourFTPIp OBJECT-TYPE
+    SYNTAX      DisplayString (SIZE(1..18))
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "FTP Server IP Address String."
+    ::= { harbourOnlineUpdate 1 }
+
+harbourFTPUserName  OBJECT-TYPE
+    SYNTAX      DisplayString (SIZE(1..32))
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "FTP User Name."
+    ::= { harbourOnlineUpdate 2 }
+
+harbourFTPPassword  OBJECT-TYPE
+    SYNTAX      DisplayString (SIZE(1..32))
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "FTP Password."
+    ::= { harbourOnlineUpdate 3 }
+
+harbourFTPFilename  OBJECT-TYPE
+    SYNTAX      DisplayString (SIZE (1..32))
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "FTP Filename."
+    ::= { harbourOnlineUpdate 4 }
+
+harbourFTPFileType  OBJECT-TYPE
+    SYNTAX      INTEGER {
+                    image(1),          -- Executable Binary File
+                    config(2),         -- Configuration File
+                    hlink-config(3),   -- H.Link Configuration File
+                    hlink-u1-image(4),
+                    fpga(5),
+                    vduos(6),
+                    cops3000(7),
+                    odiag3000(8),
+                    ooam3000(9),
+                    gtiooct(10),
+                    stack-info(11),     -- Stack Configuation Information File
+                    xducode(12)
+                }
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "FTP File Type. Now only support 1-4 type."
+    ::= { harbourOnlineUpdate 5 }
+
+harbourUpgradeSlot  OBJECT-TYPE
+    SYNTAX      INTEGER
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "Specify which slot to be updated."
+    ::= { harbourOnlineUpdate 6 }
+
+harbourUpgradeType  OBJECT-TYPE
+    SYNTAX      INTEGER {
+                    immediately(1),
+                    delay(2),
+                    timing(3)
+                }
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "Update Type. Now only support 1 type."
+    ::= { harbourOnlineUpdate 7 }
+
+harbourUpgradeTime OBJECT-TYPE
+    SYNTAX      INTEGER
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "If harbourUpgradeType is set 'immediately (1)', this field
+            will be ignored, the device will update software from the FTP
+            server immediately.
+            If harbourUpgradeType is set 'delay (2)', this field will
+            be used to specify the minutes of delay for the update.
+            If harbourUpgradeType is set 'timing (3)', this field will
+            be used to specify the 24 hour time, which o'clock the update
+            will begin. So the value will be set 0-24.
+            Now not support."
+    ::= { harbourOnlineUpdate 8 }
+
+harbourUpgradeCtrl  OBJECT-TYPE
+    SYNTAX      INTEGER {
+                    ready(0),
+                    download(1),
+                    upload(2)
+                }
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "Update Control."
+    ::= { harbourOnlineUpdate 9 }
+
+harbourUpgradeErr OBJECT-TYPE
+    SYNTAX      DisplayString (SIZE(1..255))
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "Error Message When Update Failed. NULL means success."
+::= { harbourOnlineUpdate 10 }
+
+
+harbourUpgradeStatus  OBJECT-TYPE
+    SYNTAX      INTEGER {
+                    ready(0),
+                    loading(1),
+                    success(2),
+                    fail(3)
+                }
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "Update Status."
+    ::= { harbourOnlineUpdate 11 }
+
+harbourUpgradeSystemReboot  OBJECT-TYPE
+    SYNTAX      INTEGER {
+                    ready(0),
+                    rebooting(1)
+                }
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "Reboot Control."
+    ::= { harbourOnlineUpdate 12 }
+
+harbourLinkRomateDevName OBJECT-TYPE
+    SYNTAX      DisplayString (SIZE (1..32))
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "Remote H.Link Device Name."
+    ::= { harbourOnlineUpdate 13 }
+
+
+END

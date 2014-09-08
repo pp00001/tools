@@ -1,0 +1,154 @@
+-- =======================================================================
+-- Version info 
+--
+-- Version 0.1 Created 2002.3.6 by Liyan
+-- This version of MIB is created just for character of H3100 
+--
+-- Copyright(c) 2000-2002 by Harbour Networks Limited
+-- =======================================================================
+
+-- ===========================================================================
+
+--
+-- HARBOUR H3100 character objects
+--
+
+HARBOUR-H3100-CHARACTER-MIB DEFINITIONS ::= BEGIN
+
+    IMPORTS
+        MODULE-IDENTITY     FROM SNMPv2-SMI
+	OBJECT-TYPE         FROM SNMPv2-SMI
+        Unsigned32	    FROM SNMPv2-SMI
+	DisplayString       FROM RFC-1213
+	harbourAgent        FROM HARBOUR-BASE-MIB
+        harbourSystem       FROM HARBOUR-SYSTEM-MIB
+        RowStatus           FROM SNMPv2-TC
+        PortList,
+        VlanId,
+        dot1qVlanIndex      FROM Q-BRIDGE-MIB;
+    
+    harbourH3100Char    MODULE-IDENTITY
+        LAST-UPDATED 	"20021212"
+        ORGANIZATION 	"Harbour Networks Limited"
+        CONTACT-INFO 	"www.harbournetworks.com"
+        DESCRIPTION  	
+            "The MIB module defining objects for character of H3100"
+    ::= { harbourAgent 15 }
+
+    h3100Ip             OBJECT-TYPE
+        SYNTAX          IpAddress
+        MAX-ACCESS      read-write
+        STATUS          current
+        DESCRIPTION     "Switch's IP address"
+    ::= { harbourH3100Char 1 }
+
+    h3100Mask           OBJECT-TYPE
+        SYNTAX          IpAddress
+        MAX-ACCESS      read-write
+        STATUS          current
+        DESCRIPTION     "Switch's mask"
+    ::= { harbourH3100Char 2 }
+
+    h3100VlanTable      OBJECT-TYPE
+        SYNTAX          SEQUENCE OF h3100VlanEntry
+        MAX-ACCESS      not-accessible
+        STATUS          current
+        DESCRIPTION     "H3100 Vlan's character"
+    ::= { harbourH3100Char 3 }
+
+    h3100VlanEntry      OBJECT-TYPE
+	SYNTAX          h3100VlanEntry
+	MAX-ACCESS      not-accessible
+        STATUS          current
+	DESCRIPTION     "An entry in the h3100VlanTable."
+	INDEX { dot1qVlanIndex }
+    ::= { h3100VlanTable 1 }
+
+    h3100VlanEntry ::=
+        SEQUENCE {
+        h3100VlanConsole    INTEGER,
+        h3100VlanInputPort  PortList
+        }
+
+    h3100VlanConsole    OBJECT-TYPE
+        SYNTAX          INTEGER{
+                     disable (0),
+                      enable (1)
+                               }
+        MAX-ACCESS      read-write
+        STATUS          current
+        DESCRIPTION     "Console state of Vlan."
+    ::= { h3100VlanEntry 1 }
+
+    h3100VlanInputPort  OBJECT-TYPE
+        SYNTAX          PortList
+        MAX-ACCESS      read-write
+        STATUS          current
+        DESCRIPTION     "The set of inputports of Vlan."
+    ::= { h3100VlanEntry 2 }
+
+    h3100Vcn  OBJECT IDENTIFIER ::= { harbourH3100Char 4 }
+
+    h3100VcnPortList    OBJECT-TYPE
+        SYNTAX          DisplayString
+        MAX-ACCESS      read-write
+        STATUS          current
+        DESCRIPTION     "Specify the port list for config vcn."
+    ::= { h3100Vcn 1 }
+    
+    h3100VcnTagout      OBJECT-TYPE
+        SYNTAX          INTEGER {
+                       tagout (0),
+                    nottagout (1)
+                                }
+        MAX-ACCESS      read-write
+        STATUS          current
+        DESCRIPTION     "A option of config vcn." 
+    ::= { h3100Vcn 2 }
+
+    h3100VcnBaseVid     OBJECT-TYPE
+        SYNTAX          VlanId
+        MAX-ACCESS      read-write
+        STATUS          current
+        DESCRIPTION     "Specify the base vid for config vcn." 
+    ::= { h3100Vcn 3 }
+
+    h3100VcnErr OBJECT-TYPE
+        SYNTAX          DisplayString
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION
+            "The object display error message when config vcn failed.
+             NULL means configuration succeeded."    
+    ::= { h3100Vcn 4 }
+
+    h3100VlanMode      OBJECT-TYPE
+        SYNTAX          INTEGER {
+                       normal (1),
+                     extended (2)
+                                }
+        MAX-ACCESS      read-write
+        STATUS          current
+        DESCRIPTION
+            "A vlan mode was added to v1.31 for meet demand of Hong Kong.
+             So the original mode was called normal mode, the new mode
+             (for Hong Kong) was called extended mode."
+    ::= { harbourH3100Char 5 }
+
+    h3100UplinkCard      OBJECT-TYPE
+        SYNTAX          INTEGER {
+                         none (1),  -- no card
+                     UP-100TX (2),  -- RJ45 interface
+                   UP-100MMFX (3),  -- multiple mode fiber interface
+                   UP-100SMFX (4)   -- single mode fiber interface
+                                }
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION
+            "The type of uplink card for h3100."
+    ::= { harbourH3100Char 6 }
+
+END
+
+
+

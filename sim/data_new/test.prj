@@ -1,0 +1,143 @@
+<?xml version="1.0"  encoding="UTF-8"?>
+<Networks name="Test">
+<Simulator initialState="up" port="161"
+  name="test" ipAddress="10.10.10.1">
+  <configFile name="data/config.xml"/>
+  <trapFile/>
+  <dataFile name="data/test.xml"/>
+  <device name="generic"/>
+</Simulator>
+<Simulator initialState="up" port="161"
+  name="110" ipAddress="10.10.10.2">
+  <configFile name="data/config.xml"/>
+  <trapFile/>
+  <dataFile name="data/110.xml"/>
+  <device name="generic"/>
+</Simulator>
+<Simulator initialState="up" port="161"
+  name="20" ipAddress="10.10.10.3">
+  <configFile name="data/config.xml"/>
+  <trapFile/>
+  <dataFile name="data/20.xml"/>
+  <device name="generic"/>
+</Simulator>
+<Simulator initialState="up" port="161"
+  name="21" ipAddress="10.10.10.4">
+  <configFile name="data/config.xml"/>
+  <trapFile/>
+  <dataFile name="data/21.xml"/>
+  <device name="generic"/>
+</Simulator>
+<Simulator initialState="up" port="161"
+  name="22" ipAddress="10.10.10.5">
+  <configFile name="data/config.xml"/>
+  <trapFile/>
+  <dataFile name="data/22.xml"/>
+  <device name="generic"/>
+</Simulator>
+<Simulator initialState="up" port="161"
+  name="252" ipAddress="10.10.10.6">
+  <configFile name="data/config.xml"/>
+  <trapFile/>
+  <dataFile name="data/252.xml"/>
+  <device name="generic"/>
+</Simulator>
+<Simulator initialState="up" port="161"
+  name="253" ipAddress="10.10.10.7">
+  <configFile name="data/config.xml"/>
+  <trapFile/>
+  <dataFile name="data/253.xml"/>
+  <device name="generic"/>
+</Simulator>
+<Simulator initialState="up" port="161"
+  name="70" ipAddress="10.10.10.8">
+  <configFile name="data/config.xml"/>
+  <trapFile/>
+  <dataFile name="data/70.xml"/>
+  <device name="generic"/>
+</Simulator>
+<Simulator initialState="up" port="161"
+  name="Cisco2960" ipAddress="10.10.10.9">
+  <configFile name="data/config.xml"/>
+  <trapFile/>
+  <dataFile name="data/Cisco2960.xml"/>
+  <device name="generic"/>
+</Simulator>
+<Simulator initialState="up" port="161"
+  name="as400" ipAddress="10.10.10.10">
+  <configFile name="data/config.xml"/>
+  <trapFile/>
+  <dataFile name="data/as400.xml"/>
+  <device name="generic"/>
+</Simulator>
+<Simulator initialState="up" port="161"
+  name="cisco_6509" ipAddress="10.10.10.11">
+  <configFile name="data/config.xml"/>
+  <trapFile/>
+  <dataFile name="data/cisco_6509.xml"/>
+  <device name="generic"/>
+</Simulator>
+<Simulator initialState="up" port="161"
+  name="f5" ipAddress="10.10.10.12">
+  <configFile name="data/config.xml"/>
+  <trapFile/>
+  <dataFile name="data/f5.xml"/>
+  <device name="generic"/>
+</Simulator>
+<Simulator initialState="up" port="161"
+  name="h3c" ipAddress="10.10.10.13">
+  <configFile name="data/config.xml"/>
+  <trapFile/>
+  <dataFile name="data/h3c.xml"/>
+  <device name="generic"/>
+</Simulator>
+<Simulator initialState="up" port="161"
+  name="juniper" ipAddress="10.10.10.14">
+  <configFile name="data/config.xml"/>
+  <trapFile/>
+  <dataFile name="data/juniper.xml"/>
+  <device name="generic"/>
+</Simulator>
+<Simulator initialState="up" port="161"
+  name="juniper2" ipAddress="10.10.10.15">
+  <configFile name="data/config.xml"/>
+  <trapFile/>
+  <dataFile name="data/juniper2.xml"/>
+  <device name="generic"/>
+</Simulator>
+<Simulator initialState="up" port="161"
+  name="overture" ipAddress="10.10.10.16">
+  <configFile name="data/config.xml"/>
+  <trapFile/>
+  <dataFile name="data/overture.xml"/>
+  <device name="generic"/>
+</Simulator>
+<Simulator initialState="up" port="161"
+  name="radiopdh" ipAddress="10.10.10.17">
+  <configFile name="data/config.xml"/>
+  <trapFile/>
+  <dataFile name="data/radiopdh.xml"/>
+  <device name="generic"/>
+</Simulator>
+<Simulator initialState="up" port="161"
+  name="radware" ipAddress="10.10.10.18">
+  <configFile name="data/config.xml"/>
+  <trapFile/>
+  <dataFile name="data/radware.xml"/>
+  <device name="generic"/>
+</Simulator>
+<Simulator initialState="up" port="161"
+  name="ruijie" ipAddress="10.10.10.19">
+  <configFile name="data/config.xml"/>
+  <trapFile/>
+  <dataFile name="data/ruijie.xml"/>
+  <device name="generic"/>
+</Simulator>
+<Simulator initialState="up" port="161"
+  name="tejas" ipAddress="10.10.10.20">
+  <configFile name="data/config.xml"/>
+  <trapFile/>
+  <dataFile name="data/tejas.xml"/>
+  <device name="generic"/>
+</Simulator>
+</Networks>

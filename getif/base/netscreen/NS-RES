@@ -1,0 +1,139 @@
+-- These MIBs were created on 04/30/2001
+-- This module defines NetScreen private MIBs for Configuration monitoring
+-- 
+-- Copyright (c) 1999 - 2001 by NetScreen Technologies, Inc.
+-- All rights reserved.
+-- 
+
+-- MODULE-IDENTITY
+--  OrgName
+--    NetScreen Technologies, Inc.
+--  ContactInfo
+--     Customer Support
+--     
+--     350 Oakmead Parkway
+--     Sunnyvale, CA  94085
+--     USA
+--    
+--     Tel: 1.877.NETSCREEN
+--     E-mail: support@netscreen.com
+--     Http://www.netscreen.com
+
+--  Descr
+--    This module defines the object that are used to monitor
+--    resource in netscreen box
+--
+--  Last modified date: 09/28/2001
+--    
+
+NETSCREEN-RESOURCE-MIB DEFINITIONS ::= BEGIN
+IMPORTS
+
+    IpAddress FROM RFC1155-SMI
+    DisplayString 	FROM RFC1213-MIB 
+    netscreenResource FROM NETSCREEN-SMI;
+    
+    nsResCPU OBJECT IDENTIFIER ::= { netscreenResource 1 }
+    nsResMem    OBJECT IDENTIFIER ::= { netscreenResource 2 }
+    nsResSession OBJECT IDENTIFIER ::= { netscreenResource 3 }
+
+	nsResCpuAvg OBJECT-TYPE
+        SYNTAX  INTEGER
+        ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION
+             "Average System CPU utilization in percentage."
+        ::= { nsResCPU 1 }
+
+	nsResCpuLast1Min OBJECT-TYPE
+        SYNTAX  INTEGER
+    	ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION
+             "Last one minute CPU utilization in percentage."
+        ::= { nsResCPU 2 }
+
+	nsResCpuLast5Min OBJECT-TYPE
+        SYNTAX  INTEGER
+    	ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION
+             "Last five minutes CPU utilization in percentage."
+        ::= { nsResCPU 3 }
+
+	nsResCpuLast15Min OBJECT-TYPE
+        SYNTAX  INTEGER
+    	ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION
+             "Last fifteen minutes CPU utilization in percentage."
+        ::= { nsResCPU 4 }
+
+
+	nsResMemAllocate OBJECT-TYPE
+        SYNTAX  INTEGER
+        ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION
+             "Memory allocated."
+        ::= { nsResMem 1 }
+
+	nsResMemLeft OBJECT-TYPE
+        SYNTAX  INTEGER
+        ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION
+             "Memory left."
+        ::= { nsResMem 2 }
+
+	nsResMemFrag OBJECT-TYPE
+        SYNTAX  INTEGER
+        ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION
+             "Memory fragment."
+        ::= { nsResMem 3 }
+
+	nsResSessActive OBJECT-TYPE
+        SYNTAX  INTEGER
+        ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION
+             "Active session number."
+        ::= { nsResSession 1 }
+
+	nsResSessAllocate OBJECT-TYPE
+        SYNTAX  INTEGER
+        ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION
+             "Allocate session number."
+        ::= { nsResSession 2 }
+
+	nsResSessMaxium OBJECT-TYPE
+        SYNTAX  INTEGER
+        ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION
+             "Maxium session number system can afford."
+        ::= { nsResSession 3 }
+
+	nsResSessFailed OBJECT-TYPE
+        SYNTAX  INTEGER
+        ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION
+             "Failed session allocation counters."
+        ::= { nsResSession 4 }
+
+--	nsResMemAlarmThrshold OBJECT-TYPE
+--      SYNTAX  INTEGER
+--    	ACCESS  read-only
+--        STATUS  mandatory
+--        DESCRIPTION
+--             "Alarm threshold for memory unilization"
+--        ::= { nsResMem 5 }
+
+
+
+END

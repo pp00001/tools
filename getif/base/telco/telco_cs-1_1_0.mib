@@ -1,0 +1,2614 @@
+---------------------------------------------------------------
+--
+--              SM - CommServer - Network Element
+--
+--                            MIB
+--
+--                 Management Information Base
+--
+---------------------------------------------------------------
+-- CHANGE HISTORY
+---------------------------------------------------------------
+-- Revisione: 01.00.00  del 22/09/98
+---------------------------------------------------------------
+-- Revisione: 01.01.00  del 12/09/2000
+--   modified: equipment group same as PDH equipment group
+--   modified: unit group same as PDH unit group
+--   modified: equipRestartRequest in equipRequest and modified emunumeration
+--   added:    equipment objects for PPPradio
+--   added:    equipIpLctPPPAddress
+--   added:    equipIpLctPPPNetMask
+--   modified: equipConfigChangeSeverityCode in equipConfigChangeTrapEnable and 
+--             change in emunumeration (no more alarm, but status trap)
+--   added:    alarmLogFTPStatus, alarmLogFTPStatusTrapNotification, alarmLogFTPStatusTrap
+--   modified: equipLOMConnected emunumeration constant value. 
+--             Now equipLOMConnected is a status and no more an Alarm
+--             modified: equipLOMConnectedSeverityCode in equipLOMConnectedTrapEnable
+--             modified: equipLOMConnectedTrapEnable enumeration constant value
+--   modified: alarmLogFTPStatus enumeration
+--   modified: softwareDownloadStatus enumeration
+--   added:    DEFVAL clause to userInputLabel, userInputActiveState
+--   added:    DEFVAL clause to userOutputLabel, userOutputActiveState, 
+--             userOutputForcedOperatorStatus, userOutputInternalStatus
+--   added:    portTiming, portStatus in prot group
+--   modified: portFlowControl emumeration constants
+--   modified: portTestStatus emumeration constants
+--   modified: portBaudRate emumeration constants and DEFVAL clause
+--   modified: softwareUnitActualRelease, softwareUnitReleaseBench1,
+--             softwareUnitReleaseBench2 SIZE clause
+--   added:    equipIpSnmpAgentAddress
+--   modified: equipRequest emunumeration
+--   modified: ACCESS clause in read-write for unitParentSerialNumber
+--   added:    equipManOpTable in equip group
+--   added:    equipManOpTimeOut in equip group
+--   modified: ACCESS clause in unitParentPartNumber
+--   modified: equipRequest emunumeration (added routeTableClear)
+--   added:    equipManager1IpAddr in equip group
+--   added:    equipManager2IpAddr in equip group
+--
+---------------------------------------------------------------
+
+    CS-SIAE-MIB
+
+        --FORCE-INCLUDE <envoy/h/asn1.h>
+        --FORCE-INCLUDE <envoy/h/mib.h>
+        --FORCE-INCLUDE <envoy/h/snmp.h>
+        --FORCE-INCLUDE "../include/cs-profile.h"
+        --FORCE-INCLUDE "../include/cs-mib.h"
+
+        -- exclude all rfc1213 group not implemented
+        --EXCLUDE at
+        --EXCLUDE icmp
+        --EXCLUDE egp
+
+
+    DEFINITIONS ::= BEGIN
+    
+    IMPORTS
+--                       
+--                        
+        enterprises,
+        Counter,
+        IpAddress,
+        Opaque,
+        TimeTicks,
+        OBJECT-TYPE
+            FROM RFC1155-SMI
+
+        TRAP-TYPE
+            FROM RFC-1215
+                                                     
+        DisplayString,
+        system,
+        interfaces,
+        ip,
+        udp,
+        snmp
+            FROM RFC1213-MIB;
+
+
+    siae                OBJECT IDENTIFIER ::= { enterprises 3373 }
+    cs                  OBJECT IDENTIFIER ::= { siae 4}
+    equipment       	  OBJECT IDENTIFIER ::= { cs 1 }
+    userInput       	  OBJECT IDENTIFIER ::= { cs 2 }
+    userOutput          OBJECT IDENTIFIER ::= { cs 3 }
+    alarmLog	          OBJECT IDENTIFIER ::= { cs 4 }
+    accessControl       OBJECT IDENTIFIER ::= { cs 5 }
+    unit 		  	        OBJECT IDENTIFIER ::= { cs 6 }
+    software	          OBJECT IDENTIFIER ::= { cs 7 }
+    port			          OBJECT IDENTIFIER ::= { cs 8 }
+--    hdlcUser	          OBJECT IDENTIFIER ::= { cs 9 }
+
+
+
+----------------------------------------------------------------------------------
+--  4.2 THE  EQUIPMENT GROUP
+----------------------------------------------------------------------------------
+--  The following listed objects are general object common to all  cs equipment .
+----------------------------------------------------------------------------------
+
+    equipCurrentTime   OBJECT-TYPE
+        SYNTAX      TimeTicks
+        ACCESS      read-write
+     	  STATUS      mandatory
+        DESCRIPTION
+              "Seconds since 1/1/1970 "
+        ::= {equipment 1}
+
+    equipUpTime   OBJECT-TYPE
+       	SYNTAX      TimeTicks
+       	ACCESS      read-only
+     	  STATUS      mandatory
+       	DESCRIPTION
+              "The time when the system was last re-initialized (in seconds) 
+               since 1/1/1970"
+        ::= {equipment 2}
+
+    equipType   OBJECT-TYPE
+        SYNTAX      INTEGER {
+                             radioSDH             (1),
+                             pmp                  (2),
+    	                       famSDH               (3),
+                             commServer           (4),
+                             microMux             (5),
+                             admc                 (6),
+                             radioPDH-SPU5-LC     (7),
+                             radioPDH-SPU5-LC-A   (8),
+                             radioPDH-SPU5-LC-B   (9),
+                             radioPDH-SPU5-MC     (10),
+                             radioPDH-SPU5-HC     (11),
+                             radioPDH-SPU4-LC     (12),
+                             radioPDH-SPU4-MC     (13),
+                             radioPDH-SPU4-HC     (14),
+                             radioPDH-SPU6-LC     (15),
+                             radioPDH-SPU6-MC     (16),
+                             radioPDH-SPU6-HC     (17)
+                            }
+        ACCESS      read-only
+        STATUS      mandatory
+        DESCRIPTION
+           "Type of SIAE PDH Radio Equipment:
+           LC Low Capacity (up to 4x2Mbit)
+           MC Medium Capacity (8x2Mbit and 16x2Mbit)
+           HC  High Capacity (2x8Mbit and 34Mbit)"
+        ::= {equipment 3}
+
+    equipIpEthOsiAddress   OBJECT-TYPE
+        SYNTAX      IpAddress
+        ACCESS      read-write
+        STATUS      mandatory
+        DESCRIPTION
+            "Ip address of the equipment on Ethernet-OSI interface"
+        ::=  {equipment 4}
+
+    equipGosipAddress  OBJECT-TYPE
+        SYNTAX      OCTET STRING    (SIZE(0..20))
+        ACCESS      read-write
+        STATUS      mandatory
+        DESCRIPTION
+            "GOSIP  address of the equipment"
+        ::=  {equipment 5}
+
+    equipRemoteElementTable  OBJECT-TYPE
+        SYNTAX SEQUENCE OF EquipRemoteElementEntry
+        ACCESS      not-accessible
+        STATUS      mandatory
+        DESCRIPTION
+            "Table with ISO/OSI remote element that are reacheable from this NE"
+        ::= {equipment 6}
+
+    equipRemoteElementEntry  OBJECT-TYPE
+        SYNTAX    EquipRemoteElementEntry
+        ACCESS    not-accessible
+        STATUS    mandatory
+        DESCRIPTION
+            "Remote element record"
+        INDEX     {equipRemoteElementIpAddress}
+        ::= {equipRemoteElementTable 1}
+
+    EquipRemoteElementEntry  ::=
+        SEQUENCE {
+            equipRemoteElementIpAddress
+                IpAddress,
+            equipRemoteElementGosipAddress
+                OCTET STRING,
+            equipRemoteElementLabel
+                DisplayString,
+            equipRemoteElementType
+                INTEGER
+        }
+
+    equipRemoteElementIpAddress  OBJECT-TYPE
+        SYNTAX      IpAddress
+        ACCESS      read-write
+        STATUS      mandatory
+        DESCRIPTION
+            "IP address of remote element"
+        ::=  {equipRemoteElementEntry 1}
+
+    equipRemoteElementGosipAddress  OBJECT-TYPE
+        SYNTAX      OCTET STRING    (SIZE(0..20))
+        ACCESS      read-write
+        STATUS      mandatory
+        DESCRIPTION
+            "Gosip address of remote element"
+        ::=  {equipRemoteElementEntry 2}
+
+    equipRemoteElementLabel  OBJECT-TYPE
+        SYNTAX      DisplayString   (SIZE(0..15))
+        ACCESS      read-write
+        STATUS      mandatory
+        DESCRIPTION
+            "ASII string used for label the remote element"
+        ::=  {equipRemoteElementEntry 3}
+
+    equipRemoteElementType   OBJECT-TYPE
+        SYNTAX      INTEGER {
+                             elemManager (1),
+    	                       external    (2),
+                             remote      (3),
+                             snm         (4)
+                            }
+        ACCESS      read-write
+        STATUS      mandatory
+        DESCRIPTION
+            "Type of Remote Network Element:
+              * Element Manager (1)
+              * External: the NE is used as a gateway to connect the element
+              * Remote: the equipment connected to the other end of radio link
+              * SNM: equipment managed by SubNetwork Manager"
+        ::= {equipRemoteElementEntry 4 }
+
+    equipIpEthOsiNetMask   OBJECT-TYPE
+        SYNTAX      IpAddress
+        ACCESS      read-write
+        STATUS      mandatory
+        DESCRIPTION
+            "The subnet Mask associated with the IP address of OSI ethernet interface.
+             The value of the Mask is an IP address with all the network bits set to 1
+             and all the hosts bits set to 0."
+        ::=  {equipment 7}
+
+    equipL1L2IsIsRouting   OBJECT-TYPE
+        SYNTAX      INTEGER {
+                             l1 (1),
+    	                       l2 (2)
+                            }
+        ACCESS      read-write
+        STATUS      mandatory
+        DESCRIPTION
+            "It defines the IS-IS routing type: L1 within  the same area, L2 among 
+             different areas"
+        DEFVAL { l1 } 
+        ::= {equipment 8}
+
+    equipStationID  OBJECT-TYPE
+        SYNTAX      DisplayString   (SIZE(0..31))
+        ACCESS      read-write
+        STATUS      mandatory
+        DESCRIPTION
+            "ASCII string assigned by the operator to identify the specific equipment"
+       ::= {equipment 9}
+
+    equipPhoneNumber  OBJECT-TYPE
+        SYNTAX      INTEGER
+        ACCESS      read-write
+        STATUS      mandatory
+        DESCRIPTION
+            "Phone number assigned to the equipment"
+        ::= {equipment 10}
+
+    equipTrapAckNotificationCount  OBJECT-TYPE
+        SYNTAX      INTEGER   (1..5)
+        ACCESS      read-write
+        STATUS      mandatory
+        DESCRIPTION
+            "Notificatin count time before a TrapWithAck not acknowledged cause
+             a forced logoff to remote user"
+        DEFVAL { 3 }
+        ::= {equipment 11}
+
+    equipTrapAckNotificationTime  OBJECT-TYPE
+        SYNTAX      TimeTicks   (1..60)
+        ACCESS      read-write
+        STATUS      mandatory
+        DESCRIPTION
+            "Waiting time before a new notification of a TrapWithAck not
+             acknowledged"
+        DEFVAL { 10 }
+        ::= {equipment 12}
+
+    equipTrapAcknowledge  OBJECT-TYPE
+        SYNTAX      INTEGER
+        ACCESS      write-only
+        STATUS      mandatory
+        DESCRIPTION
+            "Code number related to the Trap to be acknowledged"
+        ::= {equipment 13}
+
+    equipAlarmSyntesysCritical  OBJECT-TYPE
+       SYNTAX     INTEGER {
+                           cleared (1),
+                           activeReportable-Critical (6)
+                          }
+       ACCESS     read-only
+       STATUS     mandatory
+       DESCRIPTION
+           "OR of all Critical Alarms"
+       ::= {equipment 14}
+
+    equipAlarmSyntesysCriticalSeverityCode  OBJECT-TYPE
+        SYNTAX      INTEGER {
+                             disable (1),
+                             critical-trapEnable (6),
+                             critical-trapEnableWithACK (38),
+                             critical-trapDisable (22)
+                            }
+        ACCESS      read-write
+        STATUS      mandatory
+        DESCRIPTION
+            "Define the severity associated to the EquipAlarmSyntesysCritical
+             and enable/disable the trap generation on status change event."
+        DEFVAL      { critical-trapEnable }
+        ::= {equipment 15}
+
+    equipAlarmSyntesysMajor OBJECT-TYPE
+        SYNTAX      INTEGER {
+                             cleared (1),
+                             activeReportable-Major  (5)
+                            }
+        ACCESS      read-only
+        STATUS      mandatory
+        DESCRIPTION
+            "OR of all Major Alarms"
+        ::= {equipment  16}
+
+    equipAlarmSyntesysMajorSeverityCode  OBJECT-TYPE
+        SYNTAX      INTEGER {
+                             disable (1),
+                             major-trapEnable (5),
+                             major-trapEnableWithACK (37),
+                             major-trapDisable (21)
+                            }
+        ACCESS      read-write
+        STATUS      mandatory
+        DESCRIPTION
+            "Define the severity associated to EquipAlarmSyntesysMajor
+             and enable/disable the trap generation on status change event."
+        DEFVAL      { major-trapEnable }
+        ::= {equipment 17}
+
+    equipAlarmSyntesysMinor  OBJECT-TYPE
+        SYNTAX      INTEGER {
+                             cleared (1),
+                             activeReportable-Minor (4)
+                            }
+        ACCESS      read-only
+        STATUS      mandatory
+        DESCRIPTION
+            "OR of all Minor Alarms"
+        ::= {equipment  18}
+  
+    equipAlarmSyntesysMinorSeverityCode  OBJECT-TYPE
+        SYNTAX      INTEGER {
+                             disable (1),
+                             minor-trapEnable (4),
+                             minor-trapEnableWithACK (36),
+                             minor-trapDisable (20)
+                            }
+        ACCESS      read-write
+        STATUS      mandatory
+        DESCRIPTION
+            "Define the severity associated to EquipAlarmSyntesysMinor
+             and enable/disable the trap generation on status change event."
+        DEFVAL      { minor-trapEnable }
+        ::= {equipment 19}
+
+    equipAlarmSyntesysWarning  OBJECT-TYPE
+        SYNTAX      INTEGER {
+                             cleared (1),
+                             activeReportable-Warning (3)
+                            }
+        ACCESS      read-only
+        STATUS      mandatory
+        DESCRIPTION
+            "OR of all Warning Alarms"
+        ::= {equipment 20} 
+
+    equipAlarmSyntesysWarningSeverityCode  OBJECT-TYPE
+        SYNTAX      INTEGER {
+                             disable (1),
+                             warning-trapEnable (3),
+                             warning-trapEnableWithACK (35),
+                             warning-trapDisable (19)
+                            }
+        ACCESS      read-write
+        STATUS      mandatory
+        DESCRIPTION
+            "Define the severity associated to EquipAlarmSyntesysWarning
+             and  enable/disable the trap generation on status change event."
+        DEFVAL      { warning-trapEnable }
+        ::= {equipment 21}
+
+    equipLOMConfigEnable  OBJECT-TYPE
+        SYNTAX      INTEGER {
+                             disable (1),
+                             enable  (2)
+                            }
+        ACCESS      read-write
+        STATUS      mandatory
+        DESCRIPTION
+            "Enable/Disable the capabilityto connect a LOM in Configuration Mode"
+        ::= {equipment 22}
+
+    equipLOMConnected  OBJECT-TYPE
+        SYNTAX    INTEGER {
+                           cleared                     (1),
+                           connectionAsMonitor         (2),
+                           connectionAsConfig          (3)
+                          }
+        ACCESS      read-only
+        STATUS      mandatory
+        DESCRIPTION 
+             "Signal when the LOM is connected to the NE and if the connection is
+              for monitor or configuration"
+        ::=  { equipment  23 }
+
+    equipLOMConnectedTrapEnable   OBJECT-TYPE
+        SYNTAX      INTEGER {
+                            trapDisable        (1),
+                            trapEnable         (2),
+                            trapEnableWithAck  (3)
+                            }
+        ACCESS      read-write
+        STATUS      mandatory
+        DESCRIPTION
+            "Enable/disable the trap generation on EquipLOMConnected status change event."
+        DEFVAL      { trapEnable }
+        ::= {equipment 24}
+
+    equipManualOperation  OBJECT-TYPE
+        SYNTAX      INTEGER {
+                             cleared (1),
+                             activeReportable-Warning (3)
+                            }
+        ACCESS      read-only
+        STATUS      mandatory
+        DESCRIPTION
+            "Manual Operation active on the equipment"
+        ::= {equipment 25}
+
+    equipManualOperationSeverityCode   OBJECT-TYPE
+        SYNTAX      INTEGER {
+                             disable (1),
+                             warning-trapEnable (3),
+                             warning-trapEnableWithACK (35),
+                             warning-trapDisable (19)
+                            }
+        ACCESS      read-write
+        STATUS      mandatory
+        DESCRIPTION
+            "Enable/disable the trap generation on  EquipManualOperation
+             status change event."
+        DEFVAL      { warning-trapEnable }
+        ::= {equipment 26}
+
+    equipConfigChange  OBJECT-TYPE
+        SYNTAX      OCTET STRING    (SIZE(6))
+        ACCESS      read-write
+        STATUS      mandatory
+        DESCRIPTION
+             "Set by the NE when the equipment configuration is changed by the local
+              or Remote LOM. 
+              The octet string is a bit stream of flags; a set bit is a change on a
+              specific item. We had:
+              Byte 0.7: change in configuration for equipment group
+              Byte 0.6: change in configuration for userInput group
+              Byte 0.5: change in configuration for userOutput group
+              Byte 0.4: change in configuration for alarmLog group
+              ......
+              Byte 3.7: change in a severity for equipment group
+              Byte 3.6: change in a severity for userInput group
+              Byte 3.5: change in a severity for userOutput group
+              Byte 3.4: change in a severity for alarmLog group
+              CEM can reset the change condition writing one to desired bit flag
+              ......
+              "
+        ::= {equipment 27}
+
+    equipConfigChangeTrapEnable  OBJECT-TYPE
+        SYNTAX    INTEGER {
+                            trapDisable        (1),
+                            trapEnable         (2),
+                            trapEnableWithACK  (3)
+                       }
+        ACCESS      read-write
+        STATUS      mandatory
+        DESCRIPTION 
+            "Enable/disable the trap generation on  EquipConfigChange  status 
+             change event."  
+        DEFVAL{ trapEnable }
+    ::=  { equipment  28 }
+
+    equipRequest   OBJECT-TYPE
+        SYNTAX    INTEGER {
+                            restart               (1),
+                            applyIfChange         (2),
+                            revertIfChange        (3),
+                            configClearAndRestart (4),
+                            routeTableClear       (5)
+                       }
+        ACCESS      write-only
+        STATUS      mandatory
+        DESCRIPTION 
+         "Force Equipment Controller restart or change in interface properties"
+        ::=  { equipment  29 }
+
+
+    equipSummaryAlarmTable  OBJECT-TYPE
+        SYNTAX SEQUENCE OF EquipSummaryAlarmEntry
+        ACCESS      not-accessible
+        STATUS      mandatory
+        DESCRIPTION
+            "Table with one record for each Alarms&Controls that is active in the NE"
+        ::= {equipment 36}        
+
+    equipSummaryAlarmEntry  OBJECT-TYPE
+        SYNTAX    EquipSummaryAlarmEntry
+        ACCESS    not-accessible
+        STATUS    mandatory
+        DESCRIPTION
+            "Alarms&Controls  records"
+        INDEX     {equipSummaryRecordId}
+        ::= {equipSummaryAlarmTable 1}
+
+    EquipSummaryAlarmEntry  ::=
+        SEQUENCE {
+            equipSummaryRecordId
+                INTEGER,
+            equipSummaryManagedObject
+                OBJECT IDENTIFIER,
+            equipSummaryManagedObjectInstance
+                OBJECT IDENTIFIER,
+            equipSummaryEventDescription
+                DisplayString,    
+            equipSummaryProbableCause
+                INTEGER,
+            equipSummaryAlarmStatus
+                INTEGER,
+            equipSummaryEventTime
+                TimeTicks 
+        }
+
+    equipSummaryRecordId  OBJECT-TYPE
+        SYNTAX    INTEGER 
+        ACCESS    read-only
+        STATUS    mandatory
+        DESCRIPTION
+            "This object  is used as Index of EquipSummaryAlarmTable"
+        ::= {equipSummaryAlarmEntry 1}
+        
+    equipSummaryManagedObject  OBJECT-TYPE
+        SYNTAX     OBJECT IDENTIFIER
+        ACCESS     read-only
+        STATUS     mandatory
+        DESCRIPTION
+            "The Object Identifier of  the Managed Object with
+             Alarms or  Controls  active (not cleared Alarm Status)"
+        ::= {equipSummaryAlarmEntry 2}
+
+    equipSummaryManagedObjectInstance  OBJECT-TYPE
+        SYNTAX    OBJECT IDENTIFIER
+        ACCESS    read-only
+        STATUS    mandatory
+        DESCRIPTION
+            "This object is the instance of the ManagedObject in dot notation
+             (only instance part)"
+        ::= {equipSummaryAlarmEntry 3}
+
+    equipSummaryEventDescription  OBJECT-TYPE
+        SYNTAX    DisplayString   (SIZE(0..80))
+        ACCESS    read-only
+        STATUS    mandatory
+        DESCRIPTION
+            "ASCII string used to describe the event"
+        ::= {equipSummaryAlarmEntry 4}
+
+    equipSummaryProbableCause  OBJECT-TYPE
+        SYNTAX    INTEGER 
+        ACCESS    read-only
+        STATUS    mandatory
+        DESCRIPTION
+            "This object identifies the type of alarm"
+        ::= {equipSummaryAlarmEntry  5}
+
+    equipSummaryAlarmStatus  OBJECT-TYPE
+        SYNTAX    INTEGER {
+                           activeReportable-Status (2),
+                           activeReportable-Warning (3),
+                           activeReportable-Minor (4),
+                           activeReportable-Major (5),
+                           activeReportable-Critical (6)
+                          }
+        ACCESS    read-only
+        STATUS    mandatory
+        DESCRIPTION
+            "Alarm Status with associated severity"
+        ::= {equipSummaryAlarmEntry  6}
+        
+    equipSummaryEventTime  OBJECT-TYPE
+        SYNTAX      TimeTicks
+        ACCESS      read-only
+        STATUS      mandatory
+        DESCRIPTION
+            "The time when the Alarm became active.
+             In seconds since 01/01/70"
+        ::= { equipSummaryAlarmEntry 7 }
+
+    equipIpEthAddress   OBJECT-TYPE
+        SYNTAX      IpAddress
+        ACCESS      read-write
+        STATUS      mandatory
+        DESCRIPTION
+            "Ip address of the equipment on Ethernet interface"
+        ::=  {equipment 38 }
+
+    equipIpEthNetMask   OBJECT-TYPE
+        SYNTAX      IpAddress
+        ACCESS      read-write
+        STATUS      mandatory
+        DESCRIPTION
+            "The subnet Mask associated with the IP address of  ethernet interface.
+             The value of the Mask is an IP address with all the network bits set to 1
+             and all the hosts bits set to 0."
+        ::=  {equipment 39}
+
+    equipIpPPPAddress   OBJECT-TYPE
+        SYNTAX      IpAddress
+        ACCESS      read-write
+        STATUS      mandatory
+        DESCRIPTION
+            "Ip address of the equipment on PPP interface"
+        ::=  {equipment 40 }
+
+    equipIpPPPNetMask   OBJECT-TYPE
+        SYNTAX      IpAddress
+        ACCESS      read-write
+        STATUS      mandatory
+        DESCRIPTION
+            "The subnet Mask associated with the IP address of  PPP interface.
+             The value of the Mask is an IP address with all the network bits set to 1
+             and all the hosts bits set to 0."
+        ::=  {equipment 41 }
+        
+    equipPPPMode   OBJECT-TYPE
+        SYNTAX      INTEGER {
+                             client           (1),
+    	                       server           (2)
+                            }
+        ACCESS      read-write
+        STATUS      mandatory
+        DESCRIPTION
+            "It defines  the working mode of PPP protocol"
+        DEFVAL      { server }
+        ::= {equipment 42}
+
+        
+    equipPPPBaudRate   OBJECT-TYPE
+        SYNTAX      INTEGER {
+                             b9600             (1),
+    	                       b19200            (2),
+                             b38400		         (3),
+                             b57600            (4)
+                            }
+        ACCESS      read-write
+        STATUS      mandatory
+        DESCRIPTION
+            "It defines the baud rate of  PPP port"
+        DEFVAL      { b38400 }
+        ::= {equipment 43}
+
+    equipLctPPPBaudRate   OBJECT-TYPE
+        SYNTAX      INTEGER {
+                             b9600             (1),
+    	                       b19200            (2),
+                             b38400		         (3),
+                             b57600            (4)
+                            }
+        ACCESS      read-write
+        STATUS      mandatory
+        DESCRIPTION
+            "It defines the baud rate of  LCT-PPP port"
+        DEFVAL      { b38400 }
+        ::= {equipment 44}
+
+    equipOsiamParameter   OBJECT-TYPE
+        SYNTAX      Opaque
+        ACCESS      read-write
+        STATUS      mandatory
+        DESCRIPTION
+            "It defines the set-up  parameter for OSI stack "
+        ::= {equipment 45}
+
+    equipAlarmAlign   OBJECT-TYPE
+        SYNTAX      INTEGER {
+                             align           (1)
+                            }
+        ACCESS      write-only
+        STATUS      mandatory
+        DESCRIPTION
+            "Force equipment to re-send all trap of active alarm"
+        ::= {equipment 46}
+        
+    equipIpPPPradioAddress   OBJECT-TYPE
+        SYNTAX      IpAddress
+        ACCESS      read-write
+        STATUS      mandatory
+        DESCRIPTION
+            "Ip address of the PPP radio interface"
+        ::=  {equipment 47 }
+
+    equipIpPPPradioNetMask   OBJECT-TYPE
+        SYNTAX      IpAddress
+        ACCESS      read-write
+        STATUS      mandatory
+        DESCRIPTION
+            "The subnet Mask associated with the IP address of PPP radio interface.
+             The value of the Mask is an IP address with all the network bits set to 1
+             and all the hosts bits set to 0."
+        ::=  {equipment 48 }
+        
+    equipPPPradioMode   OBJECT-TYPE
+        SYNTAX      INTEGER {
+                             client           (1),
+    	                       server           (2)
+                            }
+        ACCESS      read-write
+        STATUS      mandatory
+        DESCRIPTION
+            "It defines the working mode of PPP radio protocol"
+        DEFVAL      { server }
+        ::= {equipment 49}
+
+    equipIpLctPPPAddress   OBJECT-TYPE
+        SYNTAX      IpAddress
+        ACCESS      read-write
+        STATUS      mandatory
+        DESCRIPTION
+            "Ip address of the LCT interface"
+        ::=  {equipment 50 }
+
+
+    equipIpLctPPPNetMask   OBJECT-TYPE
+        SYNTAX      IpAddress
+        ACCESS      read-write
+        STATUS      mandatory
+        DESCRIPTION
+            "The subnet Mask associated with the IP address of PPP Lct interface.
+             The value of the Mask is an IP address with all the network bits set to 1
+             and all the hosts bits set to 0."
+        ::=  {equipment 51 }
+
+    equipIpSnmpAgentAddress   OBJECT-TYPE
+        SYNTAX      IpAddress
+        ACCESS      read-write
+        STATUS      mandatory
+        DESCRIPTION
+            "Ip address used by SNMP Agent for mark generated TRAP"
+        ::=  {equipment 52 }
+
+    equipManOpTable  OBJECT-TYPE
+        SYNTAX SEQUENCE OF EquipManOpRecord
+        ACCESS      not-accessible
+        STATUS      mandatory
+        DESCRIPTION
+            "Table with manual operation record"
+        ::= {equipment 53}
+
+    equipManOpRecord  OBJECT-TYPE
+        SYNTAX    EquipManOpRecord
+        ACCESS    not-accessible
+        STATUS    mandatory
+        DESCRIPTION
+            "manual operation record"
+        INDEX     {equipManOpId}
+        ::= {equipManOpTable 1}
+
+    EquipManOpRecord  ::=
+        SEQUENCE {
+            equipManOpId
+                INTEGER,
+            equipManOpObjectId
+                OBJECT IDENTIFIER,
+            equipManOpInstanceId
+                OBJECT IDENTIFIER
+        }
+
+    equipManOpId  OBJECT-TYPE
+        SYNTAX      INTEGER
+        ACCESS      read-only
+        STATUS      mandatory
+        DESCRIPTION
+            "manual operation index"
+        ::=  {equipManOpRecord 1}
+
+    equipManOpObjectId  OBJECT-TYPE
+        SYNTAX      OBJECT IDENTIFIER
+        ACCESS      read-only
+        STATUS      mandatory
+        DESCRIPTION
+            "object identifier of the manual operation active element"
+        ::=  {equipManOpRecord 2}
+
+    equipManOpInstanceId  OBJECT-TYPE
+        SYNTAX      OBJECT IDENTIFIER
+        ACCESS      read-only
+        STATUS      mandatory
+        DESCRIPTION
+            "instance of the manual operation active element"
+        ::=  {equipManOpRecord 3}
+
+    equipManOpTimeOut  OBJECT-TYPE
+        SYNTAX      INTEGER   (0..65535)
+        ACCESS      read-write
+        STATUS      mandatory
+        DESCRIPTION
+            "this object defines the time (in seconds) after wich the manual
+             operations are cleared. The value range from 1 to 0FFFFh.
+             A zero means no Time-out"
+        DEFVAL      { 2 }
+        ::=  {equipment 54}
+        
+    equipManager1IpAddr   OBJECT-TYPE
+        SYNTAX      IpAddress
+        ACCESS      read-write
+        STATUS      mandatory
+        DESCRIPTION
+            "First IP address of a SNMP Manager always logged to this equipment.
+             The address 0.0.0.0 mean that manager is not present"
+        ::=  {equipment 55 }
+
+    equipManager2IpAddr   OBJECT-TYPE
+        SYNTAX      IpAddress
+        ACCESS      read-write
+        STATUS      mandatory
+        DESCRIPTION
+            "Second IP address of a SNMP Manager always logged to this equipment.
+             The address 0.0.0.0 mean that manager is not present"
+        ::=  {equipment 56 }
+
+
+
+-----------------------------------------------------------------------------------
+---  The Equipment  Group generates the following TRAPs:
+-----------------------------------------------------------------------------------
+
+    equipAlarmSyntesysCriticalSet TRAP-TYPE
+        ENTERPRISE cs
+        DESCRIPTION
+            "This event is generated by CS-NE when equipAlarmSyntesysCritical is set
+             The data passed with the event are:
+                1) equipAlarmSyntesysCritical
+                2) equipTrapAcknowledge code number"
+    ::= 101
+
+    equipAlarmSyntesysCriticalCleared TRAP-TYPE
+        ENTERPRISE cs
+        DESCRIPTION
+            "This event is generated by CS-NE when equipAlarmSyntesysCritical is cleared
+             The data passed with the event are:
+                1) equipAlarmSyntesysCritical
+                2) equipTrapAcknowledge code number"
+    ::= 102
+
+    equipAlarmSyntesysMajorSet TRAP-TYPE
+        ENTERPRISE cs
+        DESCRIPTION
+            "This event is generated by CS-NE when equipAlarmSyntesysMajor is set
+             The data passed with the event are:
+                1) equipAlarmSyntesysMajor
+                2) equipTrapAcknowledge code number"
+    ::= 103
+
+    equipAlarmSyntesysMajorCleared  TRAP-TYPE
+        ENTERPRISE cs
+        DESCRIPTION
+            "This event is generated by CS-NE when EquipAlarmSyntesysMajor is cleared
+             The data passed with the event are:
+                1) equipAlarmSyntesysMajor
+                2) equipTrapAcknowledge code number"
+    ::= 104
+
+    equipAlarmSyntesysMinorSet  TRAP-TYPE
+        ENTERPRISE cs
+        DESCRIPTION
+            "This event is generated by CS-NE when EquipAlarmSyntesysMinor is set
+             The data passed with the event are:
+                1) EquipAlarmSyntesysMinor
+                2) equipTrapAcknowledge code number"
+    ::= 105
+
+    equipAlarmSyntesysMinorCleared  TRAP-TYPE
+        ENTERPRISE cs
+        DESCRIPTION
+            "This event is generated by CS-NE when EquipAlarmSyntesysMinor is cleared
+             The data passed with the event are:
+                1) EquipAlarmSyntesysMinor
+                2) equipTrapAcknowledge code number"
+    ::= 106
+
+    equipAlarmSyntesysWarningSet  TRAP-TYPE
+        ENTERPRISE cs
+        DESCRIPTION
+            "This event is generated by CS-NE when EquipAlarmSyntesysWarning is set
+             The data passed with the event are:
+                1) EquipAlarmSyntesysWarning
+                2) equipTrapAcknowledge code number"
+    ::= 107
+
+    equipAlarmSyntesysWarningCleared  TRAP-TYPE
+        ENTERPRISE cs
+        DESCRIPTION
+            "This event is generated by CS-NE when EquipAlarmSyntesysWarning is cleared
+             The data passed with the event are:
+                1) EquipAlarmSynthesisWarning
+                2) equipTrapAcknowledge code number"
+    ::= 108
+
+    equipLOMConnectedMonitor  TRAP-TYPE
+        ENTERPRISE cs
+        DESCRIPTION
+            "This event is generated by CS-NE when equipLOMConnected is set to Monitor mode
+             The data passed with the event are:
+                1) equipLOMConnected
+                2) equipTrapAcknowledge code number"
+    ::= 109
+
+    equipLOMConnectedConfig  TRAP-TYPE
+        ENTERPRISE cs
+        DESCRIPTION
+            "This event is generated by CS-NE when equipLOMConnected is set to Configuration  mode
+             The data passed with the event are:
+                1) equipLOMConnected
+                2) equipTrapAcknowledge code number"
+    ::= 110
+
+    equipLOMDisconnected  TRAP-TYPE
+        ENTERPRISE cs
+        DESCRIPTION
+            "This event is generated by CS-NE when LOMConnected is cleared
+             The data passed with the event are:
+                1) equipLOMConnected
+                2) equipTrapAcknowledge code number"
+    ::= 111
+
+    equipManualOperationSet  TRAP-TYPE
+        ENTERPRISE cs
+        DESCRIPTION
+            "This event is generated by CS-NE when equipManualOperation is set
+             The data passed with the event are:
+                1) equipManualOperation
+                2) equipTrapAcknowledge code number"
+    ::= 112
+
+    equipManualOperationCleared  TRAP-TYPE
+        ENTERPRISE cs
+        DESCRIPTION
+            "This event is generated by  DH-NE when EquipManualOperation is cleared
+             The data passed with the event are:
+                1) equipManualOperation
+                2) equipTrapAcknowledge code number"
+    ::= 113
+
+    equipConfigChangeStatus  TRAP-TYPE
+        ENTERPRISE cs
+        DESCRIPTION
+            "This event is generated by CS-NE when equipConfigChange is changed
+             The data passed with the event are:
+                1) equipConfigChange
+                2) equipTrapAcknowledge code number"
+    ::= 114
+
+
+
+
+----------------------------------------------------------------------------------
+--  4.3 USER INPUT GROUP
+--  This group is used to describe the user inputs available on the equipment.
+--  It is a table  with a row for each equipped user input.
+----------------------------------------------------------------------------------
+
+    userInputTable  OBJECT-TYPE
+        SYNTAX      SEQUENCE OF UserInputEntry
+        ACCESS      not-accessible
+        STATUS      mandatory
+        DESCRIPTION
+            "Table with User Input records"
+        ::= {userInput 1}
+
+    userInputEntry  OBJECT-TYPE
+        SYNTAX      UserInputEntry
+        ACCESS      not-accessible
+        STATUS      mandatory
+        DESCRIPTION
+            "User Input records"
+        INDEX       {userInputNumber}
+        ::= {userInputTable 1}
+
+    UserInputEntry  ::=
+        SEQUENCE  {
+            userInputNumber
+                INTEGER,
+            userInputLabel
+                DisplayString,
+            userInputActiveState
+                INTEGER,
+            userInputAlarmStatus
+                INTEGER,
+            userInputAlarmSeverityCode
+                INTEGER
+         }
+
+    userInputNumber  OBJECT-TYPE
+        SYNTAX      INTEGER
+        ACCESS      read-only
+        STATUS      mandatory
+        DESCRIPTION
+            "User Input number is used as the index for the user input table"
+        ::= {userInputEntry 1}
+
+    userInputLabel  OBJECT-TYPE
+        SYNTAX      DisplayString   (SIZE(0..31))
+        ACCESS      read-write
+        STATUS      mandatory
+        DESCRIPTION
+            "ASCII string used by the operator to identify  the user input"
+        DEFVAL      {"USER INPUT CH."}
+        ::= {userInputEntry 2}
+
+    userInputActiveState  OBJECT-TYPE
+        SYNTAX      INTEGER {
+                        open (1),
+                        closed (2)
+                    }
+        ACCESS      read-write
+        STATUS      mandatory
+        DESCRIPTION
+            "User Input Active State"
+        DEFVAL      {closed}
+        ::= {userInputEntry 3}
+      
+    userInputAlarmStatus  OBJECT-TYPE
+        SYNTAX      INTEGER {
+                        cleared (1),
+                        activeReportable-Status (2),
+                        activeReportable-Warning (3),
+                        activeReportable-Minor (4),
+                        activeReportable-Major (5),
+                        activeReportable-Critical (6)
+                    }
+        ACCESS      read-only
+        STATUS      mandatory
+        DESCRIPTION
+            "User Input status with associated Severity"
+        ::= {userInputEntry 4}
+
+    userInputAlarmSeverityCode  OBJECT-TYPE
+        SYNTAX      INTEGER {
+                              disable (1),
+                              status-trapEnable (2),
+                              status-trapEnableWithACK (34),
+                              warning-trapEnable (3),
+                              warning-trapEnableWithACK (35),
+                              minor-trapEnable (4),
+                              minor-trapEnableWithACK (36),
+                              major-trapEnable (5),
+                              major-trapEnableWithACK (37),
+                              critical-trapEnable (6),
+                              critical-trapEnableWithACK (38),
+                              status-trapDisable (18),
+                              warning-trapDisable (19),
+                              minor-trapDisable (20),
+                              major-trapDisable (21),
+                              critical-trapDisable (22)
+                    }
+        ACCESS      read-write
+        STATUS      mandatory
+        DESCRIPTION
+            "Define the severity associated to the user input active state and
+             enable/disable the trap generation on status change event."
+        DEFVAL      { major-trapEnable }
+        ::= {userInputEntry 5}
+
+
+
+--
+--The User Input Group generates the following TRAP:
+--
+
+    userInputAlarmStatusSet  TRAP-TYPE
+        ENTERPRISE cs
+        DESCRIPTION
+            "This event is generated by  CS-NE when an User Input is set
+             The data passed with the event are:
+                1) UserInputNumber
+                2) UserInputLabel
+                3) UserInputAlarmStatus
+                4) equipTrapAcknowledge code number"
+        ::= 201
+
+    userInputAlarmStatusCleared TRAP-TYPE
+        ENTERPRISE cs
+        DESCRIPTION
+            "This event is generated by  CS-NE when an User Input is set
+             The data passed with the event are:
+               1) UserInputNumber
+               2) UserInputLabel
+               3) UserInputAlarmStatus
+               4) equipTrapAcknowledge code number"
+        ::= 202
+
+
+
+----------------------------------------------------------------------------------
+--  4.4 USER OUTPUT GROUP
+--  This group is used to describe the User Outputs (relay) available
+--  on the equipment. It is a table  with a row for each equipped User Output.
+----------------------------------------------------------------------------------
+
+    userOutputTable  OBJECT-TYPE
+        SYNTAX      SEQUENCE OF UserOutputEntry
+        ACCESS      not-accessible
+        STATUS      mandatory
+        DESCRIPTION
+            "Table with User Output records"
+        ::= {userOutput 1}
+
+    userOutputEntry  OBJECT-TYPE
+        SYNTAX      UserOutputEntry
+        ACCESS      not-accessible
+        STATUS      mandatory
+        DESCRIPTION
+            "User Output records"
+        INDEX       {userOutputNumber}
+        ::= {userOutputTable 1}
+
+    UserOutputEntry  ::=
+        SEQUENCE  {
+            userOutputNumber
+                INTEGER,
+            userOutputLabel
+                DisplayString,
+            userOutputActiveState
+                INTEGER,
+            userOutputStatus
+                INTEGER,
+            userOutputForcedOperatorStatus
+                INTEGER,
+            userOutputInternalStatus
+                OBJECT IDENTIFIER
+        }
+
+    userOutputNumber  OBJECT-TYPE
+        SYNTAX      INTEGER
+        ACCESS      read-only
+        STATUS      mandatory
+        DESCRIPTION
+            "User Output number is used as the index for the User Output table"
+        ::= {userOutputEntry 1}
+
+    userOutputLabel  OBJECT-TYPE
+        SYNTAX      DisplayString   (SIZE(0..31))
+        ACCESS      read-write
+        STATUS      mandatory
+        DESCRIPTION
+            "ASCII string used by the operator to identify the User Output"
+        DEFVAL      {"USER OUTPUT CH."}
+        ::= {userOutputEntry 2}
+
+    userOutputActiveState  OBJECT-TYPE
+        SYNTAX    INTEGER {
+                           open (1),
+                           closed (2)
+                          }
+        ACCESS      read-write
+        STATUS      mandatory
+        DESCRIPTION
+            "Define the Active State of User Output"
+        DEFVAL      {closed}
+        ::= {userOutputEntry 3}
+
+    userOutputStatus  OBJECT-TYPE
+        SYNTAX    INTEGER {
+                           notActive (1),
+                           active    (2)
+                          }
+        ACCESS      read-only
+        STATUS      mandatory
+        DESCRIPTION
+            "User Output status."
+        ::= {userOutputEntry 4}
+
+
+    userOutputForcedOperatorStatus OBJECT-TYPE
+        SYNTAX    INTEGER {
+                           notActive (1),
+                           active    (2)
+                          }
+        ACCESS      read-write
+        STATUS      mandatory
+        DESCRIPTION
+           "User Output status forced by the operator."
+        DEFVAL      {notActive}
+        ::= {userOutputEntry 5}
+
+    userOutputInternalStatus OBJECT-TYPE
+        SYNTAX      OBJECT IDENTIFIER
+        ACCESS      read-write
+        STATUS      mandatory
+        DESCRIPTION
+            "User Output status connected to internal condition. Legal object are:
+	           - Equipment synthesys alarms
+             - User inputs
+             - Forced by operator"
+        DEFVAL      {userOutputForcedOperatorStatus}
+        ::= {userOutputEntry 6}
+
+
+
+----------------------------------------------------------------------------------
+--  4.5 ALARM LOG GROUP
+--  This group is used to manage the alarm log.
+----------------------------------------------------------------------------------
+
+    alarmLogTable  OBJECT-TYPE
+        SYNTAX      SEQUENCE OF AlarmRecord
+        ACCESS      not-accessible
+        STATUS      mandatory
+        DESCRIPTION
+            "Table with Alarm  records"
+        ::= {alarmLog 1}
+
+    alarmLogRecord  OBJECT-TYPE
+        SYNTAX      AlarmRecord
+        ACCESS      not-accessible
+        STATUS      mandatory
+        DESCRIPTION
+            "Alarm records"
+        INDEX      { alarmLogRecordId }
+        ::= {alarmLogTable 1}
+
+    AlarmRecord  ::=
+        SEQUENCE {
+            alarmLogRecordId
+                INTEGER,
+            alarmLogManagedObject
+                OBJECT IDENTIFIER,
+            alarmLogManagedObjectInstance
+                OBJECT IDENTIFIER,
+            alarmLogEventDescription
+                DisplayString,
+            alarmLogProbableCause
+                INTEGER,
+            alarmLogAlarmStatus
+                INTEGER,
+            alarmLogEventTime
+                TimeTicks 
+            }
+
+    alarmLogRecordId  OBJECT-TYPE
+        SYNTAX      INTEGER 
+        ACCESS      read-only
+        STATUS      mandatory
+        DESCRIPTION
+            "This object is used as Index of AlarmLogTable."
+        ::= { alarmLogRecord 1 }
+
+    alarmLogManagedObject  OBJECT-TYPE
+        SYNTAX      OBJECT IDENTIFIER
+        ACCESS      read-only
+        STATUS      mandatory
+        DESCRIPTION
+            "The Object Identifier of the Managed Object."
+        ::= { alarmLogRecord 2 }
+
+    alarmLogManagedObjectInstance  OBJECT-TYPE
+        SYNTAX      OBJECT IDENTIFIER
+        ACCESS      read-only
+        STATUS      mandatory
+        DESCRIPTION
+            "This object is the instance of the ManagedObject."
+        ::= { alarmLogRecord 3 }
+
+    alarmLogEventDescription  OBJECT-TYPE
+        SYNTAX      DisplayString   (SIZE(0..80))
+        ACCESS      read-only
+        STATUS      mandatory
+        DESCRIPTION
+            "ASCII string used to describe the event (can be an empty string)."
+        ::= { alarmLogRecord 4 }
+
+    alarmLogProbableCause  OBJECT-TYPE
+        SYNTAX      INTEGER 
+        ACCESS      read-only
+        STATUS      mandatory
+        DESCRIPTION
+            "This object identifies the type of alarm."
+        ::= { alarmLogRecord 5 }
+
+    alarmLogAlarmStatus  OBJECT-TYPE
+        SYNTAX      INTEGER{
+                            cleared (1),
+                            activeReportable-Status (2),
+                            activeReportable-Warning (3),
+                            activeReportable-Minor (4),
+                            activeReportable-Major (5),
+                            activeReportable-Critical (6)
+                           }
+        ACCESS      read-only
+        STATUS      mandatory
+        DESCRIPTION
+            "Alarm Status with associated severity "
+        ::= { alarmLogRecord 6 }
+
+    alarmLogEventTime  OBJECT-TYPE
+        SYNTAX      TimeTicks
+        ACCESS      read-only
+        STATUS      mandatory
+        DESCRIPTION
+            "The time when the event was registered in the Log.
+             In seconds since 01/01/70"
+        ::= { alarmLogRecord 7 }
+
+
+----------------------------------------------------------------------------------
+-- The following objects are used  to map the "action"
+-- (delete record , transfer the log using NFS ...):
+----------------------------------------------------------------------------------
+
+
+    alarmLogActionRequest  OBJECT-TYPE
+        SYNTAX      INTEGER{
+                            delete (1),
+                            read   (2)
+                           }
+        ACCESS      write-only
+        STATUS      mandatory
+        DESCRIPTION
+            "This object is used to delete or to read the LOG
+             using FTP (file transfer)"
+        ::= { alarmLog 2 }
+
+    alarmLogFTPfile OBJECT-TYPE
+        SYNTAX      DisplayString   (SIZE(0..255))
+        ACCESS      read-write
+        STATUS      mandatory
+        DESCRIPTION
+            "Path and file name used when the log is transferred using FTP (action = read)"
+        ::= { alarmLog 3 }
+
+----------------------------------------------------------------------------------
+--  The following objects are used  to enable/disable  the event
+--  record write in the Log.
+----------------------------------------------------------------------------------
+
+    alarmLogAlarmSeverityEnable  OBJECT-TYPE
+        SYNTAX      INTEGER 
+        ACCESS      read-write
+        STATUS      mandatory
+        DESCRIPTION
+            "This object  enables the event record write in the log according to the severity:
+             Bit0 = Status
+             Bit1 = Warning
+             Bit2 = Minor
+             Bit3 = Major
+             Bit4 = Critical"
+        DEFVAL      {'1f'h}
+        ::= { alarmLog 4 }
+
+
+    alarmLogStartHourEnable  OBJECT-TYPE
+        SYNTAX      INTEGER   (0..23)
+        ACCESS      read-write
+        STATUS      mandatory
+        DESCRIPTION
+            "This object defines whit AlarmLogEndHourEnable the period during a day
+             when the alarm records must be written in the log."
+        DEFVAL      {0}
+        ::= { alarmLog 5 }
+
+
+    alarmLogEndHourEnable  OBJECT-TYPE
+        SYNTAX      INTEGER   (0..23)
+        ACCESS      read-write
+        STATUS      mandatory
+        DESCRIPTION
+            "This object defines whit AlarmLogStartHourEnable the period during a day
+             when the alarm records must be written in the log."
+        DEFVAL      { 23 }
+        ::= { alarmLog 6 }
+
+----------------------------------------------------------------------------------
+--  The following objects are used  as filters  when the manager reads or
+--  deletes the events in the LOG.
+----------------------------------------------------------------------------------
+
+    alarmLogStartTimeFilter  OBJECT-TYPE
+        SYNTAX      TimeTicks
+        ACCESS      read-write
+        STATUS      mandatory
+        DESCRIPTION
+            "The events with EventTime greater than this object are read/delete
+             from the log. In seconds since 01/01/70.
+             Null value means no filter"
+        DEFVAL      { 0 }
+        ::= { alarmLog 7 }
+
+    alarmLogEndTimeFilter  OBJECT-TYPE
+        SYNTAX      TimeTicks
+        ACCESS      read-write
+        STATUS      mandatory
+        DESCRIPTION
+            "The events with EventTime less than this object are read/delete
+             from the log. In seconds since 01/01/70.
+             Null value means no filter"
+        DEFVAL      { 0 }
+        ::= { alarmLog 8 }
+
+
+    alarmLogManagedObjectFilter OBJECT-TYPE
+        SYNTAX      OBJECT IDENTIFIER
+        ACCESS      read-write
+        STATUS      mandatory
+        DESCRIPTION
+            "The Object Identifier of the Managed Object that has to be read/delete
+             from the log. {cs} value means no filter"
+        DEFVAL      { cs }
+        ::= { alarmLog 9 }
+
+
+    alarmLogAlarmSeverityFilter  OBJECT-TYPE
+        SYNTAX      INTEGER 
+        ACCESS      read-write
+        STATUS      mandatory
+        DESCRIPTION
+            "This object defines the alarm severity of the records that must be read/delete
+             from the log.
+             Bit0 = Status
+             Bit1 = Warning
+             Bit2 = Minor
+             Bit3 = Major
+             Bit4 = Critical"
+        DEFVAL      { '1f'h }
+        ::= { alarmLog 10 }
+
+    alarmLogProbableCauseFilter  OBJECT-TYPE
+        SYNTAX      INTEGER 
+        ACCESS      read-write
+        STATUS      mandatory
+        DESCRIPTION
+            "This object defines the Probable Cause of the records that must be read/delete
+             from the log. Null value means no filter"
+        DEFVAL      { 0 }
+        ::= { alarmLog 11 }
+
+--
+-- The following objects are used as status indicator of FTP transfer
+--
+
+    alarmLogFTPStatus OBJECT-TYPE
+        SYNTAX      INTEGER{
+                            transferring (1),
+                            completed    (2),
+                            interrupted  (3),
+                            empty        (4)
+                           }
+        ACCESS      read-only
+        STATUS      mandatory
+        DESCRIPTION
+            "Status of alarm logger Ftp transfer operation"
+        DEFVAL      { completed }
+        ::= { alarmLog 12 }
+
+    alarmLogFTPStatusTrapNotification OBJECT-TYPE
+        SYNTAX      INTEGER {
+                             trapDisable (1),
+                             trapEnable (2),
+                             trapEnableWithACK (34)
+                            }
+        ACCESS      read-write
+        STATUS      mandatory
+        DESCRIPTION
+            "Enable/disable the trap generation on FTP tranfer operation."
+        DEFVAL      { trapEnable }
+        ::= { alarmLog 13 }
+
+
+--
+-- The Alarm Log generates the following TRAP:
+--
+
+    alarmLogFTPStatusTrap  TRAP-TYPE
+        ENTERPRISE cs
+        DESCRIPTION
+            "This event is generated by CS-NE when the status of FTP transfer is changed
+             The data passed with the event are
+             1) alarmLogFTPStatus
+             2) accessControlLoginIpAddress
+             3) equipTrapAcknowledge code number"
+        ::= 401
+
+
+
+
+----------------------------------------------------------------------------------
+-- 4.6 ACCESS CONTROL GROUP
+--
+-- This table defines the users allowed to access the system.
+-- The maximum number of user (number of records) is 13.
+----------------------------------------------------------------------------------
+
+    accessControlUserTable  OBJECT-TYPE
+        SYNTAX      SEQUENCE OF AccessControlUserRecord
+        ACCESS      not-accessible
+        STATUS      mandatory
+        DESCRIPTION
+            "Table with User records"
+        ::= { accessControl 1 }
+
+    accessControlUserRecord  OBJECT-TYPE
+        SYNTAX      AccessControlUserRecord 
+        ACCESS      not-accessible
+        STATUS      mandatory
+        DESCRIPTION
+            "Alarm records"
+        INDEX       { accessControlUsername }
+        ::= { accessControlUserTable 1 }
+
+    AccessControlUserRecord  ::=
+        SEQUENCE{
+            accessControlUsername
+                DisplayString,
+            accessControlPassword
+                DisplayString,
+            accessControlUserProfile
+                INTEGER,
+            accessControlLoginTimeout
+                INTEGER
+        }
+
+    accessControlUsername  OBJECT-TYPE
+        SYNTAX      DisplayString   (SIZE(0..8))
+        ACCESS      read-write
+        STATUS      mandatory
+        DESCRIPTION
+            "ASCII string identifying the user, it is used as Index for the table.
+             The write of a not existing Username string is used to create a new user.
+             The write of a NULL string to a specific record is used to delete the specific user"
+        ::= { accessControlUserRecord 1 }
+
+    accessControlPassword  OBJECT-TYPE
+        SYNTAX      DisplayString   (SIZE(0..8))
+        ACCESS      write-only
+        STATUS      mandatory
+        DESCRIPTION
+            "ASCII string used as password."
+        ::= { accessControlUserRecord 2 }
+
+    accessControlUserProfile OBJECT-TYPE
+        SYNTAX      INTEGER{
+                            system                 (1),
+                            stationOoperator       (2),
+                            maintenanceOperatorA   (3),
+                            maintenanceOperatorB   (4)
+                           }
+
+        ACCESS      read-write
+        STATUS      mandatory
+        DESCRIPTION
+            "This object defines the user access privilege. Is is not possible
+             change a profile into 'system (1)'"
+        ::= { accessControlUserRecord 3 }
+
+    accessControlLoginTimeout OBJECT-TYPE
+        SYNTAX      INTEGER   (0..65535)
+        ACCESS      read-write
+        STATUS      mandatory
+        DESCRIPTION
+            "This object defines the time (in seconds) after which the login session
+             is closed if no messages are received from the manager. The value range
+             from 1 to 0FFFFh. A zero means NO TIME OUT"
+        ::= { accessControlUserRecord 4 }
+
+----------------------------------------------------------------------------------
+-- The following table  is used to manage the user login,
+-- up to four logins are possible (1 CEM  + 3 LOM).
+----------------------------------------------------------------------------------
+
+    accessControlLoginTable  OBJECT-TYPE
+        SYNTAX      SEQUENCE OF AccessControlLoginRecord
+        ACCESS      not-accessible
+        STATUS      mandatory
+        DESCRIPTION
+            "Table with Login records. Max. number of Login equal 4."
+        ::= { accessControl 2 }
+
+    accessControlLoginRecord  OBJECT-TYPE
+        SYNTAX      AccessControlLoginRecord
+        ACCESS      not-accessible
+        STATUS      mandatory
+        DESCRIPTION
+            "Alarm records"
+        INDEX       { accessControlLoginIpAddress,
+                      accessControlLoginUsername }
+        ::= { accessControlLoginTable 1 }
+
+    AccessControlLoginRecord  ::=
+        SEQUENCE{
+            accessControlLoginUsername
+                DisplayString,
+            accessControlLoginPassword
+                DisplayString,
+            accessControlLoginRequest
+                INTEGER,
+            accessControlLoginIpAddress
+                IpAddress,
+            accessControlTrapEnable
+                INTEGER
+        }
+
+    accessControlLoginUsername  OBJECT-TYPE
+        SYNTAX      DisplayString   (SIZE(0..8))
+        ACCESS      read-write
+        STATUS      mandatory
+        DESCRIPTION
+            "ASCII string identifying the user."
+        ::= { accessControlLoginRecord 1 }
+
+    accessControlLoginPassword  OBJECT-TYPE
+        SYNTAX      DisplayString   (SIZE(0..8))
+        ACCESS      write-only
+        STATUS      mandatory
+        DESCRIPTION
+            "ASCII string used to verify if the user can access the system."
+        ::= { accessControlLoginRecord 2 }
+
+
+    accessControlLoginRequest  OBJECT-TYPE
+        SYNTAX      INTEGER{
+                            login   (1),
+                            logout  (2)
+                           } 
+        ACCESS      write-only
+        STATUS      mandatory
+        DESCRIPTION
+            "This object is used to request the login/logout of the user"
+        ::= { accessControlLoginRecord 3 }
+
+    accessControlLoginIpAddress  OBJECT-TYPE
+        SYNTAX      IpAddress 
+        ACCESS      read-only
+        STATUS      mandatory
+        DESCRIPTION
+            "It is the IP address of the logged user"
+        ::= { accessControlLoginRecord 4 }
+
+    accessControlTrapEnable  OBJECT-TYPE
+        SYNTAX      INTEGER{
+                           trapDisable  (1),
+                           trapEnableWithAck (2),
+                           trapEnableWithoutAck (3)
+                    }
+
+        ACCESS      read-write
+        STATUS      mandatory
+        DESCRIPTION
+            "Enable/disable of the trap toward the element defined by the IP address.
+             The trap can be with or without acknowledge from the receiving entity"
+        ::= { accessControlLoginRecord 5 }
+
+
+
+--
+--  4.7 Unit  Group
+--  This group is used to manage the units  (board and in general replaceable part) present in the equipment.
+--
+
+    unitTable  OBJECT-TYPE
+        SYNTAX      SEQUENCE OF UnitRecord
+        ACCESS      not-accessible
+        STATUS      mandatory
+        DESCRIPTION
+            "Table with Unit records."
+        ::= { unit 1 }
+
+    unitRecord  OBJECT-TYPE
+        SYNTAX      UnitRecord
+        ACCESS      not-accessible
+        STATUS      mandatory
+        DESCRIPTION
+            "Unit record"
+        INDEX       { unitId }
+        ::= { unitTable 1 }
+
+    UnitRecord  ::=
+        SEQUENCE{
+            unitId
+                INTEGER,
+            unitExpectedType
+                INTEGER,
+            unitActualType
+                INTEGER,
+            unitLabel
+                DisplayString,
+            unitFailAlarm
+                INTEGER,
+            unitMissingAlarm
+                INTEGER,
+            unitNotRespondingAlarm
+                INTEGER,
+            unitHwMismatchAlarm
+                INTEGER,
+            unitSwMismatchAlarm
+                INTEGER,
+            unitHwEdition
+                DisplayString,
+           unitPartNumber
+               DisplayString,
+           unitParentPartNumber
+               DisplayString,
+           unitParentSerialNumber
+               DisplayString
+        }
+
+    unitId  OBJECT-TYPE
+        SYNTAX      INTEGER 
+        ACCESS      read-only
+        STATUS      mandatory
+        DESCRIPTION
+            "This object is used as Index of the Unit Table."
+        ::= { unitRecord 1 }
+
+    unitExpectedType  OBJECT-TYPE
+        SYNTAX      INTEGER{
+                            unequipped        (1),
+                            eqController      (2)
+                           }
+
+        ACCESS      read-write
+        STATUS      mandatory
+        DESCRIPTION
+            "Define the expected unit type"
+        ::= { unitRecord 2 }
+
+    unitActualType  OBJECT-TYPE
+        SYNTAX      INTEGER{
+                            unequipped        (1),
+                            eqController      (2)
+                           }
+
+        ACCESS      read-only
+        STATUS      mandatory
+        DESCRIPTION
+            "Define the real unit type actually configurated"
+        ::= { unitRecord 3 }
+
+    unitLabel  OBJECT-TYPE
+        SYNTAX      DisplayString (SIZE (0..30))
+        ACCESS      read-only
+        STATUS      mandatory
+        DESCRIPTION
+            "ASCII string used to assign a name to the unit"
+        ::= { unitRecord 4 }
+
+    unitFailAlarm  OBJECT-TYPE
+        SYNTAX      INTEGER{
+                            cleared (1),
+                            activeReportable-Status (2),
+                            activeReportable-Warning (3),
+                            activeReportable-Minor (4),
+                            activeReportable-Major (5),
+                            activeReportable-Critical (6)
+                           }
+
+        ACCESS      read-only
+        STATUS      mandatory
+        DESCRIPTION
+            "Unit Fail alarm status (Probable cause = ReplaceableUnitProblem)
+             status with associated Severity"
+        ::= { unitRecord 5 }
+
+    unitMissingAlarm  OBJECT-TYPE
+        SYNTAX      INTEGER{
+                            cleared (1),
+                            activeReportable-Status (2),
+                            activeReportable-Warning (3),
+                            activeReportable-Minor (4),
+                            activeReportable-Major (5),
+                            activeReportable-Critical (6)
+                           }
+
+        ACCESS      read-only
+        STATUS      mandatory
+        DESCRIPTION
+            "Unit Missing alarm status (Probable cause = ReplaceableUnitMissing)
+             status with associated Severity"
+        ::= { unitRecord 6 }
+
+    unitNotRespondingAlarm  OBJECT-TYPE
+        SYNTAX      INTEGER{
+                            cleared (1),
+                            activeReportable-Status (2),
+                            activeReportable-Warning (3),
+                            activeReportable-Minor (4),
+                            activeReportable-Major (5),
+                            activeReportable-Critical (6)
+                           }
+
+        ACCESS      read-only
+        STATUS      mandatory
+        DESCRIPTION
+            "Unit Not Responding alarm status (Probable cause = ReplaceableUnitMalfunction)
+             status with associated Severity"
+        ::= { unitRecord 7 }
+
+
+
+    unitHwMismatchAlarm  OBJECT-TYPE
+        SYNTAX      INTEGER{
+                            cleared (1),
+                            activeReportable-Status (2),
+                            activeReportable-Warning (3),
+                            activeReportable-Minor (4),
+                            activeReportable-Major (5),
+                            activeReportable-Critical (6)
+                           }
+
+        ACCESS      read-only
+        STATUS      mandatory
+        DESCRIPTION
+            "Unit type Mismatch alarm status (Probable cause = ReplaceableUnitTypeMismatch)
+             status with associated Severity"
+        ::= { unitRecord 8 }
+
+
+    unitSwMismatchAlarm  OBJECT-TYPE
+        SYNTAX      INTEGER{
+                            cleared (1),
+                            activeReportable-Status (2),
+                            activeReportable-Warning (3),
+                            activeReportable-Minor (4),
+                            activeReportable-Major (5),
+                            activeReportable-Critical (6)
+                           }
+
+        ACCESS      read-only
+        STATUS      mandatory
+        DESCRIPTION
+            "Unit  with Sw Release  Mismatch alarm status (Probable cause = SfwrEnviromentProbleme)
+             status with associated Severity"
+        ::= { unitRecord 9 }
+
+    unitHwEdition  OBJECT-TYPE
+        SYNTAX      DisplayString (SIZE (0..255))
+        ACCESS      read-only
+        STATUS      mandatory
+        DESCRIPTION
+            "ASCII string used to identify Hw edition of the unit."
+        ::= { unitRecord 10 }
+
+    unitPartNumber  OBJECT-TYPE
+        SYNTAX      DisplayString (SIZE (0..255))
+        ACCESS      read-only
+        STATUS      mandatory
+        DESCRIPTION
+            "ASCII string to identify the Part Number of the unit"
+        ::= { unitRecord 11 }
+
+    unitParentPartNumber  OBJECT-TYPE
+        SYNTAX      DisplayString (SIZE (0..255))
+        ACCESS      read-write
+        STATUS      mandatory
+        DESCRIPTION
+            "ASCII string to identify the parent Part Number of the unit"
+        ::= { unitRecord 12 }
+
+
+    unitParentSerialNumber  OBJECT-TYPE
+        SYNTAX      DisplayString (SIZE (0..255))
+        ACCESS      read-write
+        STATUS      mandatory
+        DESCRIPTION
+            "ASCII string to identify parent Serial Number of the unit"
+        ::= { unitRecord 13 }
+
+--
+-- The following objects define the profile of the unit alarms:
+--
+
+    unitFailAlarmSeverityCode  OBJECT-TYPE
+        SYNTAX      INTEGER{
+                            disable  (1),
+                            status-trapEnable (2),
+                            status-trapEnableWithACK (34),
+                            warning-trapEnable (3),
+                            warning-trapEnableWithACK (35),
+                            minor-trapEnable (4),
+                            minor-trapEnableWithACK (36),
+                            major-trapEnable (5),
+                            major-trapEnableWithACK (37),
+                            critical-trapEnable (6),
+                            critical-trapEnableWithACK (38),
+                            status-trapDisable (18),
+                            warning-trapDisable (19),
+                            minor-trapDisable (20),
+                            major-trapDisable (21),
+                            critical-trapDisable (22)
+                           }
+        ACCESS      read-write
+        STATUS      mandatory
+        DESCRIPTION
+            "Define the severity associated to the Unit Fail Alarm and enable/disable
+             the trap generation on status change event."
+        DEFVAL      { major-trapEnable }
+        ::= { unit 2 }
+
+    unitMissingAlarmSeverityCode  OBJECT-TYPE
+        SYNTAX      INTEGER{
+                            disable  (1),
+                            status-trapEnable (2),
+                            status-trapEnableWithACK (34),
+                            warning-trapEnable (3),
+                            warning-trapEnableWithACK (35),
+                            minor-trapEnable (4),
+                            minor-trapEnableWithACK (36),
+                            major-trapEnable (5),
+                            major-trapEnableWithACK (37),
+                            critical-trapEnable (6),
+                            critical-trapEnableWithACK (38),
+                            status-trapDisable (18),
+                            warning-trapDisable (19),
+                            minor-trapDisable (20),
+                            major-trapDisable (21),
+                            critical-trapDisable (22)
+                           }
+        ACCESS      read-write
+        STATUS      mandatory
+        DESCRIPTION
+            "Define the severity associated to the Unit Missing Alarm and enable/disable
+             the trap generation on status change event."
+        DEFVAL      { major-trapEnable }
+        ::= { unit 3 }
+
+    unitNotRespondingAlarmSeverityCode  OBJECT-TYPE
+        SYNTAX      INTEGER{
+                            disable  (1),
+                            status-trapEnable (2),
+                            status-trapEnableWithACK (34),
+                            warning-trapEnable (3),
+                            warning-trapEnableWithACK (35),
+                            minor-trapEnable (4),
+                            minor-trapEnableWithACK (36),
+                            major-trapEnable (5),
+                            major-trapEnableWithACK (37),
+                            critical-trapEnable (6),
+                            critical-trapEnableWithACK (38),
+                            status-trapDisable (18),
+                            warning-trapDisable (19),
+                            minor-trapDisable (20),
+                            major-trapDisable (21),
+                            critical-trapDisable (22)
+                           }
+        ACCESS      read-write
+        STATUS      mandatory
+        DESCRIPTION
+            "Define the severity associated to the Unit Not Responding Alarm and enable/disable
+             the trap generation on status change event."
+        DEFVAL      { major-trapEnable }
+        ::= { unit 4 }
+
+    unitHwMismatchAlarmSeverityCode  OBJECT-TYPE
+        SYNTAX      INTEGER{
+                            disable  (1),
+                            status-trapEnable (2),
+                            status-trapEnableWithACK (34),
+                            warning-trapEnable (3),
+                            warning-trapEnableWithACK (35),
+                            minor-trapEnable (4),
+                            minor-trapEnableWithACK (36),
+                            major-trapEnable (5),
+                            major-trapEnableWithACK (37),
+                            critical-trapEnable (6),
+                            critical-trapEnableWithACK (38),
+                            status-trapDisable (18),
+                            warning-trapDisable (19),
+                            minor-trapDisable (20),
+                            major-trapDisable (21),
+                            critical-trapDisable (22)
+                           }
+        ACCESS      read-write
+        STATUS      mandatory
+        DESCRIPTION
+            "Define the severity associated to the UnitHwMismatchAlarm Alarm
+             and enable/disable the trap generation on status change event."
+        DEFVAL      { major-trapEnable }
+        ::= { unit 5 }
+
+    unitSwMismatchAlarmSeverityCode  OBJECT-TYPE
+        SYNTAX    INTEGER{
+                            disable  (1),
+                            status-trapEnable (2),
+                            status-trapEnableWithACK (34),
+                            warning-trapEnable (3),
+                            warning-trapEnableWithACK (35),
+                            minor-trapEnable (4),
+                            minor-trapEnableWithACK (36),
+                            major-trapEnable (5),
+                            major-trapEnableWithACK (37),
+                            critical-trapEnable (6),
+                            critical-trapEnableWithACK (38),
+                            status-trapDisable (18),
+                            warning-trapDisable (19),
+                            minor-trapDisable (20),
+                            major-trapDisable (21),
+                            critical-trapDisable (22)
+                           }
+        ACCESS      read-write
+        STATUS      mandatory
+        DESCRIPTION
+            "Define the severity associated to the Sw Release mismatch Alarm
+             and enable/disable the trap generation on status change event."
+        DEFVAL      { major-trapEnable }
+        ::= { unit 6 }
+
+--
+-- The Unit  Group generates the following TRAP:
+--
+
+    unitFailAlarmSet  TRAP-TYPE
+        ENTERPRISE cs
+        DESCRIPTION
+            "This event is generated by CS-NE when an Unit Fail Alarm is set
+             The data passed with the event are
+             1) UnitId
+             2) UnitLabel
+             3) UnitFailAlarm
+             4) equipTrapAcknowledge code number"
+        ::= 601
+
+    unitFailAlarmCleared  TRAP-TYPE 
+        ENTERPRISE cs
+        DESCRIPTION
+            "This event is generated by CS-NE when an Unit Fail Alarm is cleared
+             The data passed with the event are
+             1) UnitId
+             2) UnitLabel
+             3) UnitFailAlarm
+             4) equipTrapAcknowledge code number"
+        ::= 602
+
+    unitMissingAlarmSet  TRAP-TYPE
+        ENTERPRISE cs
+        DESCRIPTION
+            "This event is generated by CS-NE when an Unit Missing Alarm is set
+             The data passed with the event are
+             1) UnitId
+             2) UnitLabel
+             3) UnitMissingAlarm
+             4) equipTrapAcknowledge code number"
+        ::= 603
+
+    unitMissingAlarmCleared  TRAP-TYPE
+        ENTERPRISE cs
+        DESCRIPTION
+            "This event is generated by CS-NE when an Unit Missing Alarm is cleared
+             The data passed with the event are
+             1) UnitId
+             2) UnitLabel
+             3) UnitMissingAlarm
+             4) equipTrapAcknowledge code number"
+        ::= 604
+
+    unitNotRespondingAlarmSet  TRAP-TYPE
+        ENTERPRISE cs
+        DESCRIPTION
+            "This event is generated by CS-NE when an Unit Not Responding Alarm is set
+             The data passed with the event are
+             1) UnitId
+             2) UnitLabel
+             3) UnitNotRespondingAlarm
+             4) equipTrapAcknowledge code number"
+        ::= 605
+
+    unitNotRespondingAlarmCleared  TRAP-TYPE
+        ENTERPRISE cs
+        DESCRIPTION
+            "This event is generated by CS-NE when an Unit Not Responding Alarm  is cleared
+             The data passed with the event are
+             1) UnitId
+             2) UnitLabel
+             3) UnitNotRespondingAlarm
+             4) equipTrapAcknowledge code number"
+        ::= 606
+
+
+    unitHwMismatchAlarmSet  TRAP-TYPE
+        ENTERPRISE cs
+        DESCRIPTION
+            "This event is generated by CS-NE when an Unit Hw Mismatch Alarm is set
+             The data passed with the event are
+             1) UnitId
+             2) UnitLabel
+             3) Unit HwMismatch Alarm
+             4) equipTrapAcknowledge code number"
+        ::= 607
+
+    unitHwMismatchAlarmCleared  TRAP-TYPE
+        ENTERPRISE cs
+        DESCRIPTION
+            "This event is generated by CS-NE when an Unit Hw Mismatch Alarm is cleared
+             The data passed with the event are
+             1) UnitId
+             2) UnitLabel
+             3) Unit HwMismatchAlarm
+             4) equipTrapAcknowledge code number"
+        ::= 608
+
+
+    unitSwMismatchAlarmSet  TRAP-TYPE
+        ENTERPRISE cs
+        DESCRIPTION
+            "This event is generated by CS-NE when an Unit Hw Mismatch Alarm is set
+             The data passed with the event are
+             1) UnitId
+             2) UnitLabel
+             3) Unit HwMismatch Alarm
+             4) equipTrapAcknowledge code number"
+        ::= 609
+
+    unitSwMismatchAlarmCleared  TRAP-TYPE
+        ENTERPRISE cs
+        DESCRIPTION
+            "This event is generated by CS-NE when an Unit Hw Mismatch Alarm is cleared
+             The data passed with the event are
+             1) UnitId
+             2) UnitLabel
+             3) Unit HwMismatchAlarm
+             4) equipTrapAcknowledge code number"
+        ::= 610
+
+----------------------------------------------------------------------------------
+--  4.8 SOFTWARE GROUP
+----------------------------------------------------------------------------------
+--  This group is used to manage the Sw present in the  equipment Because in the
+--  CommServer only one unit (the controller) is present only one Sw unit is present.
+----------------------------------------------------------------------------------
+
+    softwareEquipmentReleaseBench1   OBJECT-TYPE
+        SYNTAX      DisplayString   (SIZE(0..15))
+        ACCESS      read-only
+        STATUS      mandatory
+        DESCRIPTION
+            "ASCII string identifying the equipment release present in Bench1"
+        ::= { software 1 }
+
+    softwareEquipmentReleaseBench1Status  OBJECT-TYPE
+        SYNTAX      INTEGER{
+                            notLoaded (1),
+                            loaded   (2),
+                            running (3)
+                           }
+        ACCESS      read-only
+        STATUS      mandatory
+        DESCRIPTION
+            "Status of the bench 1 software"
+        ::= { software 2 }
+
+    softwareEquipmentReleaseBench2   OBJECT-TYPE
+        SYNTAX      DisplayString   (SIZE(0..15))
+        ACCESS      read-only
+        STATUS      mandatory
+        DESCRIPTION
+            "ASCII string identifying the equipment release present in Bench2"
+        ::= { software 3 }
+
+    softwareEquipmentReleaseBench2Status  OBJECT-TYPE
+        SYNTAX      INTEGER{
+                            notLoaded (1),
+                            loaded   (2),
+                            running (3)
+                           }
+        ACCESS      read-only
+        STATUS      mandatory
+        DESCRIPTION
+            "Status of the bench 2 software"
+        ::= { software 4 }
+
+    softwareIpAddressDwlServer  OBJECT-TYPE
+        SYNTAX      IpAddress
+        ACCESS      read-write
+        STATUS      mandatory
+        DESCRIPTION
+            "Ip address of the remote element from which the Software is downloaded"
+        ::= { software  5 }
+
+    softwareGosipAddressDwlServer  OBJECT-TYPE
+        SYNTAX      OCTET STRING    (SIZE(0..31))
+        ACCESS      read-write
+        STATUS      mandatory
+        DESCRIPTION
+            "GOSIP address of the remote element from which the Software is downloaded"
+        ::= { software 6 }
+
+    softwareDownloadfile   OBJECT-TYPE
+        SYNTAX      DisplayString   (SIZE(0..255))
+        ACCESS      read-write
+        STATUS      mandatory
+        DESCRIPTION
+            "CEM or LOM Directory and name of the descriptor file. The files
+             with the SW code must be present in the same directory"
+        ::= { software 7 }
+
+    softwareActionRequest   OBJECT-TYPE
+        SYNTAX      INTEGER
+        ACCESS      write-only
+        STATUS      mandatory
+        DESCRIPTION
+            "This Integer is a bit string  with each bit when set has the following meaning:
+             BIT 0   -    Download  request
+             BIT 1   -    Abort Download  request
+             BIT 2   -    Bench switch   request
+             BIT 4   -    Partial download
+             BIT 5   -    Forced Download 
+             BIT 6   -    Implicit Activation
+             The bit 4...6  enable/disable the different options on download request."
+        ::= { software 8 }
+
+    softwareDownloadStatus  OBJECT-TYPE
+        SYNTAX      INTEGER{
+                            downloading       (1),
+                            completed         (2),
+                            interrupted       (3),
+                            perif-downloading (4)
+                           }
+        ACCESS      read-only
+        STATUS      mandatory
+        DESCRIPTION
+            "Status of SW download operation"
+        ::= { software 9 }
+
+    softwareUnitTable  OBJECT-TYPE
+        SYNTAX      SEQUENCE OF SoftwareUnitRecord
+        ACCESS      not-accessible
+        STATUS      mandatory
+        DESCRIPTION
+            "Table with Software records concerning units within the equipment"
+        ::= { software 10 }
+
+    softwareUnitRecord  OBJECT-TYPE
+        SYNTAX      SoftwareUnitRecord
+        ACCESS      not-accessible
+        STATUS      mandatory
+        DESCRIPTION
+            "Software record"
+        INDEX       { softwareUnitId, 
+                      softwareElementId }
+        ::= { softwareUnitTable 1 }
+
+    SoftwareUnitRecord  ::=
+        SEQUENCE{
+            softwareUnitId
+                INTEGER,
+            softwareElementId
+                INTEGER,
+            softwareType
+                INTEGER,
+            softwareUnitReleaseBench1
+                DisplayString,
+            softwareUnitReleaseBench2
+                DisplayString,
+            softwareUnitActualRelease
+                DisplayString
+        }
+
+
+    softwareUnitId  OBJECT-TYPE
+        SYNTAX      INTEGER 
+        ACCESS      read-only
+        STATUS      mandatory
+        DESCRIPTION
+            "This object is used as Index of the softwareUnit Table and also identifies
+             the unit in the equipment."
+        ::= { softwareUnitRecord 1 }
+
+    softwareElementId  OBJECT-TYPE
+        SYNTAX      INTEGER 
+        ACCESS      read-only
+        STATUS      mandatory
+        DESCRIPTION
+            "This object is used as Index of the softwareUnit Table and also identifies
+             the SW programmable element in the specified unit."
+        ::= { softwareUnitRecord 2 }
+
+    softwareType  OBJECT-TYPE
+        SYNTAX      INTEGER {
+                              s-record    (1),
+                              image-FPGA  (2),
+                              volatile    (3)
+                            }
+        ACCESS      read-only
+        STATUS      mandatory
+        DESCRIPTION
+            "Format type"
+        ::= { softwareUnitRecord 3 }
+
+    softwareUnitReleaseBench1   OBJECT-TYPE
+        SYNTAX      DisplayString   (SIZE(0..8))
+        ACCESS      read-only
+        STATUS      mandatory
+        DESCRIPTION
+            "ASCII string identifying the software release present
+             in the programmable element of specified unit bench 1."
+        ::= { softwareUnitRecord 4 }
+
+    softwareUnitReleaseBench2   OBJECT-TYPE
+        SYNTAX      DisplayString   (SIZE(0..8))
+        ACCESS      read-only
+        STATUS      mandatory
+        DESCRIPTION
+            "ASCII string identifying the software release present
+             in the programmable element of specified unit bench 2"
+        ::= { softwareUnitRecord 5 }
+
+    softwareUnitActualRelease   OBJECT-TYPE
+        SYNTAX      DisplayString   (SIZE(0..33))
+        ACCESS      read-only
+        STATUS      mandatory
+        DESCRIPTION
+            "ASCII string identifying the software release actually present
+             in the programmable element of specified unit"
+        ::= { softwareUnitRecord 6 }
+
+    softwareDownloadStatusTrapNotification OBJECT-TYPE
+        SYNTAX      INTEGER {
+                             trapDisable (1),
+                             trapEnable (2),
+                             trapEnableWithACK (34)
+                            }
+        ACCESS      read-write
+        STATUS      mandatory
+        DESCRIPTION
+            "Enable/disable the trap generation on download status change."
+        DEFVAL      { trapEnable }
+        ::= { software 11 }
+
+----------------------------------------------------------------------------------
+--  The  Software  Group generates the following TRAP:
+----------------------------------------------------------------------------------
+
+    softwareDownloadStatusTrap  TRAP-TYPE
+        ENTERPRISE cs
+        DESCRIPTION
+            "This event is generated by CS-NE when the status of download is changed
+             The data passed with the event are
+             1) softwareDownloadStatus
+             2) equipTrapAcknowledge code number"
+        ::= 701
+
+
+
+----------------------------------------------------------------------------------
+-- 4.7 PORT  GROUP
+----------------------------------------------------------------------------------
+-- This group is used to manage the CommServer Ports.
+----------------------------------------------------------------------------------
+
+    portTable  OBJECT-TYPE
+        SYNTAX      SEQUENCE OF PortRecord
+        ACCESS      not-accessible
+        STATUS      mandatory
+        DESCRIPTION 
+            "Table with Port  records."
+        ::= { port 1 }
+
+    portRecord  OBJECT-TYPE
+        SYNTAX      PortRecord
+        ACCESS      not-accessible
+        STATUS      mandatory
+        DESCRIPTION 
+            "Port record"
+        INDEX { portId }
+        ::= { portTable 1 }
+
+    PortRecord  ::=
+        SEQUENCE {
+            portId
+                INTEGER,
+            portInterfaceType
+                INTEGER,
+            portProtocolType
+                INTEGER,
+            portBaudRate
+                INTEGER,
+            portFlowControl
+                INTEGER,
+            portTiming  
+                INTEGER,
+            portStatus
+                INTEGER,
+            portTestAddress
+                INTEGER,
+            portTestStatus
+                INTEGER,
+            portFailAlarm
+                INTEGER
+        }
+
+    portId  OBJECT-TYPE
+        SYNTAX      INTEGER
+        ACCESS      read-only
+        STATUS      mandatory
+        DESCRIPTION 
+            "This object  is used as Index of the Port Table."  
+        ::= { portRecord 1 }
+
+    portInterfaceType  OBJECT-TYPE
+        SYNTAX      INTEGER{
+                             rs232                (1),
+                             rs485                (2)
+                           }
+        ACCESS      read-write
+        STATUS      mandatory
+        DESCRIPTION 
+            "It defines the Port Interface type"
+        DEFVAL { rs232 }
+        ::= { portRecord  2 }
+
+    portProtocolType  OBJECT-TYPE
+        SYNTAX      INTEGER{
+                             sync                (1),
+                             async               (2)
+                           }
+        ACCESS      read-write
+        STATUS      mandatory
+        DESCRIPTION 
+            "It defines the Port protocol type"
+        DEFVAL { sync }
+        ::=  { portRecord  3 }
+
+    portBaudRate  OBJECT-TYPE
+        SYNTAX      INTEGER {
+                              b2400                (1),
+                              b4800                (2),
+                              b9600                (3),
+                              b19200               (4)
+                            }
+        ACCESS      read-write
+        STATUS      mandatory
+        DESCRIPTION 
+            "It defines the Port baud rate (only for RS485 interface and Asynchronous protocol)
+             The object is set before the test command. It reports the port baudrate also when
+             the port is open by CEM"
+        DEFVAL { b19200 }
+        ::=  { portRecord  4 }
+
+    portFlowControl  OBJECT-TYPE
+        SYNTAX      INTEGER {
+                              disable             (1),
+                              hw-control          (2)
+                            }
+        ACCESS      read-write
+        STATUS      mandatory
+        DESCRIPTION 
+            "It defines the type of flow control implemented on the Port."
+        DEFVAL { disable }
+        ::=  { portRecord  5 }
+
+    portTiming  OBJECT-TYPE
+    SYNTAX      INTEGER{
+                             syncDCE              (1),
+			                       syncCS               (2)
+                           }
+        ACCESS      read-write
+        STATUS      mandatory
+        DESCRIPTION 
+            "It defines the Port Timing (clock source) used in syncronous mode
+             SyncDCE: CommServer receives the clocks from Modem, SyncCS: the
+             Commserver provides the clocks to the peripheral"
+        DEFVAL { syncDCE }
+        ::= { portRecord  6 }
+
+    portStatus OBJECT-TYPE
+        SYNTAX      INTEGER {
+                              notInUse            (1),
+                              inUse               (2)
+                            }
+        ACCESS      read-only
+        STATUS      mandatory
+        DESCRIPTION 
+            "It reports the status of the port."
+        ::=  { portRecord  7 }
+      
+    portTestAddress  OBJECT-TYPE
+        SYNTAX	    INTEGER     (1..65535)
+        ACCESS      read-write
+        STATUS      mandatory
+        DESCRIPTION 
+            "It defines the HDLC Address to be used for port test.
+             The test starts when this object is written"
+        ::=  { portRecord  8 }
+
+    portTestStatus OBJECT-TYPE
+        SYNTAX      INTEGER {
+                              testOk              (1),
+                              testRunning         (2),
+                              timeOut             (3),
+                              protocolError       (4),
+                              portInUse           (5), 
+                              portConfError       (6),
+                              portLoopback        (7)
+                            }
+        ACCESS      read-only
+        STATUS      mandatory
+        DESCRIPTION 
+            "It reports the status and the result of the test."
+        ::=  { portRecord  9 }
+      
+    portFailAlarm  OBJECT-TYPE
+        SYNTAX      INTEGER {
+                              cleared                        (1),
+                              activeReportable-Status        (2),
+                              activeReportable-Warning       (3),
+                              activeReportable-Minor         (4),
+                              activeReportable-Major         (5),
+                              activeReportable-Critical      (6)
+                            }
+        ACCESS      read-only
+        STATUS      mandatory
+        DESCRIPTION 
+            "Port Fail alarm status (Probable cause = ReplaceablePortProblem) status with 
+             associated Severity (see ANNEX A)"
+        ::=  { portRecord  10 }
+
+----------------------------------------------------------------------------------
+--  The following objects define the profile of the Port alarms:
+----------------------------------------------------------------------------------
+
+    portFailAlarmSeverityCode  OBJECT-TYPE
+        SYNTAX      INTEGER {
+                              disable                    (1),
+                              status-trapEnable          (2),
+                              status-trapEnableWithACK   (34),
+                              warning-trapEnable         (3),
+                              warning-trapEnableWithACK  (35),
+                              minor-trapEnable           (4),
+                              minor-trapEnableWithACK    (36),
+                              major-trapEnable           (5),
+                              major-trapEnableWithACK    (37),
+                              critical-trapEnable        (6),
+                              critical-trapEnableWithACK (38),
+                              status-trapDisable         (18),
+                              warning-trapDisable        (19),
+                              minor-trapDisable          (20),
+                              major-trapDisable          (21),
+                              critical-trapDisable       (22)
+                            }
+        ACCESS      read-write
+        STATUS      mandatory
+        DESCRIPTION 
+            "Define the severity associated to the Port Fail Alarm and enable/disable 
+             the trap generation on status change event."
+        DEFVAL { major-trapEnable }
+        ::=  { port 2 }
+
+
+----------------------------------------------------------------------------------
+--  The Port  Group generates the following TRAP:
+----------------------------------------------------------------------------------
+
+    portFailAlarmSet  TRAP-TYPE
+        ENTERPRISE cs
+        DESCRIPTION
+            "This event is generated by cs-NE when an Port Fail Alarm is set
+             The data passed with the event are
+             1) portId
+             2) portFailAlarm
+             3) equipTrapAcknowledge code number"
+        ::= 801
+
+    portFailAlarmCleared  TRAP-TYPE
+        ENTERPRISE cs
+        DESCRIPTION
+            "This event is generated by cs-NE when an Port Fail Alarm is cleared
+             The data passed with the event are
+             1) portId
+             2) portFailAlarm
+             3) equipTrapAcknowledge code number"
+        ::= 802
+
+
+
+
+END
+
+   

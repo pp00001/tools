@@ -1,0 +1,71 @@
+	HEALTHCHECK-MIB DEFINITIONS ::= BEGIN
+
+	IMPORTS
+		MODULE-IDENTITY,OBJECT-TYPE,NOTIFICATION-TYPE,Integer32
+			FROM SNMPv2-SMI
+		TEXTUAL-CONVENTION,TimeStamp,DisplayString
+			FROM SNMPv2-TC
+		MODULE-COMPLIANCE,OBJECT-GROUP
+			FROM SNMPv2-CONF
+		blueCoatMgmt
+			 FROM BLUECOAT-MIB;
+
+	deviceHealthCheckMIB MODULE-IDENTITY
+		LAST-UPDATED "0208280300Z"
+		ORGANIZATION "BlueCoat, Inc."
+		CONTACT-INFO
+		"support@bluecoat.com"
+		DESCRIPTION
+			"The HealthCheck-MIB is used to monitor
+			changes in the health of upstream systems."
+		::= { blueCoatMgmt 7 }
+
+deviceHealthCheckMIBObjects
+		OBJECT IDENTIFIER ::= { deviceHealthCheckMIB 1 }
+
+deviceHealthCheckMIBNotifications
+		OBJECT IDENTIFIER ::= { deviceHealthCheckMIB 2 }
+
+--
+-- Textual conventions
+--
+     HealthCheckMessageString ::= TEXTUAL-CONVENTION
+       DISPLAY-HINT "255a"
+       STATUS      current
+       DESCRIPTION
+           "The message describing a change in the health
+            of an upstream system."
+       SYNTAX      OCTET STRING (SIZE (0..MAX))
+
+--
+-- MIB variables
+--
+
+deviceHealthCheckValues
+	OBJECT IDENTIFIER ::= { deviceHealthCheckMIBObjects 1 }
+
+deviceHealthCheckMessage OBJECT-TYPE
+	SYNTAX		HealthCheckMessageString
+	MAX-ACCESS	not-accessible
+	STATUS		current
+	DESCRIPTION
+			"The custom message generated for this change in health."
+
+	::= { deviceHealthCheckValues 1 }
+
+--
+-- notifications
+--
+
+deviceHealthCheckTrap NOTIFICATION-TYPE
+	OBJECTS { deviceHealthCheckMessage }
+	STATUS current
+	DESCRIPTION
+		"A notification is generated when the health of a monitored system changes."
+
+	::= { deviceHealthCheckMIBNotifications 1 }
+
+
+END
+
+

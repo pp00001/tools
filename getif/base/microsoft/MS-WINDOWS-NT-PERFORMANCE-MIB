@@ -1,0 +1,4237 @@
+    WINDOWS-NT-PERFORMANCE DEFINITIONS ::= BEGIN
+    IMPORTS
+        enterprises, Counter, TimeTicks
+            FROM RFC1155-SMI
+        OBJECT-TYPE
+            FROM RFC1212-MIB
+        DisplayString
+            FROM RFC1213-MIB;
+
+    microsoft   OBJECT IDENTIFIER ::= { enterprises 311 }
+    software    OBJECT IDENTIFIER ::= { microsoft 1 }
+    systems     OBJECT IDENTIFIER ::= { software 1 }
+    os          OBJECT IDENTIFIER ::= { systems 3 }
+    winnt       OBJECT IDENTIFIER ::= { os 1 }
+    performance OBJECT IDENTIFIER ::= { winnt 1 }
+
+
+
+    -- browser MIB
+
+    browser OBJECT IDENTIFIER ::= { performance 1 }
+
+    browAnnouncementsServerPerSec OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Announcements Server/sec is the rate that the servers in this domain have announced themselves to this server."
+        ::= { browser 1 }
+
+    browAnnouncementsDomainPerSec OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Announcements Domain/sec is the rate that a Domain has announced itself to the network."
+        ::= { browser 2 }
+
+    browAnnouncementsTotalPerSec OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Announcements Total/sec is the sum of Announcements Server/sec and Announcements Domain/sec."
+        ::= { browser 3 }
+
+    browElectionPacketsPerSec OBJECT-TYPE
+        SYNTAX Counter
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Election Packets/sec is the rate of browser election packets that have been received by this workstation."
+        ::= { browser 4 }
+
+    browMailslotWritesPerSec OBJECT-TYPE
+        SYNTAX Counter
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Mailslot Writes/sec is the rate of mailslot messages that have been successfully received."
+        ::= { browser 5 }
+
+    browServerListRequestsPerSec OBJECT-TYPE
+        SYNTAX Counter
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Server List Requests/sec is the rate of requests to retrieve a list of browser servers that have been processed by this workstation."
+        ::= { browser 6 }
+
+    browEnumerationsServerPerSec OBJECT-TYPE
+        SYNTAX Counter
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Enumerations Server/sec is the rate of Server browse requests that have been processed by this workstation."
+        ::= { browser 7 }
+
+    browEnumerationsDomainPerSec OBJECT-TYPE
+        SYNTAX Counter
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Enumerations Domain/sec is the rate of Domain browse requests that have been processed by this workstation."
+        ::= { browser 8 }
+
+    browEnumerationsOtherPerSec OBJECT-TYPE
+        SYNTAX Counter
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Enumerations Other/sec is the rate of browse requests processed by this workstation that were not domain or server browse requests."
+        ::= { browser 9 }
+
+    browEnumerationsTotalPerSec OBJECT-TYPE
+        SYNTAX Counter
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Enumerations Total/sec is the rate of browse requests that have been processed by this workstation.  This is the sum of Enumerations Server, Enumerations Domain, and Enumerations Other."
+        ::= { browser 10 }
+
+    browMissedServerAnnouncements OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Missed Server Announcements is the number of server announcements that have been missed due to configuration or allocation limits."
+        ::= { browser 11 }
+
+    browMissedMailslotDatagrams OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Missed Mailslot Datagrams is the number of Mailslot Datagrams that have been discarded due to configuration or allocation limits."
+        ::= { browser 12 }
+
+    browMissedServerListRequests OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Missed Server List Requests is the number of requests to retrieve a list of browser servers that were received by this workstation, but could not be processed."
+        ::= { browser 13 }
+
+    browServerAnnounceAllocationsFailedPerSec OBJECT-TYPE
+        SYNTAX Counter
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Server Announce Allocations Failed/sec is the rate of server (or domain) announcements that have failed due to lack of memory."
+        ::= { browser 14 }
+
+    browMailslotAllocationsFailed OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Mailslot Allocations Failed is the number of times the datagram receiver has failed to allocate a buffer to hold a user mailslot write."
+        ::= { browser 15 }
+
+    browMailslotReceivesFailed OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Mailslot Receives Failed indicates the number of mailslot messages that couldn't be received due to transport failures."
+        ::= { browser 16 }
+
+    browMailslotWritesFailed OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Mailslot Writes Failed is the total number of mailslot messages that have been successfully received, but that were unable to be written to the mailslot."
+        ::= { browser 17 }
+
+    browMailslotOpensFailedPerSec OBJECT-TYPE
+        SYNTAX Counter
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Mailslot Opens Failed/sec indicates the rate of mailslot messages received by this workstation that were to be delivered to mailslots that are not present on this workstation."
+        ::= { browser 18 }
+
+    browDuplicateMasterAnnouncements OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Duplicate Master Announcements indicates the number of times that the master browser has detected another master browser on the same domain."
+        ::= { browser 19 }
+
+    browIllegalDatagramsPerSec OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Illegal Datagrams/sec is the rate of incorrectly formatted datagrams that have been received by the workstation."
+        ::= { browser 20 }
+
+    -- cache MIB
+
+    cache OBJECT IDENTIFIER ::= { performance 2 }
+
+    cachDataMapsPerSec OBJECT-TYPE
+        SYNTAX Counter
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Data Maps/sec is the frequency that a file system such as NTFS or HPFS maps a page of a file into the Cache to read the page."
+        ::= { cache 1 }
+
+    cachSyncDataMapsPerSec OBJECT-TYPE
+        SYNTAX Counter
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Sync Data Maps/sec counts the frequency that a file system such as NTFS or HPFS maps a page of a file into the Cache to read the page, and wishes to wait for the Cache to retrieve the page if it is not in main memory."
+        ::= { cache 2 }
+
+    cachAsyncDataMapsPerSec OBJECT-TYPE
+        SYNTAX Counter
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Async Data Maps/sec is the frequency that an application using a file system such as NTFS or HPFS to map a page of a file into the Cache to read the page, and does not wish to wait for the Cache to retrieve the page if it is not in main memory."
+        ::= { cache 3 }
+
+    cachDataMapHitsPercent OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Data Map Hits is the percentage of Data Maps in the Cache that could be resolved without having to retrieve a page from the disk, i.e. the page was already in physical memory."
+        ::= { cache 4 }
+
+    cachDataMapPinsPerSec OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Data Map Pins/sec is the frequency of Data Maps in the Cache that resulted in pinning a page in main memory, an action usually preparatory to writing to the file on disk.  While pinned, a page's physical address in main memory and virtual address in the Cache will not be altered."
+        ::= { cache 6 }
+
+    cachPinReadsPerSec OBJECT-TYPE
+        SYNTAX Counter
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Pin Reads/sec is the frequency of reading data into the Cache preparatory to writing the data back to disk.  Pages read in this fashion are pinned in memory at the completion of the read.  While pinned, a page's physical address in the Cache will not be altered."
+        ::= { cache 8 }
+
+    cachSyncPinReadsPerSec OBJECT-TYPE
+        SYNTAX Counter
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Sync Pin Reads/sec is the frequency of reading data into the Cache preparatory to writing the data back to disk.  Pages read in this fashion are pinned in memory at the completion of the read.  The file system will not regain control until the page is pinned in the Cache, in particular if the disk must be accessed to retrieve the page.  While pinned, a page's physical address in the Cache will not be altered."
+        ::= { cache 9 }
+
+    cachAsyncPinReadsPerSec OBJECT-TYPE
+        SYNTAX Counter
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Async Pin Reads/sec is the frequency of reading data into the Cache preparatory to writing the data back to disk.   Pages read in this fashion are pinned in memory at the completion of the read.  The file system will regain control immediately even if the disk must be accessed to retrieve the page.  While pinned, a page's physical address will not be altered."
+        ::= { cache 10 }
+
+    cachPinReadHitsPercent OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Pin Read Hits is the percentage of Cache Pin Read requests that hit the Cache, i.e., did not require a disk read in order to provide access to the page in the Cache.  While pinned, a page's physical address in the Cache will not be altered.  The LAN Redirector uses this method for retrieving Cache information, as does the LAN Server for small transfers.  This is usually the method used by the disk file systems as well."
+        ::= { cache 11 }
+
+    cachCopyReadsPerSec OBJECT-TYPE
+        SYNTAX Counter
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Copy Reads/sec is the frequency of reads from Cache pages that involve a memory copy of the data from the Cache to the application's buffer.  The LAN Redirector uses this method for retrieving Cache information, as does the LAN Server for small transfers.  This is a method used by the disk file systems as well."
+        ::= { cache 13 }
+
+    cachSyncCopyReadsPerSec OBJECT-TYPE
+        SYNTAX Counter
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Sync Copy Reads/sec is the frequency of reads from Cache pages that involve a memory copy of the data from the Cache to the application's buffer.  The file system will not regain control until the copy operation is complete, even if the disk must be accessed to retrieve the page."
+        ::= { cache 14 }
+
+    cachAsyncCopyReadsPerSec OBJECT-TYPE
+        SYNTAX Counter
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Async Copy Reads/sec is the frequency of reads from Cache pages that involve a memory copy of the data from the Cache to the application's buffer.  The application will regain control immediately even if the disk must be accessed to retrieve the page."
+        ::= { cache 15 }
+
+    cachCopyReadHitsPercent OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Copy Read Hits is the percentage of Cache Copy Read requests that hit the Cache, i.e., did not require a disk read in order to provide access to the page in the Cache.  A Copy Read is a file read operation that is satisfied by a memory copy from a Cache page to the application's buffer.  The LAN Redirector uses this method for retrieving Cache information, as does the LAN Server for small transfers.  This is a method used by the disk file systems as well."
+        ::= { cache 16 }
+
+    cachMDLReadsPerSec OBJECT-TYPE
+        SYNTAX Counter
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "MDL Reads/sec is the frequency of reads from Cache pages that use a Memory Descriptor List (MDL) to access the data.  The MDL contains the physical address of each page involved in the transfer, and thus can employ a hardware Direct Memory Access (DMA) device to effect the copy.  The LAN Server uses this method for large transfers out of the server."
+        ::= { cache 18 }
+
+    cachSyncMDLReadsPerSec OBJECT-TYPE
+        SYNTAX Counter
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Sync MDL Reads/sec is the frequency of reads from Cache pages that use a Memory Descriptor List (MDL) to access the pages.  The MDL contains the physical address of each page in the transfer, thus permitting Direct Memory Access (DMA) of the pages.  If the accessed page(s) are not in main memory, the caller will wait for the pages to fault in from the disk."
+        ::= { cache 19 }
+
+    cachAsyncMDLReadsPerSec OBJECT-TYPE
+        SYNTAX Counter
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Async MDL Reads/sec is the frequency of reads from Cache pages using a Memory Descriptor List (MDL) to access the pages.  The MDL contains the physical address of each page in the transfer, thus permitting Direct Memory Access (DMA) of the pages.  If the accessed page(s) are not in main memory, the calling application program will not wait for the pages to fault in from disk."
+        ::= { cache 20 }
+
+    cachMDLReadHitsPercent OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "MDL Read Hits is the percentage of Cache Memory Descriptor List (MDL) Read requests that hit the Cache, i.e., did not require disk accesses in order to provide memory access to the page(s) in the Cache."
+        ::= { cache 21 }
+
+    cachReadAheadsPerSec OBJECT-TYPE
+        SYNTAX Counter
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Read Aheads/sec is the frequency of Cache reads where the Cache detects sequential access to a file.  The read aheads permit the data to be transferred in larger blocks than those being requested by the application, reducing the overhead per access."
+        ::= { cache 23 }
+
+    cachFastReadsPerSec OBJECT-TYPE
+        SYNTAX Counter
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Fast Reads/sec is the frequency of reads from Cache pages that bypass the installed file system and retrieve the data directly from the Cache.  Normally, file I/O requests invoke the appropriate file system to retrieve data from a file, but this path permits direct retrieval of Cache data without file system involvement if the data is in the Cache.  Even if the data is not in the Cache, one invocation of the file system is avoided."
+        ::= { cache 24 }
+
+    cachSyncFastReadsPerSec OBJECT-TYPE
+        SYNTAX Counter
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Sync Fast Reads/sec is the frequency of reads from Cache pages that bypass the installed file system and retrieve the data directly from the Cache.  Normally, file I/O requests invoke the appropriate file system to retrieve data from a file, but this path permits direct retrieval of Cache data without file system involvement if the data is in the Cache.  Even if the data is not in the Cache, one invocation of the file system is avoided.  If the data is not in the Cache, the request (application program call) will wait until the data has been retrieved from disk."
+        ::= { cache 25 }
+
+    cachAsyncFastReadsPerSec OBJECT-TYPE
+        SYNTAX Counter
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Async Fast Reads/sec is the frequency of reads from Cache pages that bypass the installed file system and retrieve the data directly from the Cache.  Normally, file I/O requests will invoke the appropriate file system to retrieve data from a file, but this path permits direct retrieval of Cache data without file system involvement if the data is in the Cache.  Even if the data is not in the Cache, one invocation of the file system is avoided.  If the data is not in the Cache, the request (application program call) will not wait until the data has been retrieved from disk, but will get control immediately."
+        ::= { cache 26 }
+
+    cachFastReadResourceMissesPerSec OBJECT-TYPE
+        SYNTAX Counter
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Fast Read Resource Misses/sec is the frequency of Cache misses necessitated by the lack of available resources to satisfy the request."
+        ::= { cache 27 }
+
+    cachFastReadNotPossiblesPerSec OBJECT-TYPE
+        SYNTAX Counter
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Fast Read Not Possibles/sec is the frequency of attempts by an Application Program Interface (API) function call to bypass the file system to get at Cache data, that could not be honored without invoking the file system after all."
+        ::= { cache 28 }
+
+    cachLazyWriteFlushesPerSec OBJECT-TYPE
+        SYNTAX Counter
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Lazy Write Flushes/sec is the frequency the Cache's Lazy Write thread has written to disk.  Lazy Writing is the process of updating the disk after the page has been changed in memory, so the application making the change to the file does not have to wait for the disk write to complete before proceeding.  More than one page can be transferred on each write operation."
+        ::= { cache 29 }
+
+    cachLazyWritePagesPerSec OBJECT-TYPE
+        SYNTAX Counter
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Lazy Write Pages/sec is the frequency the Cache's Lazy Write thread has written to disk.  Lazy Writing is the process of updating the disk after the page has been changed in memory, so the application making the change to the file does not have to wait for the disk write to complete before proceeding.  More than one page can be transferred on a single disk write operation."
+        ::= { cache 30 }
+
+    cachDataFlushesPerSec OBJECT-TYPE
+        SYNTAX Counter
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Data Flushes/sec is the frequency the Cache has flushed its contents to disk as the result of a request to flush or to satisfy a write-through file write request.  More than one page can be transferred on each flush operation."
+        ::= { cache 31 }
+
+    cachDataFlushPagesPerSec OBJECT-TYPE
+        SYNTAX Counter
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Data Flush Pages/sec is the number of pages the Cache has flushed to disk as a result of a request to flush or to satisfy a write-through file write request.  More than one page can be transferred on each flush operation."
+        ::= { cache 32 }
+
+    -- fTP Server MIB
+
+    fTP-Server OBJECT IDENTIFIER ::= { performance 3 }
+
+    ftpsrvBytesSentPerSec OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Bytes Sent/sec is the rate that data bytes are sent by the FTP Server."
+        ::= { fTP-Server 1 }
+
+    ftpsrvBytesReceivedPerSec OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Bytes Received/sec is the rate that data bytes are received by the FTP Server."
+        ::= { fTP-Server 2 }
+
+    ftpsrvBytesTotalPerSec OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Bytes Total/sec is the sum of Bytes Sent/sec and Bytes Received/sec.  This is the total rate of bytes transferred by the FTP Server."
+        ::= { fTP-Server 3 }
+
+    ftpsrvFilesSent OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Files Sent is the total number of files sent by the FTP Server."
+        ::= { fTP-Server 4 }
+
+    ftpsrvFilesReceived OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Files Received is the total number of files received by the FTP Server."
+        ::= { fTP-Server 5 }
+
+    ftpsrvFilesTotal OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Files Total is the sum of Files Sent and Files Received.  This is the total number of files transferred by the FTP Server."
+        ::= { fTP-Server 6 }
+
+    ftpsrvCurrentAnonymousUsers OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Current Anonymous Users is the number of anonymous users currently connected to the FTP Server."
+        ::= { fTP-Server 7 }
+
+    ftpsrvCurrentNonAnonymousUsers OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Current NonAnonymous Users is the number of nonanonymous users currently connected to the FTP Server."
+        ::= { fTP-Server 8 }
+
+    ftpsrvTotalAnonymousUsers OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Total Anonymous Users is the total number of anonymous users that have ever connected to the FTP Server."
+        ::= { fTP-Server 9 }
+
+    ftpsrvTotalNonAnonymousUsers OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Total NonAnonymous Users is the total number of nonanonymous users that have ever connected to the FTP Server."
+        ::= { fTP-Server 10 }
+
+    ftpsrvMaximumAnonymousUsers OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Maximum Anonymous Users is the maximum number of anonymous users simultaneously connected to the FTP Server."
+        ::= { fTP-Server 11 }
+
+    ftpsrvMaximumNonAnonymousUsers OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Maximum NonAnonymous Users is the maximum number of nonanonymous users simultaneously connected to the FTP Server."
+        ::= { fTP-Server 12 }
+
+    ftpsrvCurrentConnections OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Current Connections is the current number of connections to the FTP Server."
+        ::= { fTP-Server 13 }
+
+    ftpsrvMaximumConnections OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Maximum Connections is the maximum number of simultaneous connections to the FTP Server."
+        ::= { fTP-Server 14 }
+
+    ftpsrvConnectionAttempts OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Connection Attempts is the number of connection attempts that have been made to the FTP Server."
+        ::= { fTP-Server 15 }
+
+    ftpsrvLogonAttempts OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Logon Attempts is the number of logon attempts that have been made by the FTP Server."
+        ::= { fTP-Server 16 }
+
+    -- iCMP MIB
+
+    iCMP OBJECT IDENTIFIER ::= { performance 4 }
+
+    icmpMessagesPerSec OBJECT-TYPE
+        SYNTAX Counter
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Messages/sec is the total rate that ICMP messages are received and sent by the entity.  The rate includes those messages received or sent in error."
+        ::= { iCMP 1 }
+
+    icmpMessagesReceivedPerSec OBJECT-TYPE
+        SYNTAX Counter
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Messages Received/sec is the rate that ICMP messages are received by the entity.  The rate includes those messages received in error."
+        ::= { iCMP 2 }
+
+    icmpMessagesReceivedErrors OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Messages Received Errors is the number of ICMP messages that the entity received but determined as having errors (bad ICMP checksums, bad length, etc.)."
+        ::= { iCMP 3 }
+
+    icmpReceivedDestUnreachable OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Received Destination Unreachable is the number of ICMP Destination Unreachable messages received."
+        ::= { iCMP 4 }
+
+    icmpReceivedTimeExceeded OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Received Time Exceeded is the number of ICMP Time Exceeded messages received."
+        ::= { iCMP 5 }
+
+    icmpReceivedParameterProblem OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Received Parameter Problem is the number of ICMP Parameter Problem messages received."
+        ::= { iCMP 6 }
+
+    icmpReceivedSourceQuench OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Received Source Quench is the number of ICMP Source Quench messages received."
+        ::= { iCMP 7 }
+
+    icmpReceivedRedirectPerSec OBJECT-TYPE
+        SYNTAX Counter
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Received Redirect/sec is the rate of ICMP Redirect messages received."
+        ::= { iCMP 8 }
+
+    icmpReceivedEchoPerSec OBJECT-TYPE
+        SYNTAX Counter
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Received Echo/sec is the rate of ICMP Echo messages received."
+        ::= { iCMP 9 }
+
+    icmpReceivedEchoReplyPerSec OBJECT-TYPE
+        SYNTAX Counter
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Received Echo Reply/sec is the rate of ICMP Echo Reply messages received."
+        ::= { iCMP 10 }
+
+    icmpReceivedTimestampPerSec OBJECT-TYPE
+        SYNTAX Counter
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Received Timestamp/sec is the rate of ICMP Timestamp (request) messages received."
+        ::= { iCMP 11 }
+
+    icmpReceivedTimestampReplyPerSec OBJECT-TYPE
+        SYNTAX Counter
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Received Timestamp Reply/sec is the rate of ICMP Timestamp Reply messages received."
+        ::= { iCMP 12 }
+
+    icmpReceivedAddressMask OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Received Address Mask is the number of ICMP Address Mask Request messages received."
+        ::= { iCMP 13 }
+
+    icmpReceivedAddressMaskReply OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Received Address Mask Reply is the number of ICMP Address Mask Reply messages received."
+        ::= { iCMP 14 }
+
+    icmpMessagesSentPerSec OBJECT-TYPE
+        SYNTAX Counter
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Messages Sent/sec is the rate that ICMP messages are attempted to be sent by the entity.  The rate includes those messages sent in error."
+        ::= { iCMP 15 }
+
+    icmpMessagesOutboundErrors OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Messages Outbound Errors is the number of ICMP messages that this entity did not send due to problems discovered within ICMP such as lack of buffers.  This value should not include errors discovered outside the ICMP layer such as the inability of IP to route the resultant datagram. In some implementations there may be no types of error that contribute to this counter's value."
+        ::= { iCMP 16 }
+
+    icmpSentDestinationUnreachable OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Sent Destination Unreachable is the number of ICMP Destination Unreachable messages sent."
+        ::= { iCMP 17 }
+
+    icmpSentTimeExceeded OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Sent Time Exceeded is the number of ICMP Time Exceeded messages sent."
+        ::= { iCMP 18 }
+
+    icmpSentParameterProblem OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Sent Parameter Problem is the number of ICMP Parameter Problem messages sent."
+        ::= { iCMP 19 }
+
+    icmpSentSourceQuench OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Sent Source Quench is the number of ICMP Source Quench messages sent."
+        ::= { iCMP 20 }
+
+    icmpSentRedirectPerSec OBJECT-TYPE
+        SYNTAX Counter
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Sent Redirect/sec is the rate of ICMP Redirect messages sent."
+        ::= { iCMP 21 }
+
+    icmpSentEchoPerSec OBJECT-TYPE
+        SYNTAX Counter
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Sent Echo/sec is the rate of ICMP Echo messages sent."
+        ::= { iCMP 22 }
+
+    icmpSentEchoReplyPerSec OBJECT-TYPE
+        SYNTAX Counter
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Sent Echo Reply/sec is the rate of ICMP Echo Reply messages sent."
+        ::= { iCMP 23 }
+
+    icmpSentTimestampPerSec OBJECT-TYPE
+        SYNTAX Counter
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Sent Timestamp/sec is the rate of ICMP Timestamp (request) messages sent."
+        ::= { iCMP 24 }
+
+    icmpSentTimestampReplyPerSec OBJECT-TYPE
+        SYNTAX Counter
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Sent Timestamp Reply/sec is the rate of ICMP Timestamp Reply messages sent."
+        ::= { iCMP 25 }
+
+    icmpSentAddressMask OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Sent Address Mask is the number of ICMP Address Mask Request messages sent."
+        ::= { iCMP 26 }
+
+    icmpSentAddressMaskReply OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Sent Address Mask Reply is the number of ICMP Address Mask Reply messages sent."
+        ::= { iCMP 27 }
+
+    -- iP MIB
+
+    iP OBJECT IDENTIFIER ::= { performance 5 }
+
+    ipDatagramsPerSec OBJECT-TYPE
+        SYNTAX Counter
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Datagrams/sec is the rate that IP datagrams are received from or sent to the interfaces, including those in error.  Any forwarded datagrams are not included in this rate."
+        ::= { iP 1 }
+
+    ipDatagramsReceivedPerSec OBJECT-TYPE
+        SYNTAX Counter
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Datagrams Received/sec is the rate that IP datagrams are received from the interfaces, including those in error."
+        ::= { iP 2 }
+
+    ipDatagramsReceivedHeaderErrors OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Datagrams Received Header Errors is the number of input datagrams discarded due to errors in their IP headers, including bad checksums, version number mismatch, other format errors, time-to-live exceeded, errors discovered in processing their IP options, etc."
+        ::= { iP 3 }
+
+    ipDatagramsReceivedAddressErrors OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Datagrams Received Address Errors is the number of input datagrams discarded because the IP address in their IP header's destination field was not a valid address to be received at this entity.  This count includes invalid addresses (e.g., 0.0.  0.0) and addresses of unsupported Classes (e.g., Class E).  For entities that are not IP Gateways and therefore do not forward datagrams, this counter includes datagrams discarded because the destination address was not a local address."
+        ::= { iP 4 }
+
+    ipDatagramsForwardedPerSec OBJECT-TYPE
+        SYNTAX Counter
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Datagrams Forwarded/sec is the rate of input datagrams for that this entity was not their final IP destination, as a result of which an attempt was made to find a route to forward them to that final destination.  In entities that do not act as IP Gateways, this rate will include only those packets that were Source-Routed via this entity, and the Source-Route option processing was successful."
+        ::= { iP 5 }
+
+    ipDatagramsReceivedUnknownProtocol OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Datagrams Received Unknown Protocol is the number of locally-addressed datagrams received successfully but discarded because of an unknown or unsupported protocol."
+        ::= { iP 6 }
+
+    ipDatagramsReceivedDiscarded OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Datagrams Received Discarded is the number of input IP datagrams for which no problems were encountered to prevent their continued processing, but which were discarded (e.g., for lack of buffer space). This counter does not include any datagrams discarded while awaiting re-assembly."
+        ::= { iP 7 }
+
+    ipDatagramsReceivedDeliveredPerSec OBJECT-TYPE
+        SYNTAX Counter
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Datagrams Received Delivered/sec is the rate that input datagrams are successfully delivered to IP user-protocols (including ICMP)."
+        ::= { iP 8 }
+
+    ipDatagramsSentPerSec OBJECT-TYPE
+        SYNTAX Counter
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Datagrams Sent/sec is the rate that IP datagrams are supplied to IP for transmission by local IP user-protocols (including ICMP). That this counter does not include any datagrams counted in Datagrams Forwarded."
+        ::= { iP 9 }
+
+    ipDatagramsOutboundDiscarded OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Datagrams Outbound Discarded is the number of output IP datagrams for which no problems were encountered to prevent their transmission to their destination, but which were discarded (e.g., for lack of buffer space.)  This counter would include datagrams counted in Datagrams Forwarded if any such packets met this (discretionary) discard criterion."
+        ::= { iP 10 }
+
+    ipDatagramsOutboundNoRoute OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Datagrams Outbound No Route is the number of IP datagrams discarded because no route could be found to transmit them to their destination. This counter includes any packets counted in Datagrams Forwarded that meet this `no route' criterion."
+        ::= { iP 11 }
+
+    ipFragmentsReceivedPerSec OBJECT-TYPE
+        SYNTAX Counter
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Fragments Received/sec is the rate that IP fragments that need to be re-assembled at this entity are received."
+        ::= { iP 12 }
+
+    ipFragmentsRe-assembledPerSec OBJECT-TYPE
+        SYNTAX Counter
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Fragments Re-assembled/sec is the rate that IP fragments are successfully re-assembled."
+        ::= { iP 13 }
+
+    ipFragmentRe-assemblyFailures OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Fragment Re-assembly Failures is the number of failures detected by the IP re-assembly algorithm (for whatever reason: timed out, errors, etc.)  This is not necessarily a count of discarded IP fragments since some algorithms (notably RFC 815) can lose track of the number of fragments by combining them as they are received."
+        ::= { iP 14 }
+
+    ipFragmentedDatagramsPerSec OBJECT-TYPE
+        SYNTAX Counter
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Fragmented Datagrams/sec is the rate that datagrams are successfully fragmented at this entity."
+        ::= { iP 15 }
+
+    ipFragmentationFailures OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Fragmentation Failures is the number of IP datagrams that have been discarded because they needed to be fragmented at this entity but could not be, e.g., because their `Don't Fragment' flag was set."
+        ::= { iP 16 }
+
+    ipFragmentsCreatedPerSec OBJECT-TYPE
+        SYNTAX Counter
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Fragments Created/sec is the rate that IP datagram fragments have been generated as a result of fragmentation at this entity."
+        ::= { iP 17 }
+
+    -- logicalDisk MIB
+
+
+    logdsklogicalDiskTable OBJECT-TYPE
+        SYNTAX SEQUENCE OF LogdsklogicalDiskEntry
+        ACCESS not-accessible
+        STATUS mandatory
+        DESCRIPTION
+            "A table containing performance information for instances of 'logicalDisk' objects."
+        ::= { performance 6 }
+
+    logdsklogicalDiskEntry OBJECT-TYPE
+        SYNTAX LogdsklogicalDiskEntry
+        ACCESS not-accessible
+        STATUS mandatory
+        DESCRIPTION
+            "Performance information for one particular instance of 'logicalDisk' object."
+        INDEX { logdsklogicalDiskInstance }
+        ::= { logdsklogicalDiskTable 1 }
+
+    LogdsklogicalDiskEntry ::=
+        SEQUENCE {
+            logdsklogicalDiskInstance DisplayString,
+            logdskPercentFreeSpace INTEGER,
+            logdskFreeMegabytes INTEGER,
+            logdskCurrentDiskQueueLength INTEGER,
+            logdskPercentDiskTime TimeTicks,
+            logdskAvgDiskQueueLength INTEGER,
+            logdskPercentDiskReadTime TimeTicks,
+            logdskAvgDiskReadQueueLength INTEGER,
+            logdskPercentDiskWriteTime TimeTicks,
+            logdskAvgDiskWriteQueueLength INTEGER,
+            logdskAvgDiskSecPerTransfer TimeTicks,
+            logdskAvgDiskSecPerRead TimeTicks,
+            logdskAvgDiskSecPerWrite TimeTicks,
+            logdskDiskTransfersPerSec Counter,
+            logdskDiskReadsPerSec Counter,
+            logdskDiskWritesPerSec Counter,
+            logdskDiskBytesPerSec INTEGER,
+            logdskDiskReadBytesPerSec INTEGER,
+            logdskDiskWriteBytesPerSec INTEGER
+        }
+
+    logdsklogicalDiskInstance OBJECT-TYPE
+        SYNTAX DisplayString
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Instance name."
+        ::= { logdsklogicalDiskEntry 1 }
+
+    logdskPercentFreeSpace OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Percent Free Space is the ratio of the free space available on the logical disk unit to the total usable space provided by the selected logical disk drive"
+        ::= { logdsklogicalDiskEntry 2 }
+
+    logdskFreeMegabytes OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Free Megabytes displays the unallocated space on the disk drive in megabytes. One megabyte = 1,048,576 bytes."
+        ::= { logdsklogicalDiskEntry 3 }
+
+    logdskCurrentDiskQueueLength OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Current Disk Queue Length is the number of requests outstanding on the disk at the time the performance data is collected.  It includes requests in service at the time of the snapshot.  This is an instantaneous length, not an average over the time interval.  Multi-spindle disk devices can have multiple requests active at one time, but other concurrent requests are awaiting service.  This counter may reflect a transitory high or low queue length, but if there is a sustained load on the disk drive, it is likely that this will be consistently high.  Requests are experiencing delays proportional to the length of this queue minus the number of spindles on the disks.  This difference should average less than 2 for good performance."
+        ::= { logdsklogicalDiskEntry 4 }
+
+    logdskPercentDiskTime OBJECT-TYPE
+        SYNTAX TimeTicks
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Disk Time is the percentage of elapsed time that the selected disk drive is busy servicing read or write requests."
+        ::= { logdsklogicalDiskEntry 5 }
+
+    logdskAvgDiskQueueLength OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Avg. Disk Queue Length is the average number of both read and write requests that were queued for the selected disk during the sample interval."
+        ::= { logdsklogicalDiskEntry 6 }
+
+    logdskPercentDiskReadTime OBJECT-TYPE
+        SYNTAX TimeTicks
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Disk Read Time is the percentage of elapsed time that the selected disk drive is busy servicing read requests."
+        ::= { logdsklogicalDiskEntry 7 }
+
+    logdskAvgDiskReadQueueLength OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Avg. Disk Read Queue Length is the average number of read requests that were queued for the selected disk during the sample interval."
+        ::= { logdsklogicalDiskEntry 8 }
+
+    logdskPercentDiskWriteTime OBJECT-TYPE
+        SYNTAX TimeTicks
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Disk Write Time is the percentage of elapsed time that the selected disk drive is busy servicing write requests."
+        ::= { logdsklogicalDiskEntry 9 }
+
+    logdskAvgDiskWriteQueueLength OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Avg. Disk Write Queue Length is the average number of write requests that were queued for the selected disk during the sample interval."
+        ::= { logdsklogicalDiskEntry 10 }
+
+    logdskAvgDiskSecPerTransfer OBJECT-TYPE
+        SYNTAX TimeTicks
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Avg. Disk sec/Transfer is the time in seconds of the average disk transfer."
+        ::= { logdsklogicalDiskEntry 11 }
+
+    logdskAvgDiskSecPerRead OBJECT-TYPE
+        SYNTAX TimeTicks
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Avg. Disk sec/Read is the average time in seconds of a read of data from the disk."
+        ::= { logdsklogicalDiskEntry 12 }
+
+    logdskAvgDiskSecPerWrite OBJECT-TYPE
+        SYNTAX TimeTicks
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Avg. Disk sec/Write is the average time in seconds of a write of data to the disk."
+        ::= { logdsklogicalDiskEntry 13 }
+
+    logdskDiskTransfersPerSec OBJECT-TYPE
+        SYNTAX Counter
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Disk Transfers/sec is the rate of read and write operations on the disk."
+        ::= { logdsklogicalDiskEntry 14 }
+
+    logdskDiskReadsPerSec OBJECT-TYPE
+        SYNTAX Counter
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Disk Reads/sec is the rate of read operations on the disk."
+        ::= { logdsklogicalDiskEntry 15 }
+
+    logdskDiskWritesPerSec OBJECT-TYPE
+        SYNTAX Counter
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Disk Writes/sec is the rate of write operations on the disk."
+        ::= { logdsklogicalDiskEntry 16 }
+
+    logdskDiskBytesPerSec OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Disk Bytes/sec is the rate bytes are transferred to or from the disk during write or read operations."
+        ::= { logdsklogicalDiskEntry 17 }
+
+    logdskDiskReadBytesPerSec OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Disk Read Bytes/sec is the rate bytes are transferred from the disk during read operations."
+        ::= { logdsklogicalDiskEntry 18 }
+
+    logdskDiskWriteBytesPerSec OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Disk Write Bytes is rate bytes are transferred to the disk during write operations."
+        ::= { logdsklogicalDiskEntry 19 }
+
+    -- memory MIB
+
+    memory OBJECT IDENTIFIER ::= { performance 7 }
+
+    memAvailableBytes OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Available Bytes displays the size of the virtual memory currently on the Zeroed, Free, and Standby lists.  Zeroed and Free memory is ready for use, with Zeroed memory cleared to zeros.  Standby memory is memory removed from a process's Working Set but still available.  Notice that this is an instantaneous count, not an average over the time interval."
+        ::= { memory 1 }
+
+    memCommittedBytes OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Committed Bytes displays the size of virtual memory (in bytes) that has been Committed (as opposed to simply reserved).  Committed memory must have backing (i.e., disk) storage available, or must be assured never to need disk storage (because main memory is large enough to hold it.)  Notice that this is an instantaneous count, not an average over the time interval."
+        ::= { memory 2 }
+
+    memCommitLimit OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Commit Limit is the size (in bytes) of virtual memory that can be committed without having to extend the paging file(s).  If the paging file(s) can be extended, this is a soft limit."
+        ::= { memory 3 }
+
+    memPageFaultsPerSec OBJECT-TYPE
+        SYNTAX Counter
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Page Faults/sec is a count of the Page Faults in the processor.  A page fault occurs when a process refers to a virtual memory page that is not in its Working Set in main memory.  A Page Fault will not cause the page to be fetched from disk if that page is on the standby list, and hence already in main memory, or if it is in use by another process with whom the page is shared."
+        ::= { memory 4 }
+
+    memWriteCopiesPerSec OBJECT-TYPE
+        SYNTAX Counter
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Write Copies/sec is the number of page faults that have been satisfied by making a copy of a page when an attempt to write to the page is made.  This is an economical way of sharing data since the copy of the page is only made on an attempt to write to the page; otherwise, the page is shared."
+        ::= { memory 5 }
+
+    memTransitionFaultsPerSec OBJECT-TYPE
+        SYNTAX Counter
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Transition Faults/sec is the number of page faults resolved by recovering pages that were in transition, i.e., being written to disk at the time of the page fault.  The pages were recovered without additional disk activity."
+        ::= { memory 6 }
+
+    memCacheFaultsPerSec OBJECT-TYPE
+        SYNTAX Counter
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Cache Faults occur whenever the Cache manager does not find a file's page in the immediate Cache and must ask the memory manager to locate the page elsewhere in memory or on the disk so that it can be loaded into the immediate Cache."
+        ::= { memory 7 }
+
+    memDemandZeroFaultsPerSec OBJECT-TYPE
+        SYNTAX Counter
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Demand Zero Faults are the number of page faults for pages that must be filled with zeros before the fault is satisfied.  If the Zeroed list is not empty, the fault can be resolved by removing a page from the Zeroed list."
+        ::= { memory 8 }
+
+    memPagesPerSec OBJECT-TYPE
+        SYNTAX Counter
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Pages/sec is the number of pages read from the disk or written to the disk to resolve memory references to pages that were not in memory at the time of the reference.  This is the sum of Pages Input/sec and Pages Output/sec.  This counter includes paging traffic on behalf of the system Cache to access file data for applications.  This value also includes the pages to/from non-cached mapped memory files.  This is the primary counter to observe if you are concerned about excessive memory pressure (that is, thrashing), and the excessive paging that may result."
+        ::= { memory 9 }
+
+    memPagesInputPerSec OBJECT-TYPE
+        SYNTAX Counter
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Pages Input/sec is the number of pages read from the disk to resolve memory references to pages that were not in memory at the time of the reference.  This counter includes paging traffic on behalf of the system Cache to access file data for applications.  This is an important counter to observe if you are concerned about excessive memory pressure (that is, thrashing), and the excessive paging that may result."
+        ::= { memory 10 }
+
+    memPageReadsPerSec OBJECT-TYPE
+        SYNTAX Counter
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Page Reads/sec is the number of times the disk was read to retrieve pages of virtual memory necessary to resolve page faults.  Multiple pages can be read during a disk read operation."
+        ::= { memory 11 }
+
+    memPagesOutputPerSec OBJECT-TYPE
+        SYNTAX Counter
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Pages Output/sec is a count of the number of pages that are written to disk because the pages have been modified in main memory."
+        ::= { memory 12 }
+
+    memPageWritesPerSec OBJECT-TYPE
+        SYNTAX Counter
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Page Writes/sec is a count of the number of times pages have been written to the disk because they were changed since last retrieved.  Each such write operation may transfer a number of pages."
+        ::= { memory 13 }
+
+    memPoolPagedBytes OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Pool Paged Bytes is the number of bytes in the Paged Pool, a system memory area where space is acquired by operating system components as they accomplish their appointed tasks.  Paged Pool pages can be paged out to the paging file when not accessed by the system for sustained periods of time."
+        ::= { memory 14 }
+
+    memPoolNonpagedBytes OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Pool Nonpaged Bytes is the number of bytes in the Nonpaged Pool, a system memory area where space is acquired by operating system components as they accomplish their appointed tasks.  Nonpaged Pool pages cannot be paged out to the paging file, but instead remain in main memory as long as they are allocated."
+        ::= { memory 15 }
+
+    memPoolPagedAllocs OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Pool Paged Allocs is the number of calls to allocate space in the system Paged Pool.  Paged Pool is a system memory area where space is acquired by operating system components as they accomplish their appointed tasks.  Paged Pool pages can be paged out to the paging file when not accessed by the system for sustained periods of time."
+        ::= { memory 16 }
+
+    memPoolNonpagedAllocs OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Pool Nonpaged Allocs is the number of calls to allocate space in the system Nonpaged Pool.  Nonpaged Pool is a system memory area where space is acquired by operating system components as they accomplish their appointed tasks.  Nonpaged Pool pages cannot be paged out to the paging file, but instead remain in main memory as long as they are allocated."
+        ::= { memory 17 }
+
+    memFreeSystemPageTableEntries OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "The number of Page Table Entries not currently in use by the system."
+        ::= { memory 18 }
+
+    memCacheBytes OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Cache Bytes measures the number of bytes currently in use by the system Cache.  The system Cache is used to buffer data retrieved from disk or LAN.  The system Cache uses memory not in use by active processes in the computer."
+        ::= { memory 19 }
+
+    memCacheBytesPeak OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Cache Bytes Peak measures the maximum number of bytes used by the system Cache.  The system Cache is used to buffer data retrieved from disk or LAN.  The system Cache uses memory not in use by active processes in the computer."
+        ::= { memory 20 }
+
+    memPoolPagedResidentBytes OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Pool Paged Resident Bytes is the size of paged Pool resident in core memory.  This is the actual cost of the paged Pool allocation, since this is actively in use and using real physical memory."
+        ::= { memory 21 }
+
+    memSystemCodeTotalBytes OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "System Code Total Bytes is the number of bytes of pagable pages in ntoskrnl.exe, hal.dll, and the boot drivers and file systems loaded by ntldr/osloader."
+        ::= { memory 22 }
+
+    memSystemCodeResidentBytes OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "System Code Resident Bytes is the number of bytes of System Code Total Bytes currently resident in core memory.  This is the code working set of the pagable executive.  In addition to this, there is another ~300k bytes of non-paged kernel code."
+        ::= { memory 23 }
+
+    memSystemDriverTotalBytes OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "System Driver Total Bytes is the number of bytes of pagable pages in all other loaded device drivers."
+        ::= { memory 24 }
+
+    memSystemDriverResidentBytes OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "System Driver Resident Bytes is the number of bytes of System Driver Total Bytes currently resident in core memory.  This number is the code working set of the pagable drivers.  In addition to this, there is another ~700k bytes of non-paged driver code."
+        ::= { memory 25 }
+
+    memSystemCacheResidentBytes OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "System Cache Resident Bytes is the number of bytes currently resident in the global disk cache."
+        ::= { memory 26 }
+
+    memPercentCommittedBytesInUse OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "% Committed Bytes In Use is the ratio of the Commited Bytes to the Commit Limit. This represents the amount of available virtual memory in use. Note that the Commit Limit may change if the paging file is extended. This is an instantaneous value, not an average."
+        ::= { memory 27 }
+
+    -- nBT Connection MIB
+
+    nbtconnBT-ConnectionTable OBJECT-TYPE
+        SYNTAX SEQUENCE OF NbtconnBT-ConnectionEntry
+        ACCESS not-accessible
+        STATUS mandatory
+        DESCRIPTION
+            "A table containing performance information for instances of 'nBT-Connection' objects."
+        ::= { performance 8 }
+
+    nbtconnBT-ConnectionEntry OBJECT-TYPE
+        SYNTAX NbtconnBT-ConnectionEntry
+        ACCESS not-accessible
+        STATUS mandatory
+        DESCRIPTION
+            "Performance information for one particular instance of 'nBT-Connection' object."
+        INDEX { nbtconnBT-ConnectionInstance }
+        ::= { nbtconnBT-ConnectionTable 1 }
+
+    NbtconnBT-ConnectionEntry ::=
+        SEQUENCE {
+            nbtconnBT-ConnectionInstance DisplayString,
+            nbtconBytesReceivedPerSec INTEGER,
+            nbtconBytesSentPerSec INTEGER,
+            nbtconBytesTotalPerSec INTEGER
+        }
+
+    nbtconnBT-ConnectionInstance OBJECT-TYPE
+        SYNTAX DisplayString
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Instance name."
+        ::= { nbtconnBT-ConnectionEntry 1 }
+
+    nbtconBytesReceivedPerSec OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Bytes Received/sec is the rate that bytes are received by the local computer over an NBT connection to some remote computer.  All the bytes received by the local computer over the particular NBT connection are counted."
+        ::= { nbtconnBT-ConnectionEntry 2 }
+
+    nbtconBytesSentPerSec OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Bytes Sent/sec is the rate that bytes are sent by the local computer over an NBT connection to some remote computer.  All the bytes sent by the local computer over the particular NBT connection are counted."
+        ::= { nbtconnBT-ConnectionEntry 3 }
+
+    nbtconBytesTotalPerSec OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Total Bytes/sec is the rate that bytes are sent or received by the local computer over an NBT connection to some remote computer.  All the bytes sent or received by the local computer over the particular NBT connection are counted."
+        ::= { nbtconnBT-ConnectionEntry 4 }
+
+    -- netBEUI MIB
+
+    nbeuinetBEUITable OBJECT-TYPE
+        SYNTAX SEQUENCE OF NbeuinetBEUIEntry
+        ACCESS not-accessible
+        STATUS mandatory
+        DESCRIPTION
+            "A table containing performance information for instances of 'netBEUI' objects."
+        ::= { performance 9 }
+
+    nbeuinetBEUIEntry OBJECT-TYPE
+        SYNTAX NbeuinetBEUIEntry
+        ACCESS not-accessible
+        STATUS mandatory
+        DESCRIPTION
+            "Performance information for one particular instance of 'netBEUI' object."
+        INDEX { nbeuinetBEUIInstance }
+        ::= { nbeuinetBEUITable 1 }
+
+    NbeuinetBEUIEntry ::=
+        SEQUENCE {
+            nbeuinetBEUIInstance DisplayString,
+            nbeuiDatagramsPerSec Counter,
+            nbeuiDatagramBytesPerSec INTEGER,
+            nbeuiPacketsPerSec Counter,
+            nbeuiFramesPerSec Counter,
+            nbeuiFrameBytesPerSec INTEGER,
+            nbeuiBytesTotalPerSec INTEGER,
+            nbeuiConnectionsOpen INTEGER,
+            nbeuiConnectionsNoRetries INTEGER,
+            nbeuiConnectionsWithRetries INTEGER,
+            nbeuiDisconnectsLocal INTEGER,
+            nbeuiDisconnectsRemote INTEGER,
+            nbeuiFailuresLink INTEGER,
+            nbeuiFailuresAdapter INTEGER,
+            nbeuiConnectionSessionTimeouts INTEGER,
+            nbeuiConnectionsCanceled INTEGER,
+            nbeuiFailuresResourceRemote INTEGER,
+            nbeuiFailuresResourceLocal INTEGER,
+            nbeuiFailuresNotFound INTEGER,
+            nbeuiFailuresNoListen INTEGER,
+            nbeuiDatagramsSentPerSec Counter,
+            nbeuiDatagramBytesSentPerSec INTEGER,
+            nbeuiDatagramsReceivedPerSec Counter,
+            nbeuiDatagramBytesReceivedPerSec INTEGER,
+            nbeuiPacketsSentPerSec Counter,
+            nbeuiPacketsReceivedPerSec Counter,
+            nbeuiFramesSentPerSec Counter,
+            nbeuiFrameBytesSentPerSec INTEGER,
+            nbeuiFramesReceivedPerSec Counter,
+            nbeuiFrameBytesReceivedPerSec INTEGER,
+            nbeuiFramesRe-SentPerSec Counter,
+            nbeuiFrameBytesRe-SentPerSec INTEGER,
+            nbeuiFramesRejectedPerSec Counter,
+            nbeuiFrameBytesRejectedPerSec INTEGER,
+            nbeuiExpirationsResponse INTEGER,
+            nbeuiExpirationsAck INTEGER,
+            nbeuiWindowSendMaximum INTEGER,
+            nbeuiWindowSendAverage INTEGER,
+            nbeuiPiggybackAckQueuedPerSec Counter,
+            nbeuiPiggybackAckTimeouts INTEGER
+        }
+
+    nbeuinetBEUIInstance OBJECT-TYPE
+        SYNTAX DisplayString
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Instance name."
+        ::= { nbeuinetBEUIEntry 1 }
+
+    nbeuiDatagramsPerSec OBJECT-TYPE
+        SYNTAX Counter
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Datagrams/sec is the rate that datagrams are processed by the computer.  This counter displays the sum of datagrams sent and datagrams received.  A datagram is a connectionless packet whose delivery to a remote is not guaranteed."
+        ::= { nbeuinetBEUIEntry 2 }
+
+    nbeuiDatagramBytesPerSec OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Datagram Bytes/sec is the rate that datagram bytes are processed by the computer.  This counter is the sum of datagram bytes that are sent as well as received.  A datagram is a connectionless packet whose delivery to a remote is not guaranteed."
+        ::= { nbeuinetBEUIEntry 3 }
+
+    nbeuiPacketsPerSec OBJECT-TYPE
+        SYNTAX Counter
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Packets/sec is the rate that packets are processed by the computer.  This count is the sum of Packets Sent and Packets Received per second.  This counter includes all packets processed: control as well as data packets."
+        ::= { nbeuinetBEUIEntry 4 }
+
+    nbeuiFramesPerSec OBJECT-TYPE
+        SYNTAX Counter
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Frames/sec is the rate that data frames (or packets) are processed by the computer.  This counter is the sum of data frames sent and data frames received.  This counter only counts those frames (packets) that carry data."
+        ::= { nbeuinetBEUIEntry 5 }
+
+    nbeuiFrameBytesPerSec OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Frame Bytes/sec is the rate that data bytes are processed by the computer.  This counter is the sum of data frame bytes sent and received.  This counter only counts the byte in frames (packets) that carry data."
+        ::= { nbeuinetBEUIEntry 6 }
+
+    nbeuiBytesTotalPerSec OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Bytes Total/sec is the sum of Frame Bytes/sec and Datagram Bytes/sec.  This is the total rate of bytes sent to or received from the network by the protocol, but only counts the bytes in frames (i.e., packets) which carry data."
+        ::= { nbeuinetBEUIEntry 7 }
+
+    nbeuiConnectionsOpen OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Connections Open is the number of connections currently open for this protocol.  This counter shows the current count only and does not accumulate over time."
+        ::= { nbeuinetBEUIEntry 8 }
+
+    nbeuiConnectionsNoRetries OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Connections No Retries is the total count of connections that were successfully made on the first try.  This number is an accumulator and shows a running total."
+        ::= { nbeuinetBEUIEntry 9 }
+
+    nbeuiConnectionsWithRetries OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Connections With Retries is the total count of connections that were made after retrying the attempt.  A retry occurs when the first connection attempt failed.  This number is an accumulator and shows a running total."
+        ::= { nbeuinetBEUIEntry 10 }
+
+    nbeuiDisconnectsLocal OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Disconnects Local is the number of session disconnections that were initiated by the local computer.  This number is an accumulator and shows a running total."
+        ::= { nbeuinetBEUIEntry 11 }
+
+    nbeuiDisconnectsRemote OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Disconnects Remote is the number of session disconnections that were initiated by the remote computer.  This number is an accumulator and shows a running total."
+        ::= { nbeuinetBEUIEntry 12 }
+
+    nbeuiFailuresLink OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Failures Link is the number of connections that were dropped due to a link failure.  This number is an accumulator and shows a running total."
+        ::= { nbeuinetBEUIEntry 13 }
+
+    nbeuiFailuresAdapter OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Failures Adapter is the number of connections that were dropped due to an adapter failure.  This number is an accumulator and shows a running total."
+        ::= { nbeuinetBEUIEntry 14 }
+
+    nbeuiConnectionSessionTimeouts OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Connection Session Timeouts is the number of connections that were dropped due to a session timeout.  This number is an accumulator and shows a running total."
+        ::= { nbeuinetBEUIEntry 15 }
+
+    nbeuiConnectionsCanceled OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Connections Canceled is the number of connections that were canceled.  This number is an accumulator and shows a running total."
+        ::= { nbeuinetBEUIEntry 16 }
+
+    nbeuiFailuresResourceRemote OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Failures Resource Remote is the number of connections that failed because of resource problems or shortages on the remote computer.  This number is an accumulator and shows a running total."
+        ::= { nbeuinetBEUIEntry 17 }
+
+    nbeuiFailuresResourceLocal OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Failures Resource Local is the number of connections that failed because of resource problems or shortages on the local computer.  This number is an accumulator and shows a running total."
+        ::= { nbeuinetBEUIEntry 18 }
+
+    nbeuiFailuresNotFound OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Failures Not Found is the number of connection attempts that failed because the remote computer could not be found.  This number is an accumulator and shows a running total."
+        ::= { nbeuinetBEUIEntry 19 }
+
+    nbeuiFailuresNoListen OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Failures No Listen is the number of connections that were rejected because the remote computer was not listening for connection requests."
+        ::= { nbeuinetBEUIEntry 20 }
+
+    nbeuiDatagramsSentPerSec OBJECT-TYPE
+        SYNTAX Counter
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Datagrams Sent/sec is the rate that datagrams are sent from the computer.  A datagram is a connectionless packet whose delivery to a remote computer is not guaranteed."
+        ::= { nbeuinetBEUIEntry 21 }
+
+    nbeuiDatagramBytesSentPerSec OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Datagram Bytes Sent/sec is the rate that datagram bytes are sent from the computer.  A datagram is a connectionless packet whose delivery to a remote computer is not guaranteed."
+        ::= { nbeuinetBEUIEntry 22 }
+
+    nbeuiDatagramsReceivedPerSec OBJECT-TYPE
+        SYNTAX Counter
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Datagrams Received/sec is the rate that datagrams are received by the computer.  A datagram is a connectionless packet whose delivery to a remote computer is not guaranteed."
+        ::= { nbeuinetBEUIEntry 23 }
+
+    nbeuiDatagramBytesReceivedPerSec OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Datagram Bytes Received/sec is the rate that datagram bytes are received by the computer.  A datagram is a connectionless packet whose delivery to a remote computer is not guaranteed."
+        ::= { nbeuinetBEUIEntry 24 }
+
+    nbeuiPacketsSentPerSec OBJECT-TYPE
+        SYNTAX Counter
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Packets Sent/sec is the rate that packets are sent by the computer.  This counter counts all packets sent by the computer, i.e. control as well as data packets."
+        ::= { nbeuinetBEUIEntry 25 }
+
+    nbeuiPacketsReceivedPerSec OBJECT-TYPE
+        SYNTAX Counter
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Packets Received/sec is the rate that packets are received by the computer.  This counter counts all packets processed: control as well as data packets."
+        ::= { nbeuinetBEUIEntry 26 }
+
+    nbeuiFramesSentPerSec OBJECT-TYPE
+        SYNTAX Counter
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Frames Sent/sec is the rate that data frames are sent by the computer.  This counter only counts the frames (packets) that carry data."
+        ::= { nbeuinetBEUIEntry 27 }
+
+    nbeuiFrameBytesSentPerSec OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Frame Bytes Sent/sec is the rate that data bytes are sent by the computer.  This counter only counts the bytes in frames (packets) that carry data."
+        ::= { nbeuinetBEUIEntry 28 }
+
+    nbeuiFramesReceivedPerSec OBJECT-TYPE
+        SYNTAX Counter
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Frames Received/sec is the rate that data frames are received by the computer.  This counter only counts the frames (packets) that carry data."
+        ::= { nbeuinetBEUIEntry 29 }
+
+    nbeuiFrameBytesReceivedPerSec OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Frame Bytes Received/sec is the rate that data bytes are received by the computer.  This counter only counts the frames (packets) that carry data."
+        ::= { nbeuinetBEUIEntry 30 }
+
+    nbeuiFramesRe-SentPerSec OBJECT-TYPE
+        SYNTAX Counter
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Frames Re-Sent/sec is the rate that data frames (packets) are re-sent by the computer.  This counter only counts the frames or packets that carry data."
+        ::= { nbeuinetBEUIEntry 31 }
+
+    nbeuiFrameBytesRe-SentPerSec OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Frame Bytes Re-Sent/sec is the rate that data bytes are re-sent by the computer.  This counter only counts the bytes in frames that carry data."
+        ::= { nbeuinetBEUIEntry 32 }
+
+    nbeuiFramesRejectedPerSec OBJECT-TYPE
+        SYNTAX Counter
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Frames Rejected/sec is the rate that data frames are rejected.  This counter only counts the frames (packets) that carry data."
+        ::= { nbeuinetBEUIEntry 33 }
+
+    nbeuiFrameBytesRejectedPerSec OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Frame Bytes Rejected/sec is the rate that data bytes are rejected.  This counter only counts the bytes in data frames (packets) that carry data."
+        ::= { nbeuinetBEUIEntry 34 }
+
+    nbeuiExpirationsResponse OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Expirations Response is the count of T1 timer expirations."
+        ::= { nbeuinetBEUIEntry 35 }
+
+    nbeuiExpirationsAck OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Expirations Ack is the count of T2 timer expirations"
+        ::= { nbeuinetBEUIEntry 36 }
+
+    nbeuiWindowSendMaximum OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Window Send Maximum is the maximum number of bytes of data that will be sent before waiting for an acknowledgment from the remote computer."
+        ::= { nbeuinetBEUIEntry 37 }
+
+    nbeuiWindowSendAverage OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Window Send Average is the running average number of data bytes that were sent before waiting for an acknowledgment from the remote computer."
+        ::= { nbeuinetBEUIEntry 38 }
+
+    nbeuiPiggybackAckQueuedPerSec OBJECT-TYPE
+        SYNTAX Counter
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Piggyback Ack Queued/sec is the rate that piggybacked acknowledgments are queued. Piggyback acknowledgments are acknowledgments to received packets that are to be included in the next outgoing packet to the remote computer."
+        ::= { nbeuinetBEUIEntry 39 }
+
+    nbeuiPiggybackAckTimeouts OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Piggyback Ack Timeouts is the number of times that a piggyback acknowledgment could not be sent because there was no outgoing packet to the remote on which to piggyback.  A piggyback ack is an acknowledgment to a received packet that is sent along in an outgoing data packet to the remote computer.  If no outgoing packet is sent within the timeout period, then an ack packet is sent and this counter is incremented."
+        ::= { nbeuinetBEUIEntry 40 }
+
+    -- netBEUI Resource MIB
+
+    nbeuirnetBEUI-ResourceTable OBJECT-TYPE
+        SYNTAX SEQUENCE OF NbeuirnetBEUI-ResourceEntry
+        ACCESS not-accessible
+        STATUS mandatory
+        DESCRIPTION
+            "A table containing performance information for instances of 'netBEUI-Resource' objects."
+        ::= { performance 10 }
+
+    nbeuirnetBEUI-ResourceEntry OBJECT-TYPE
+        SYNTAX NbeuirnetBEUI-ResourceEntry
+        ACCESS not-accessible
+        STATUS mandatory
+        DESCRIPTION
+            "Performance information for one particular instance of 'netBEUI-Resource' object."
+        INDEX { nbeuirnetBEUI-ResourceInstance }
+        ::= { nbeuirnetBEUI-ResourceTable 1 }
+
+    NbeuirnetBEUI-ResourceEntry ::=
+        SEQUENCE {
+            nbeuirnetBEUI-ResourceInstance DisplayString,
+            nbeuirUsedMaximum INTEGER,
+            nbeuirUsedAverage INTEGER,
+            nbeuirTimesExhausted INTEGER
+        }
+
+    nbeuirnetBEUI-ResourceInstance OBJECT-TYPE
+        SYNTAX DisplayString
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Instance name."
+        ::= { nbeuirnetBEUI-ResourceEntry 1 }
+
+    nbeuirUsedMaximum OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Used Maximum is the maximum number of NetBEUI resources (buffers) in use at any point in time.  This value is useful in sizing the maximum resources provided.  The number in parentheses following the resource name is used to identify the resource in Event Log messages."
+        ::= { nbeuirnetBEUI-ResourceEntry 2 }
+
+    nbeuirUsedAverage OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Used Average is the current number of resources (buffers) in use at this time.  The number in parentheses following the resource name is used to identify the resource in Event Log messages."
+        ::= { nbeuirnetBEUI-ResourceEntry 3 }
+
+    nbeuirTimesExhausted OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Times Exhausted is the number of times all the resources (buffers) were in use.  The number in parentheses following the resource name is used to identify the resource in Event Log messages."
+        ::= { nbeuirnetBEUI-ResourceEntry 4 }
+
+    -- network Interface MIB
+
+    netintnetwork-InterfaceTable OBJECT-TYPE
+        SYNTAX SEQUENCE OF Netintnetwork-InterfaceEntry
+        ACCESS not-accessible
+        STATUS mandatory
+        DESCRIPTION
+            "A table containing performance information for instances of 'network-Interface' objects."
+        ::= { performance 11 }
+
+    netintnetwork-InterfaceEntry OBJECT-TYPE
+        SYNTAX Netintnetwork-InterfaceEntry
+        ACCESS not-accessible
+        STATUS mandatory
+        DESCRIPTION
+            "Performance information for one particular instance of 'network-Interface' object."
+        INDEX { netintnetwork-InterfaceInstance }
+        ::= { netintnetwork-InterfaceTable 1 }
+
+    Netintnetwork-InterfaceEntry ::=
+        SEQUENCE {
+            netintnetwork-InterfaceInstance DisplayString,
+            netintBytesTotalPerSec Counter,
+            netintPacketsPerSec Counter,
+            netintPacketsReceivedPerSec Counter,
+            netintPacketsSentPerSec Counter,
+            netintCurrentBandwidth INTEGER,
+            netintBytesReceivedPerSec Counter,
+            netintPacketsReceivedUnicastPerSec Counter,
+            netintPacketsReceivedNon-UnicastPerSec Counter,
+            netintPacketsReceivedDiscarded INTEGER,
+            netintPacketsReceivedErrors INTEGER,
+            netintPacketsReceivedUnknown INTEGER,
+            netintBytesSentPerSec Counter,
+            netintPacketsSentUnicastPerSec Counter,
+            netintPacketsSentNon-UnicastPerSec Counter,
+            netintPacketsOutboundDiscarded INTEGER,
+            netintPacketsOutboundErrors INTEGER,
+            netintOutputQueueLength INTEGER
+        }
+
+    netintnetwork-InterfaceInstance OBJECT-TYPE
+        SYNTAX DisplayString
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Instance name."
+        ::= { netintnetwork-InterfaceEntry 1 }
+
+    netintBytesTotalPerSec OBJECT-TYPE
+        SYNTAX Counter
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Bytes Total/sec is the rate that bytes are sent and received on the interface, including framing characters."
+        ::= { netintnetwork-InterfaceEntry 2 }
+
+    netintPacketsPerSec OBJECT-TYPE
+        SYNTAX Counter
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Packets/sec is the rate that packets are sent and received on the network interface."
+        ::= { netintnetwork-InterfaceEntry 3 }
+
+    netintPacketsReceivedPerSec OBJECT-TYPE
+        SYNTAX Counter
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Packets Received/sec is the rate that packets are received on the network interface."
+        ::= { netintnetwork-InterfaceEntry 4 }
+
+    netintPacketsSentPerSec OBJECT-TYPE
+        SYNTAX Counter
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Packets Sent/sec is the rate that packets are sent on the network interface."
+        ::= { netintnetwork-InterfaceEntry 5 }
+
+    netintCurrentBandwidth OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Current Bandwidth is an estimate of the interface's current bandwidth in bits per second (bps). For interfaces that do not vary in bandwidth or for those where no accurate estimation can be made, this value is the nominal bandwidth."
+        ::= { netintnetwork-InterfaceEntry 6 }
+
+    netintBytesReceivedPerSec OBJECT-TYPE
+        SYNTAX Counter
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Bytes Received/sec is the rate that bytes are received on the interface, including framing characters."
+        ::= { netintnetwork-InterfaceEntry 7 }
+
+    netintPacketsReceivedUnicastPerSec OBJECT-TYPE
+        SYNTAX Counter
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Packets Received Unicast/sec is the rate that (subnet) unicast packets are delivered to a higher-layer protocol."
+        ::= { netintnetwork-InterfaceEntry 8 }
+
+    netintPacketsReceivedNon-UnicastPerSec OBJECT-TYPE
+        SYNTAX Counter
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Packets Received Non-Unicast/sec is the rate that non-unicast (i.e., subnet broadcast or subnet multicast) packets are delivered to a higher-layer protocol."
+        ::= { netintnetwork-InterfaceEntry 9 }
+
+    netintPacketsReceivedDiscarded OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Packets Received Discarded is the number of inbound packets that were chosen to be discarded even though no errors had been detected to prevent their being deliverable to a higher-layer protocol. One possible reason for discarding such a packet could be to free up buffer space."
+        ::= { netintnetwork-InterfaceEntry 10 }
+
+    netintPacketsReceivedErrors OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Packets Received Errors is the number of inbound packets that contained errors preventing them from being deliverable to a higher-layer protocol."
+        ::= { netintnetwork-InterfaceEntry 11 }
+
+    netintPacketsReceivedUnknown OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Packets Received Unknown is the number of packets received via the interface that were discarded because of an unknown or unsupported protocol."
+        ::= { netintnetwork-InterfaceEntry 12 }
+
+    netintBytesSentPerSec OBJECT-TYPE
+        SYNTAX Counter
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Bytes Sent/sec is the rate that bytes are sent on the interface, including framing characters."
+        ::= { netintnetwork-InterfaceEntry 13 }
+
+    netintPacketsSentUnicastPerSec OBJECT-TYPE
+        SYNTAX Counter
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Packets Sent Unicast/sec is the rate that packets are requested to be transmitted to subnet-unicast addresses by higher-level protocols.  The rate includes the packets that were discarded or not sent."
+        ::= { netintnetwork-InterfaceEntry 14 }
+
+    netintPacketsSentNon-UnicastPerSec OBJECT-TYPE
+        SYNTAX Counter
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Packets Sent Non-Unicast/sec is the rate that packets are requested to be transmitted to non-unicast (i.e., subnet broadcast or subnet multicast) addresses by higher-level protocols.  The rate includes the packets that were discarded or not sent."
+        ::= { netintnetwork-InterfaceEntry 15 }
+
+    netintPacketsOutboundDiscarded OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Packets Outbound Discarded is the number of outbound packets that were chosen to be discarded even though no errors had been detected to prevent their being transmitted.  One possible reason for discarding such a packet could be to free up buffer space."
+        ::= { netintnetwork-InterfaceEntry 16 }
+
+    netintPacketsOutboundErrors OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Packets Outbound Errors is the number of outbound packets that could not be transmitted because of errors."
+        ::= { netintnetwork-InterfaceEntry 17 }
+
+    netintOutputQueueLength OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Output Queue Length is the length of the output packet queue (in packets.)  If this is longer than 2, delays are being experienced and the bottleneck should be found and eliminated if possible.  Since the requests are queued by NDIS in this implementations, this will always be 0."
+        ::= { netintnetwork-InterfaceEntry 18 }
+
+    -- network Segment MIB
+
+    netsegnetwork-SegmentTable OBJECT-TYPE
+        SYNTAX SEQUENCE OF Netsegnetwork-SegmentEntry
+        ACCESS not-accessible
+        STATUS mandatory
+        DESCRIPTION
+            "A table containing performance information for instances of 'network-Segment' objects."
+        ::= { performance 12 }
+
+    netsegnetwork-SegmentEntry OBJECT-TYPE
+        SYNTAX Netsegnetwork-SegmentEntry
+        ACCESS not-accessible
+        STATUS mandatory
+        DESCRIPTION
+            "Performance information for one particular instance of 'network-Segment' object."
+        INDEX { netsegnetwork-SegmentInstance }
+        ::= { netsegnetwork-SegmentTable 1 }
+
+    Netsegnetwork-SegmentEntry ::=
+        SEQUENCE {
+            netsegnetwork-SegmentInstance DisplayString,
+            netsegTotalFramesReceivedPerSecond Counter,
+            netsegTotalBytesReceivedPerSecond Counter,
+            netsegBroadcastFramesReceivedPerSecond Counter,
+            netsegMulticastFramesReceivedPerSecond Counter,
+            netsegPercentNetworkUtilization TimeTicks
+        }
+
+    netsegnetwork-SegmentInstance OBJECT-TYPE
+        SYNTAX DisplayString
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Instance name."
+        ::= { netsegnetwork-SegmentEntry 1 }
+
+    netsegTotalFramesReceivedPerSecond OBJECT-TYPE
+        SYNTAX Counter
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "The total number of frames received per second on this network segment."
+        ::= { netsegnetwork-SegmentEntry 2 }
+
+    netsegTotalBytesReceivedPerSecond OBJECT-TYPE
+        SYNTAX Counter
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "The number of bytes received per second on this network segment."
+        ::= { netsegnetwork-SegmentEntry 3 }
+
+    netsegBroadcastFramesReceivedPerSecond OBJECT-TYPE
+        SYNTAX Counter
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "The number of Broadcast frames received per second on this network segment."
+        ::= { netsegnetwork-SegmentEntry 4 }
+
+    netsegMulticastFramesReceivedPerSecond OBJECT-TYPE
+        SYNTAX Counter
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "The number of Multicast frames received per second on this network segment."
+        ::= { netsegnetwork-SegmentEntry 5 }
+
+    netsegPercentNetworkUtilization OBJECT-TYPE
+        SYNTAX TimeTicks
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Percentage of network bandwidth in use on this network segment."
+        ::= { netsegnetwork-SegmentEntry 6 }
+
+    -- objects MIB
+
+    objects OBJECT IDENTIFIER ::= { performance 13 }
+
+    objProcesses OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Processes is the number of processes in the computer at the time of data collection.  Notice that this is an instantaneous count, not an average over the time interval.  Each process represents the running of a program."
+        ::= { objects 1 }
+
+    objThreads OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Threads is the number of threads in the computer at the time of data collection.  Notice that this is an instantaneous count, not an average over the time interval.  A thread is the basic executable entity that can execute instructions in a processor."
+        ::= { objects 2 }
+
+    objEvents OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Events is the number of events in the computer at the time of data collection.  Notice that this is an instantaneous count, not an average over the time interval.  An event is used when two or more threads wish to synchronize execution."
+        ::= { objects 3 }
+
+    objSemaphores OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Semaphores is the number of semaphores in the computer at the time of data collection.  Notice that this is an instantaneous count, not an average over the time interval.  Threads use semaphores to obtain exclusive access to data structures that they share with other threads."
+        ::= { objects 4 }
+
+    objMutexes OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Mutexes counts the number of mutexes in the computer at the time of data collection.  This is an instantaneous count, not an average over the time interval.  Mutexes are used by threads to assure only one thread is executing some section of code."
+        ::= { objects 5 }
+
+    objSections OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Sections is the number of sections in the computer at the time of data collection.  Notice that this is an instantaneous count, not an average over the time interval.  A section is a portion of virtual memory created by a process for  a storing data.  A process may share sections with other processes."
+        ::= { objects 6 }
+
+    -- paging File MIB
+
+    pagefipaging-FileTable OBJECT-TYPE
+        SYNTAX SEQUENCE OF Pagefipaging-FileEntry
+        ACCESS not-accessible
+        STATUS mandatory
+        DESCRIPTION
+            "A table containing performance information for instances of 'paging-File' objects."
+        ::= { performance 14 }
+
+    pagefipaging-FileEntry OBJECT-TYPE
+        SYNTAX Pagefipaging-FileEntry
+        ACCESS not-accessible
+        STATUS mandatory
+        DESCRIPTION
+            "Performance information for one particular instance of 'paging-File' object."
+        INDEX { pagefipaging-FileInstance }
+        ::= { pagefipaging-FileTable 1 }
+
+    Pagefipaging-FileEntry ::=
+        SEQUENCE {
+            pagefipaging-FileInstance DisplayString,
+            pagefiPercentUsage INTEGER,
+            pagefiPercentUsagePeak INTEGER
+        }
+
+    pagefipaging-FileInstance OBJECT-TYPE
+        SYNTAX DisplayString
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Instance name."
+        ::= { pagefipaging-FileEntry 1 }
+
+    pagefiPercentUsage OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "The amount of the Page File instance in use in percent.  See also Process:Page File Bytes."
+        ::= { pagefipaging-FileEntry 2 }
+
+    pagefiPercentUsagePeak OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "The peak usage of the Page File instance in percent.  See also Process:Page File Bytes Peak."
+        ::= { pagefipaging-FileEntry 3 }
+
+    -- physicalDisk MIB
+
+    pdiskphysicalDiskTable OBJECT-TYPE
+        SYNTAX SEQUENCE OF PdiskphysicalDiskEntry
+        ACCESS not-accessible
+        STATUS mandatory
+        DESCRIPTION
+            "A table containing performance information for instances of 'physicalDisk' objects."
+        ::= { performance 15 }
+
+    pdiskphysicalDiskEntry OBJECT-TYPE
+        SYNTAX PdiskphysicalDiskEntry
+        ACCESS not-accessible
+        STATUS mandatory
+        DESCRIPTION
+            "Performance information for one particular instance of 'physicalDisk' object."
+        INDEX { pdiskphysicalDiskInstance }
+        ::= { pdiskphysicalDiskTable 1 }
+
+    PdiskphysicalDiskEntry ::=
+        SEQUENCE {
+            pdiskphysicalDiskInstance DisplayString,
+            pdiskCurrentDiskQueueLength INTEGER,
+            pdiskPercentDiskTime TimeTicks,
+            pdiskAvgDiskQueueLength INTEGER,
+            pdiskPercentDiskReadTime TimeTicks,
+            pdiskAvgDiskReadQueueLength INTEGER,
+            pdiskPercentDiskWriteTime TimeTicks,
+            pdiskAvgDiskWriteQueueLength INTEGER,
+            pdiskAvgDiskSecPerTransfer TimeTicks,
+            pdiskAvgDiskSecPerRead TimeTicks,
+            pdiskAvgDiskSecPerWrite TimeTicks,
+            pdiskDiskTransfersPerSec Counter,
+            pdiskDiskReadsPerSec Counter,
+            pdiskDiskWritesPerSec Counter,
+            pdiskDiskBytesPerSec INTEGER,
+            pdiskDiskReadBytesPerSec INTEGER,
+            pdiskDiskWriteBytesPerSec INTEGER
+        }
+
+    pdiskphysicalDiskInstance OBJECT-TYPE
+        SYNTAX DisplayString
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Instance name."
+        ::= { pdiskphysicalDiskEntry 1 }
+
+    pdiskCurrentDiskQueueLength OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Current Disk Queue Length is the number of requests outstanding on the disk at the time the performance data is collected.  It includes requests in service at the time of the snapshot.  This is an instantaneous length, not an average over the time interval.  Multi-spindle disk devices can have multiple requests active at one time, but other concurrent requests are awaiting service.  This counter may reflect a transitory high or low queue length, but if there is a sustained load on the disk drive, it is likely that this will be consistently high.  Requests are experiencing delays proportional to the length of this queue minus the number of spindles on the disks.  This difference should average less than 2 for good performance."
+        ::= { pdiskphysicalDiskEntry 2 }
+
+    pdiskPercentDiskTime OBJECT-TYPE
+        SYNTAX TimeTicks
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Disk Time is the percentage of elapsed time that the selected disk drive is busy servicing read or write requests."
+        ::= { pdiskphysicalDiskEntry 3 }
+
+    pdiskAvgDiskQueueLength OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Avg. Disk Queue Length is the average number of both read and write requests that were queued for the selected disk during the sample interval."
+        ::= { pdiskphysicalDiskEntry 4 }
+
+    pdiskPercentDiskReadTime OBJECT-TYPE
+        SYNTAX TimeTicks
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Disk Read Time is the percentage of elapsed time that the selected disk drive is busy servicing read requests."
+        ::= { pdiskphysicalDiskEntry 5 }
+
+    pdiskAvgDiskReadQueueLength OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Avg. Disk Read Queue Length is the average number of read requests that were queued for the selected disk during the sample interval."
+        ::= { pdiskphysicalDiskEntry 6 }
+
+    pdiskPercentDiskWriteTime OBJECT-TYPE
+        SYNTAX TimeTicks
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Disk Write Time is the percentage of elapsed time that the selected disk drive is busy servicing write requests."
+        ::= { pdiskphysicalDiskEntry 7 }
+
+    pdiskAvgDiskWriteQueueLength OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Avg. Disk Write Queue Length is the average number of write requests that were queued for the selected disk during the sample interval."
+        ::= { pdiskphysicalDiskEntry 8 }
+
+    pdiskAvgDiskSecPerTransfer OBJECT-TYPE
+        SYNTAX TimeTicks
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Avg. Disk sec/Transfer is the time in seconds of the average disk transfer."
+        ::= { pdiskphysicalDiskEntry 9 }
+
+    pdiskAvgDiskSecPerRead OBJECT-TYPE
+        SYNTAX TimeTicks
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Avg. Disk sec/Read is the average time in seconds of a read of data from the disk."
+        ::= { pdiskphysicalDiskEntry 10 }
+
+    pdiskAvgDiskSecPerWrite OBJECT-TYPE
+        SYNTAX TimeTicks
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Avg. Disk sec/Write is the average time in seconds of a write of data to the disk."
+        ::= { pdiskphysicalDiskEntry 11 }
+
+    pdiskDiskTransfersPerSec OBJECT-TYPE
+        SYNTAX Counter
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Disk Transfers/sec is the rate of read and write operations on the disk."
+        ::= { pdiskphysicalDiskEntry 12 }
+
+    pdiskDiskReadsPerSec OBJECT-TYPE
+        SYNTAX Counter
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Disk Reads/sec is the rate of read operations on the disk."
+        ::= { pdiskphysicalDiskEntry 13 }
+
+    pdiskDiskWritesPerSec OBJECT-TYPE
+        SYNTAX Counter
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Disk Writes/sec is the rate of write operations on the disk."
+        ::= { pdiskphysicalDiskEntry 14 }
+
+    pdiskDiskBytesPerSec OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Disk Bytes/sec is the rate bytes are transferred to or from the disk during write or read operations."
+        ::= { pdiskphysicalDiskEntry 15 }
+
+    pdiskDiskReadBytesPerSec OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Disk Read Bytes/sec is the rate bytes are transferred from the disk during read operations."
+        ::= { pdiskphysicalDiskEntry 16 }
+
+    pdiskDiskWriteBytesPerSec OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Disk Write Bytes is rate bytes are transferred to the disk during write operations."
+        ::= { pdiskphysicalDiskEntry 17 }
+
+    -- process MIB
+
+    procprocessTable OBJECT-TYPE
+        SYNTAX SEQUENCE OF ProcprocessEntry
+        ACCESS not-accessible
+        STATUS mandatory
+        DESCRIPTION
+            "A table containing performance information for instances of 'process' objects."
+        ::= { performance 16 }
+
+    procprocessEntry OBJECT-TYPE
+        SYNTAX ProcprocessEntry
+        ACCESS not-accessible
+        STATUS mandatory
+        DESCRIPTION
+            "Performance information for one particular instance of 'process' object."
+        INDEX { procprocessInstance }
+        ::= { procprocessTable 1 }
+
+    ProcprocessEntry ::=
+        SEQUENCE {
+            procprocessInstance DisplayString,
+            procPercentProcessorTime INTEGER,
+            procPercentUserTime INTEGER,
+            procPercentPrivilegedTime INTEGER,
+            procVirtualBytesPeak INTEGER,
+            procVirtualBytes INTEGER,
+            procPageFaultsPerSec Counter,
+            procWorkingSetPeak INTEGER,
+            procWorkingSet INTEGER,
+            procPageFileBytesPeak INTEGER,
+            procPageFileBytes INTEGER,
+            procPrivateBytes INTEGER,
+            procThreadCount INTEGER,
+            procPriorityBase INTEGER,
+            procElapsedTime TimeTicks,
+            procIDProcess INTEGER,
+            procPoolPagedBytes INTEGER,
+            procPoolNonpagedBytes INTEGER,
+            procHandleCount INTEGER
+        }
+
+    procprocessInstance OBJECT-TYPE
+        SYNTAX DisplayString
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Instance name."
+        ::= { procprocessEntry 1 }
+
+    procPercentProcessorTime OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Processor Time is the percentage of elapsed time that all of the threads of this process used the processor to execute instructions.  An instruction is the basic unit of execution in a computer, a thread is the object that executes instructions, and a process is the object created when a program is run.  Code executed to handle certain hardware interrupts or trap conditions may be counted for this process."
+        ::= { procprocessEntry 2 }
+
+    procPercentUserTime OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "User Time is the percentage of elapsed time that this process's threads have spent executing code in User Mode.  Applications execute in User Mode, as do subsystems like the window manager and the graphics engine.  Code executing in User Mode cannot damage the integrity of the Windows NT Executive, Kernel, and device drivers.  Unlike some early operating systems, Windows NT uses process boundaries for subsystem protection in addition to the traditional protection of User and Privileged modes.  These subsystem processes provide additional protection.  Therefore, some work done by Windows NT on behalf of your application may appear in other subsystem processes in addition to the Privileged Time in your process."
+        ::= { procprocessEntry 3 }
+
+    procPercentPrivilegedTime OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Privileged Time is the percentage of elapsed time that this process's threads have spent executing code in Privileged Mode.  When a Windows NT system service is called, the service will often run in Privileged Mode to gain access to system-private data.  Such data is protected from access by threads executing in User Mode.  Calls to the system may be explicit, or they may be implicit such as when a page fault or an interrupt occurs.  Unlike some early operating systems, Windows NT uses process boundaries for subsystem protection in addition to the traditional protection of User and Privileged modes.  These subsystem processes provide additional protection.  Therefore, some work done by Windows NT on behalf of your application may appear in other subsystem processes in addition to the Privileged Time in your process."
+        ::= { procprocessEntry 4 }
+
+    procVirtualBytesPeak OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Virtual Bytes Peak is the maximum number of bytes of virtual address space the process has used at any one time.  Use of virtual address space does not necessarily imply corresponding use of either disk or main memory pages.  Virtual space is however finite, and by using too much, the process may limit its ability to load libraries."
+        ::= { procprocessEntry 5 }
+
+    procVirtualBytes OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Virtual Bytes is the current size in bytes of the virtual address space the process is using.  Use of virtual address space does not necessarily imply corresponding use of either disk or main memory pages.  Virtual space is however finite, and by using too much, the process may limit its ability to load libraries."
+        ::= { procprocessEntry 6 }
+
+    procPageFaultsPerSec OBJECT-TYPE
+        SYNTAX Counter
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Page Faults/sec is the rate of Page Faults by the threads executing in this process.  A page fault occurs when a thread refers to a virtual memory page that is not in its working set in main memory.  This will not cause the page to be fetched from disk if it is on the standby list and hence already in main memory, or if it is in use by another process with whom the page is shared."
+        ::= { procprocessEntry 7 }
+
+    procWorkingSetPeak OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Working Set Peak is the maximum number of bytes in the Working Set of this process at any point in time.  The Working Set is the set of memory pages touched recently by the threads in the process.  If free memory in the computer is above a threshold, pages are left in the Working Set of a process even if they are not in use.  When free memory falls below a threshold, pages are trimmed from Working Sets.  If they are needed they will then be soft-faulted back into the Working Set before they leave main memory."
+        ::= { procprocessEntry 8 }
+
+    procWorkingSet OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Working Set is the current number of bytes in the Working Set of this process.  The Working Set is the set of memory pages touched recently by the threads in the process.  If free memory in the computer is above a threshold, pages are left in the Working Set of a process even if they are not in use.  When free memory falls below a threshold, pages are trimmed from Working Sets.  If they are needed they will then be soft-faulted back into the Working Set before they leave main memory."
+        ::= { procprocessEntry 9 }
+
+    procPageFileBytesPeak OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Page File Bytes Peak is the maximum number of bytes this process has used in the paging file(s).  Paging files are used to store pages of memory used by the process that are not contained in other files.  Paging files are shared by all processes, and lack of space in paging files can prevent other processes from allocating memory."
+        ::= { procprocessEntry 10 }
+
+    procPageFileBytes OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Page File Bytes is the current number of bytes this process has used in the paging file(s).  Paging files are used to store pages of memory used by the process that are not contained in other files.  Paging files are shared by all processes, and lack of space in paging files can prevent other processes from allocating memory."
+        ::= { procprocessEntry 11 }
+
+    procPrivateBytes OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Private Bytes is the current number of bytes this process has allocated that cannot be shared with other processes."
+        ::= { procprocessEntry 12 }
+
+    procThreadCount OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "The number of threads currently active in this process.  An instruction is the basic unit of execution in a processor, and a thread is the object that executes instructions.  Every running process has at least one thread."
+        ::= { procprocessEntry 13 }
+
+    procPriorityBase OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "The current base priority of this process.  Threads within a process can raise and lower their own base priority relative to the process's base priority."
+        ::= { procprocessEntry 14 }
+
+    procElapsedTime OBJECT-TYPE
+        SYNTAX TimeTicks
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "The total elapsed time (in seconds) this process has been running."
+        ::= { procprocessEntry 15 }
+
+    procIDProcess OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "ID Process is the unique identifier of this process.  ID Process numbers are reused, so they only identify a process for the lifetime of that process."
+        ::= { procprocessEntry 16 }
+
+    procPoolPagedBytes OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Pool Paged Bytes is the number of bytes in the Paged Pool, a system memory area where space is acquired by operating system components as they accomplish their appointed tasks.  Paged Pool pages can be paged out to the paging file when not accessed by the system for sustained periods of time."
+        ::= { procprocessEntry 17 }
+
+    procPoolNonpagedBytes OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Pool Nonpaged Bytes is the number of bytes in the Nonpaged Pool, a system memory area where space is acquired by operating system components as they accomplish their appointed tasks.  Nonpaged Pool pages cannot be paged out to the paging file, but instead remain in main memory as long as they are allocated."
+        ::= { procprocessEntry 18 }
+
+    procHandleCount OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "The total number of handles currently open by this process.  This number is the sum of the handles currently open by each thread in this process."
+        ::= { procprocessEntry 19 }
+
+    -- processor MIB
+
+    procsrprocessorTable OBJECT-TYPE
+        SYNTAX SEQUENCE OF ProcsrprocessorEntry
+        ACCESS not-accessible
+        STATUS mandatory
+        DESCRIPTION
+            "A table containing performance information for instances of 'processor' objects."
+        ::= { performance 17 }
+
+    procsrprocessorEntry OBJECT-TYPE
+        SYNTAX ProcsrprocessorEntry
+        ACCESS not-accessible
+        STATUS mandatory
+        DESCRIPTION
+            "Performance information for one particular instance of 'processor' object."
+        INDEX { procsrprocessorInstance }
+        ::= { procsrprocessorTable 1 }
+
+    ProcsrprocessorEntry ::=
+        SEQUENCE {
+            procsrprocessorInstance DisplayString,
+            procsrPercentProcessorTime INTEGER,
+            procsrPercentUserTime INTEGER,
+            procsrPercentPrivilegedTime INTEGER,
+            procsrInterruptsPerSec Counter,
+            procsrPercentDPCTime INTEGER,
+            procsrPercentInterruptTime INTEGER,
+            procsrDPCsQueuedPerSec Counter,
+            procsrDPCRate INTEGER,
+            procsrDPCBypassesPerSec Counter,
+            procsrAPCBypassesPerSec Counter
+        }
+
+    procsrprocessorInstance OBJECT-TYPE
+        SYNTAX DisplayString
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Instance name."
+        ::= { procsrprocessorEntry 1 }
+
+    procsrPercentProcessorTime OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Processor Time is expressed as a percentage of the elapsed time that a processor is busy executing a non-Idle thread.  It can be viewed as the fraction of the time spent doing useful work.  Each processor is assigned an Idle thread in the Idle process which consumes those unproductive processor cycles not used by any other threads."
+        ::= { procsrprocessorEntry 2 }
+
+    procsrPercentUserTime OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "User Time is the percentage of processor time spent in User Mode in non-Idle threads.  All application code and subsystem code execute in User Mode.  The graphics engine, graphics device drivers, printer device drivers, and the window manager also execute in User Mode.  Code executing in User Mode cannot damage the integrity of the Windows NT Executive, Kernel, and device drivers.  Unlike some early operating systems, Windows NT uses process boundaries for subsystem protection in addition to the traditional protection of User and Privileged modes.  These subsystem processes provide additional protection.  Therefore, some work done by Windows NT on behalf of your application may appear in other subsystem processes in addition to the Privileged Time in your process."
+        ::= { procsrprocessorEntry 3 }
+
+    procsrPercentPrivilegedTime OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Privileged Time is the percentage of processor time spent in Privileged Mode in non-Idle threads.  The Windows NT service layer, the Executive routines, and the Windows NT Kernel execute in Privileged Mode.  Device drivers for most devices other than graphics adapters and printers also execute in Privileged Mode.  Unlike some early operating systems, Windows NT uses process boundaries for subsystem protection in addition to the traditional protection of User and Privileged modes.  These subsystem processes provide additional protection.  Therefore, some work done by Windows NT on behalf of your application may appear in other subsystem processes in addition to the Privileged Time in your process."
+        ::= { procsrprocessorEntry 4 }
+
+    procsrInterruptsPerSec OBJECT-TYPE
+        SYNTAX Counter
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Interrupts/sec is the number of device interrupts the processor is experiencing.  A device interrupts the processor when it has completed a task or when it otherwise requires attention.  Normal thread execution is suspended during interrupts.  An interrupt may cause the processor to switch to another, higher priority thread.  Clock interrupts are frequent and periodic and create a background of interrupt activity."
+        ::= { procsrprocessorEntry 5 }
+
+    procsrPercentDPCTime OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "% DPC Time is the percentage of elapsed time that the Processor spent in Deferred Procedure Calls.  When a hardware device interrupts the Processor, the Interrupt Handler may elect to execute the majority of its work in a DPC.  DPC's run at lower priority than Interrupts, and so permit Interrupts to occur while DPC's being execute.  Deferred Procedure Calls are executed in Privileged Mode, so this is a component of Processor: % Privileged Time.  This counter can help determine the source of excessive time being spent in Privileged Mode."
+        ::= { procsrprocessorEntry 6 }
+
+    procsrPercentInterruptTime OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "% Interrupt Time is the percentage of elapsed time that the Processor spent handling hardware Interrupts.  When a hardware device interrupts the Processor, the Interrupt Handler will execute to handle the condition, usually by signaling I/O completion and possibly issuing another pending I/O request.  Some of this work may be done in a Deferred Procedure Call (see % DPC Time.)  However, time spent in DPC's is not counted as time in Interrupts.  Interrupts are executed in Privileged Mode, so this is a component of Processor: % Privileged Time.  This counter can help determine the source of excessive time being spent in Privileged Mode."
+        ::= { procsrprocessorEntry 7 }
+
+    procsrDPCsQueuedPerSec OBJECT-TYPE
+        SYNTAX Counter
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "DPCs Queued/sec is the rate DPC objects are queued to this processor's DPC queue."
+        ::= { procsrprocessorEntry 8 }
+
+    procsrDPCRate OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "DPC Rate is the average rate DPC objects are queued to this processor's DPC queue per clock tick."
+        ::= { procsrprocessorEntry 9 }
+
+    procsrDPCBypassesPerSec OBJECT-TYPE
+        SYNTAX Counter
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "DPC Bypasses/sec is the rate Dispatch interrupts were short-circuited."
+        ::= { procsrprocessorEntry 10 }
+
+    procsrAPCBypassesPerSec OBJECT-TYPE
+        SYNTAX Counter
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "APC Bypasses/sec is the rate kernel APC interrupts were short-circuited."
+        ::= { procsrprocessorEntry 11 }
+
+    -- rAS Port MIB
+
+    rasprtrAS-PortTable OBJECT-TYPE
+        SYNTAX SEQUENCE OF RasprtrAS-PortEntry
+        ACCESS not-accessible
+        STATUS mandatory
+        DESCRIPTION
+            "A table containing performance information for instances of 'rAS-Port' objects."
+        ::= { performance 18 }
+
+    rasprtrAS-PortEntry OBJECT-TYPE
+        SYNTAX RasprtrAS-PortEntry
+        ACCESS not-accessible
+        STATUS mandatory
+        DESCRIPTION
+            "Performance information for one particular instance of 'rAS-Port' object."
+        INDEX { rasprtrAS-PortInstance }
+        ::= { rasprtrAS-PortTable 1 }
+
+    RasprtrAS-PortEntry ::=
+        SEQUENCE {
+            rasprtrAS-PortInstance DisplayString,
+            rasprtBytesTransmitted INTEGER,
+            rasprtBytesReceived INTEGER,
+            rasprtFramesTransmitted INTEGER,
+            rasprtFramesReceived INTEGER,
+            rasprtPercentCompressionOut INTEGER,
+            rasprtPercentCompressionIn INTEGER,
+            rasprtCRCErrors INTEGER,
+            rasprtTimeoutErrors INTEGER,
+            rasprtSerialOverrunErrors INTEGER,
+            rasprtAlignmentErrors INTEGER,
+            rasprtBufferOverrunErrors INTEGER,
+            rasprtTotalErrors INTEGER,
+            rasprtBytesTransmittedPerSec Counter,
+            rasprtBytesReceivedPerSec Counter,
+            rasprtFramesTransmittedPerSec Counter,
+            rasprtFramesReceivedPerSec Counter,
+            rasprtTotalErrorsPerSec Counter
+        }
+
+    rasprtrAS-PortInstance OBJECT-TYPE
+        SYNTAX DisplayString
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Instance name."
+        ::= { rasprtrAS-PortEntry 1 }
+
+    rasprtBytesTransmitted OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "The number of bytes transmitted total for this connection."
+        ::= { rasprtrAS-PortEntry 2 }
+
+    rasprtBytesReceived OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "The number of bytes received total for this connection."
+        ::= { rasprtrAS-PortEntry 3 }
+
+    rasprtFramesTransmitted OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "The number of data frames transmitted total for this connection."
+        ::= { rasprtrAS-PortEntry 4 }
+
+    rasprtFramesReceived OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "The number of data frames received total for this connection."
+        ::= { rasprtrAS-PortEntry 5 }
+
+    rasprtPercentCompressionOut OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "The compression ratio for bytes being transmitted."
+        ::= { rasprtrAS-PortEntry 6 }
+
+    rasprtPercentCompressionIn OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "The compression ratio for bytes being received."
+        ::= { rasprtrAS-PortEntry 7 }
+
+    rasprtCRCErrors OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "The total number of CRC Errors for this connection.  CRC Errors occur when the frame received contains erroneous data."
+        ::= { rasprtrAS-PortEntry 8 }
+
+    rasprtTimeoutErrors OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "The total number of Timeout Errors for this connection.  Timeout Errors occur when an expected is not received in time."
+        ::= { rasprtrAS-PortEntry 9 }
+
+    rasprtSerialOverrunErrors OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "The total number of Serial Overrun Errors for this connection.  Serial Overrun Errors occur when the hardware cannot handle the rate at which data is received."
+        ::= { rasprtrAS-PortEntry 10 }
+
+    rasprtAlignmentErrors OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "The total number of Alignment Errors for this connection.  Alignment Errors occur when a byte received is different from the byte expected."
+        ::= { rasprtrAS-PortEntry 11 }
+
+    rasprtBufferOverrunErrors OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "The total number of Buffer Overrun Errors for this connection.  Buffer Overrun Errors when the software cannot handle the rate at which data is received."
+        ::= { rasprtrAS-PortEntry 12 }
+
+    rasprtTotalErrors OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "The total number of CRC, Timeout, Serial Overrun, Alignment, and Buffer Overrun Errors for this connection."
+        ::= { rasprtrAS-PortEntry 13 }
+
+    rasprtBytesTransmittedPerSec OBJECT-TYPE
+        SYNTAX Counter
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "The number of bytes transmitted per second."
+        ::= { rasprtrAS-PortEntry 14 }
+
+    rasprtBytesReceivedPerSec OBJECT-TYPE
+        SYNTAX Counter
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "The number of bytes received per second."
+        ::= { rasprtrAS-PortEntry 15 }
+
+    rasprtFramesTransmittedPerSec OBJECT-TYPE
+        SYNTAX Counter
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "The number of frames transmitted per second."
+        ::= { rasprtrAS-PortEntry 16 }
+
+    rasprtFramesReceivedPerSec OBJECT-TYPE
+        SYNTAX Counter
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "The number of frames received per second."
+        ::= { rasprtrAS-PortEntry 17 }
+
+    rasprtTotalErrorsPerSec OBJECT-TYPE
+        SYNTAX Counter
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "The total number of CRC, Timeout, Serial Overrun, Alignment, and Buffer Overrun Errors per second."
+        ::= { rasprtrAS-PortEntry 18 }
+
+    -- rAS Total MIB
+
+    rAS-Total OBJECT IDENTIFIER ::= { performance 19 }
+
+    rastotBytesTransmitted OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "The number of bytes transmitted total for this connection."
+        ::= { rAS-Total 1 }
+
+    rastotBytesReceived OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "The number of bytes received total for this connection."
+        ::= { rAS-Total 2 }
+
+    rastotFramesTransmitted OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "The number of data frames transmitted total for this connection."
+        ::= { rAS-Total 3 }
+
+    rastotFramesReceived OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "The number of data frames received total for this connection."
+        ::= { rAS-Total 4 }
+
+    rastotPercentCompressionOut OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "The compression ratio for bytes being transmitted."
+        ::= { rAS-Total 5 }
+
+    rastotPercentCompressionIn OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "The compression ratio for bytes being received."
+        ::= { rAS-Total 6 }
+
+    rastotCRCErrors OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "The total number of CRC Errors for this connection.  CRC Errors occur when the frame received contains erroneous data."
+        ::= { rAS-Total 7 }
+
+    rastotTimeoutErrors OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "The total number of Timeout Errors for this connection.  Timeout Errors occur when an expected is not received in time."
+        ::= { rAS-Total 8 }
+
+    rastotSerialOverrunErrors OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "The total number of Serial Overrun Errors for this connection.  Serial Overrun Errors occur when the hardware cannot handle the rate at which data is received."
+        ::= { rAS-Total 9 }
+
+    rastotAlignmentErrors OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "The total number of Alignment Errors for this connection.  Alignment Errors occur when a byte received is different from the byte expected."
+        ::= { rAS-Total 10 }
+
+    rastotBufferOverrunErrors OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "The total number of Buffer Overrun Errors for this connection.  Buffer Overrun Errors when the software cannot handle the rate at which data is received."
+        ::= { rAS-Total 11 }
+
+    rastotTotalErrors OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "The total number of CRC, Timeout, Serial Overrun, Alignment, and Buffer Overrun Errors for this connection."
+        ::= { rAS-Total 12 }
+
+    rastotBytesTransmittedPerSec OBJECT-TYPE
+        SYNTAX Counter
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "The number of bytes transmitted per second."
+        ::= { rAS-Total 13 }
+
+    rastotBytesReceivedPerSec OBJECT-TYPE
+        SYNTAX Counter
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "The number of bytes received per second."
+        ::= { rAS-Total 14 }
+
+    rastotFramesTransmittedPerSec OBJECT-TYPE
+        SYNTAX Counter
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "The number of frames transmitted per second."
+        ::= { rAS-Total 15 }
+
+    rastotFramesReceivedPerSec OBJECT-TYPE
+        SYNTAX Counter
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "The number of frames received per second."
+        ::= { rAS-Total 16 }
+
+    rastotTotalErrorsPerSec OBJECT-TYPE
+        SYNTAX Counter
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "The total number of CRC, Timeout, Serial Overrun, Alignment, and Buffer Overrun Errors per second."
+        ::= { rAS-Total 17 }
+
+    rastotTotalConnections OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "The total number of Remote Access connections."
+        ::= { rAS-Total 18 }
+
+    -- redirector MIB
+
+    redirector OBJECT IDENTIFIER ::= { performance 20 }
+
+    redirBytesTotalPerSec OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Bytes Total/sec is the rate the Redirector is processing data bytes.  This includes all application and file data in addition to protocol information such as packet headers."
+        ::= { redirector 1 }
+
+    redirFileDataOperationsPerSec OBJECT-TYPE
+        SYNTAX Counter
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "File Data Operations/sec is the rate the Redirector is processing data operations.  One operation includes (hopefully) many bytes.  We say hopefully here because each operation has overhead.  You can determine the efficiency of this path by dividing the Bytes/sec by this counter to determine the average number of bytes transferred/operation."
+        ::= { redirector 2 }
+
+    redirPacketsPerSec OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Packets/sec is the rate the Redirector is processing data packets.  One packet includes (hopefully) many bytes.  We say hopefully here because each packet has protocol overhead.  You can determine the efficiency of this path by dividing the Bytes/sec by this counter to determine the average number of bytes transferred/packet.  You can also divide this counter by Operations/sec to determine the average number of packets per operation, another measure of efficiency."
+        ::= { redirector 3 }
+
+    redirBytesReceivedPerSec OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Bytes Received/sec is the rate of bytes coming in to the Redirector from the network.  It includes all application data as well as network protocol information (such as packet headers.)"
+        ::= { redirector 4 }
+
+    redirPacketsReceivedPerSec OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Packets Received/sec is the rate that the Redirector is receiving packets (also called SMBs or Server Message Blocks).  Network transmissions are divided into packets.  The average number of bytes received in a packet can be obtained by dividing Bytes Received/sec by this counter.  Some packets received may not contain incoming data, for example an acknowledgment to a write made by the Redirector would count as an incoming packet."
+        ::= { redirector 5 }
+
+    redirReadBytesPagingPerSec OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Read Bytes Paging/sec is the rate that the Redirector is attempting to read bytes in response to page faults.  Page faults are caused by loading of modules (such as programs and libraries), by a miss in the Cache (see Read Bytes Cache/sec), or by files directly mapped into the address space of applications (a high-performance feature of Windows NT.)"
+        ::= { redirector 6 }
+
+    redirReadBytesNon-PagingPerSec OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Read Bytes Non-Paging/sec are those bytes read by the Redirector in response to normal file requests by an application when they are redirected to come from another computer.  In addition to file requests, this counter includes other methods of reading across the network such as Named Pipes and Transactions.  This counter does not count network protocol information, just application data."
+        ::= { redirector 7 }
+
+    redirReadBytesCachePerSec OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Read Bytes Cache/sec is the rate that applications on your computer are accessing the Cache using the Redirector.  Some of these data requests may be satisfied by merely retrieving the data from the system Cache on your own computer if it happened to be used recently and there was room to keep it in the Cache.  Requests that miss the Cache will cause a page fault (see Read Bytes Paging/sec)."
+        ::= { redirector 8 }
+
+    redirReadBytesNetworkPerSec OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Read Bytes Network/sec is the rate that applications are reading data across the network.  For one reason or another the data was not in the system Cache, and these bytes actually came across the network.  Dividing this number by Bytes Received/sec will indicate the 'efficiency' of data coming in from the network, since all of these bytes are real application data (see Bytes Received/sec.)"
+        ::= { redirector 9 }
+
+    redirBytesTransmittedPerSec OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Bytes Transmitted/sec is the rate that bytes are leaving the Redirector to the network.  It includes all application data as well as network protocol information (such as packet headers and the like.)"
+        ::= { redirector 10 }
+
+    redirPacketsTransmittedPerSec OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Packets Transmitted/sec is the rate that the Redirector is sending packets (also called SMBs or Server Message Blocks).  Network transmissions are divided into packets.  The average number of bytes transmitted in a packet can be obtained by dividing Bytes Transmitted/sec by this counter."
+        ::= { redirector 11 }
+
+    redirWriteBytesPagingPerSec OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Write Bytes Paging/sec is the rate that the Redirector is attempting to write bytes changed in the pages being used by applications.  The program data changed by modules (such as programs and libraries) that were loaded over the network are 'paged out' when no longer needed.  Other output pages come from the Cache (see Write Bytes Cache/sec)."
+        ::= { redirector 12 }
+
+    redirWriteBytesNon-PagingPerSec OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Write Bytes Non-Paging/sec is the rate of the bytes that are written by the Redirector in response to normal file outputs by an application when they are redirected to go to another computer.  In addition to file requests this counter includes other methods of writing across the network such as Named Pipes and Transactions.  This counter does not count network protocol information, just application data."
+        ::= { redirector 13 }
+
+    redirWriteBytesCachePerSec OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Write Bytes Cache/sec is the rate that applications on your computer are writing to the Cache using the Redirector.  The data may not leave your computer immediately, but may be retained in the Cache for further modification before being written to the network.  This saves network traffic.  Each write of a byte into the Cache is counted here."
+        ::= { redirector 14 }
+
+    redirWriteBytesNetworkPerSec OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Write Bytes Network/sec is the rate that your applications are writing data across the network.  Either the system Cache was bypassed, as for Named Pipes or Transactions, or else the Cache wrote the bytes to make room for other data.  Dividing this counter by Bytes Transmitted/sec will indicate the 'efficiency' of data written to the network, since all of these bytes are real application data (see Transmitted Bytes/sec.)"
+        ::= { redirector 15 }
+
+    redirFileReadOperationsPerSec OBJECT-TYPE
+        SYNTAX Counter
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "File Read Operations/sec is the rate that applications are asking the Redirector for data.  Each call to a file system or similar Application Program Interface (API) call counts as one operation."
+        ::= { redirector 16 }
+
+    redirReadOperationsRandomPerSec OBJECT-TYPE
+        SYNTAX Counter
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Read Operations Random/sec counts the rate that, on a file-by-file basis, reads are made that are not sequential.  If a read is made using a particular file handle, and then is followed by another read that is not immediately the contiguous next byte, this counter is incremented by one."
+        ::= { redirector 17 }
+
+    redirReadPacketsPerSec OBJECT-TYPE
+        SYNTAX Counter
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Read Packets/sec is the rate that read packets are being placed on the network.  Each time a single packet is sent with a request to read data remotely, this counter is incremented by one."
+        ::= { redirector 18 }
+
+    redirReadsLargePerSec OBJECT-TYPE
+        SYNTAX Counter
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Reads Large/sec is the rate that reads over 2 times the server's negotiated buffer size are made by applications.  Too many of these could place a strain on server resources.  This counter is incremented once for each read. It does not count packets."
+        ::= { redirector 19 }
+
+    redirReadPacketsSmallPerSec OBJECT-TYPE
+        SYNTAX Counter
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Read Packets Small/sec is the rate that reads less than one-fourth of the server's negotiated buffer size are made by applications.  Too many of these could indicate a waste of buffers on the server.  This counter is incremented once for each read. It does not count packets."
+        ::= { redirector 20 }
+
+    redirFileWriteOperationsPerSec OBJECT-TYPE
+        SYNTAX Counter
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "File Write Operations/sec is the rate that applications are sending data to the Redirector.  Each call to a file system or similar Application Program Interface (API) call counts as one operation."
+        ::= { redirector 21 }
+
+    redirWriteOperationsRandomPerSec OBJECT-TYPE
+        SYNTAX Counter
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Write Operations Random/sec is the rate that, on a file-by-file basis, writes are made that are not sequential.  If a write is made using a particular file handle, and then is followed by another write that is not immediately the next contiguous byte, this counter is incremented by one."
+        ::= { redirector 22 }
+
+    redirWritePacketsPerSec OBJECT-TYPE
+        SYNTAX Counter
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Write Packets/sec is the rate that writes are being sent to the network.  Each time a single packet is sent with a request to write remote data, this counter is incremented by one."
+        ::= { redirector 23 }
+
+    redirWritesLargePerSec OBJECT-TYPE
+        SYNTAX Counter
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Writes Large/sec is the rate that writes are made by applications that are over 2 times the server's negotiated buffer size.  Too many of these could place a strain on server resources.  This counter is incremented once for each write: it counts writes, not packets."
+        ::= { redirector 24 }
+
+    redirWritePacketsSmallPerSec OBJECT-TYPE
+        SYNTAX Counter
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Write Packets Small/sec is the rate that writes are made by applications that are less than one-fourth of the server's negotiated buffer size.  Too many of these could indicate a waste of buffers on the server.  This counter is incremented once for each write: it counts writes, not packets!"
+        ::= { redirector 25 }
+
+    redirReadsDeniedPerSec OBJECT-TYPE
+        SYNTAX Counter
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Reads Denied/sec is the rate that the server is unable to accommodate requests for Raw Reads.  When a read is much larger than the server's negotiated buffer size, the Redirector requests a Raw Read which, if granted, would permit the transfer of the data without lots of protocol overhead on each packet.  To accomplish this the server must lock out other requests, so the request is denied if the server is really busy."
+        ::= { redirector 26 }
+
+    redirWritesDeniedPerSec OBJECT-TYPE
+        SYNTAX Counter
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Writes Denied/sec is the rate that the server is unable to accommodate requests for Raw Writes.  When a write is much larger than the server's negotiated buffer size, the Redirector requests a Raw Write which, if granted, would permit the transfer of the data without lots of protocol overhead on each packet.  To accomplish this the server must lock out other requests, so the request is denied if the server is really busy."
+        ::= { redirector 27 }
+
+    redirNetworkErrorsPerSec OBJECT-TYPE
+        SYNTAX Counter
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Network Errors/sec counts serious unexpected errors that generally indicate the Redirector and one or more Servers are having serious communication difficulties.  For example an SMB (Server Manager Block) protocol error will generate a Network Error.  These result in an entry in the system Event Log, so look there for details."
+        ::= { redirector 28 }
+
+    redirServerSessions OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Server Sessions counts the total number of security objects the Redirector has managed.  For example, a Logon to a server followed by a network access to the same server will establish one connection, but two sessions."
+        ::= { redirector 29 }
+
+    redirServerReconnects OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Server Reconnects counts the number of times your Redirector has had to reconnect to a server in order to complete a new active request.  You can be disconnected by the Server if you remain inactive for too long.  Locally even if all your remote files are closed, the Redirector will keep your connections intact for (nominally) ten minutes.  Such inactive connections are called Dormant Connections.  Reconnecting is expensive in time."
+        ::= { redirector 30 }
+
+    redirConnectsCore OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Connects Core counts the number of connections you have to servers running the original MS-Net SMB protocol, including MS-Net itself and Xenix and Vax's."
+        ::= { redirector 31 }
+
+    redirConnectsLanManager20 OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Connects Lan Manager 2.0 counts connections to Lan Manager 2.0 servers, including LMX servers."
+        ::= { redirector 32 }
+
+    redirConnectsLanManager21 OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Connects Lan Manager 2.1 counts connections to Lan Manager 2.1 servers, including LMX servers."
+        ::= { redirector 33 }
+
+    redirConnectsWindowsNT OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Connects Windows NT counts the connections to Windows NT computers.  Good choice!"
+        ::= { redirector 34 }
+
+    redirServerDisconnects OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Server Disconnects counts the number of times a Server has disconnected your Redirector.  See also Server Reconnects."
+        ::= { redirector 35 }
+
+    redirServerSessionsHung OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Server Sessions Hung counts the number of active sessions that are timed out and unable to proceed due to a lack of response from the remote server."
+        ::= { redirector 36 }
+
+    redirCurrentCommands OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Current Commands counts the number of requests to the Redirector that are currently queued for service.  If this number is much larger than the number of network adapter cards installed in the computer, then the network(s) and/or the server(s) being accessed are seriously bottlenecked."
+        ::= { redirector 37 }
+
+    -- server MIB
+
+    server OBJECT IDENTIFIER ::= { performance 21 }
+
+    servBytesTotalPerSec OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "The number of bytes the server has sent to and received from the network.  This value provides an overall indication of how busy the server is."
+        ::= { server 1 }
+
+    servBytesReceivedPerSec OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "The number of bytes the server has received from the network.  Indicates how busy the server is."
+        ::= { server 2 }
+
+    servBytesTransmittedPerSec OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "The number of bytes the server has sent on the network.  Indicates how busy the server is."
+        ::= { server 3 }
+
+    servSessionsTimedOut OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "The number of sessions that have been closed due to their idle time exceeding the autodisconnect parameter for the server.  Shows whether the autodisconnect setting is helping to conserve resources."
+        ::= { server 4 }
+
+    servSessionsErroredOut OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "The number of sessions that have been closed due to unexpected error conditions.  Indicates how frequently network problems are causing dropped sessions on the server."
+        ::= { server 5 }
+
+    servSessionsLoggedOff OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "The number of sessions that have terminated normally. Useful in interpreting the Sessions Times Out and Sessions Errored Out statistics--allows percentage calculations."
+        ::= { server 6 }
+
+    servSessionsForcedOff OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "The number of sessions that have been forced to logoff.  Can indicate how many sessions were forced to logoff due to logon time constraints."
+        ::= { server 7 }
+
+    servErrorsLogon OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "The number of failed logon attempts to the server.  Can indicate whether password guessing programs are being used to crack the security on the server."
+        ::= { server 8 }
+
+    servErrorsAccessPermissions OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "The number of times opens on behalf of clients have failed with STATUS_ACCESS_DENIED.  Can indicate whether somebody is randomly attempting to access files in hopes of getting at something that was not properly protected."
+        ::= { server 9 }
+
+    servErrorsGrantedAccess OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "The number of times accesses to files opened successfully were denied.  Can indicate attempts to access files without proper access authorization."
+        ::= { server 10 }
+
+    servErrorsSystem OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "The number of times an internal Server Error was detected.  Unexpected errors usually indicate a problem with the Server."
+        ::= { server 11 }
+
+    servBlockingRequestsRejected OBJECT-TYPE
+        SYNTAX Counter
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "The number of times the server has rejected blocking SMBs due to insufficient count of free work items. Indicates whether the maxworkitem or minfreeworkitems server parameters may need tuning."
+        ::= { server 12 }
+
+    servWorkItemShortages OBJECT-TYPE
+        SYNTAX Counter
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "The number of times STATUS_DATA_NOT_ACCEPTED was returned at receive indication time.  This occurs when no work item is available or can be allocated to service the incoming request.  Indicates whether the initworkitems or maxworkitems parameters may need tuning."
+        ::= { server 13 }
+
+    servFilesOpenedTotal OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "The number of successful open attempts performed by the server of behalf of clients.  Useful in determining the amount of file I/O, determining overhead for path-based operations, determining the effectiveness of oplocks."
+        ::= { server 14 }
+
+    servFilesOpen OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "The number of files currently opened in the server.  Indicates current server activity."
+        ::= { server 15 }
+
+    servServerSessions OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "The number of sessions currently active in the server.  Indicates current server activity."
+        ::= { server 16 }
+
+    servFileDirectorySearches OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "The number of searches for files currently active in the server.  Indicates current server activity."
+        ::= { server 17 }
+
+    servPoolNonpagedBytes OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "The number of bytes of non-pageable computer memory the server is currently using.  Can help in determining good values for the maxnonpagedmemoryusage parameter."
+        ::= { server 18 }
+
+    servPoolNonpagedFailures OBJECT-TYPE
+        SYNTAX Counter
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "The number of times allocations from nonpaged pool have failed.  Indicates that the computer's physical memory is too small."
+        ::= { server 19 }
+
+    servPoolNonpagedPeak OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "The maximum number of bytes of nonpaged pool the server has had in use at any one point.  Indicates how much physical memory the computer should have."
+        ::= { server 20 }
+
+    servPoolPagedBytes OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "The number of bytes of pageable computer memory the server is currently using.  Can help in determining good values for the maxpagedmemoryusage parameter."
+        ::= { server 21 }
+
+    servPoolPagedFailures OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "The number of times allocations from paged pool have failed.  Indicates that the computer's physical memory of pagefile are too small."
+        ::= { server 22 }
+
+    servPoolPagedPeak OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "The maximum number of bytes of paged pool the server has had allocated.  Indicates the proper sizes of the Page File(s) and physical memory."
+        ::= { server 23 }
+
+    servContextBlocksQueuedPerSec OBJECT-TYPE
+        SYNTAX Counter
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Context Blocks Queued per second is the rate that work context blocks had to be placed on the server's FSP queue to await server action."
+        ::= { server 24 }
+
+    servLogonPerSec OBJECT-TYPE
+        SYNTAX Counter
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Logon/sec is the rate of all server logons"
+        ::= { server 25 }
+
+    servLogonTotal OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Logon Total includes all interactive logons, network logons, service logons, successful logon, and failed logons since the machine is last rebooted."
+        ::= { server 26 }
+
+    -- server Work Queues MIB
+
+    swqserver-Work-QueuesTable OBJECT-TYPE
+        SYNTAX SEQUENCE OF Swqserver-Work-QueuesEntry
+        ACCESS not-accessible
+        STATUS mandatory
+        DESCRIPTION
+            "A table containing performance information for instances of 'server-Work-Queues' objects."
+        ::= { performance 22 }
+
+    swqserver-Work-QueuesEntry OBJECT-TYPE
+        SYNTAX Swqserver-Work-QueuesEntry
+        ACCESS not-accessible
+        STATUS mandatory
+        DESCRIPTION
+            "Performance information for one particular instance of 'server-Work-Queues' object."
+        INDEX { swqserver-Work-QueuesInstance }
+        ::= { swqserver-Work-QueuesTable 1 }
+
+    Swqserver-Work-QueuesEntry ::=
+        SEQUENCE {
+            swqserver-Work-QueuesInstance DisplayString,
+            swqQueueLength INTEGER,
+            swqActiveThreads INTEGER,
+            swqAvailableThreads INTEGER,
+            swqAvailableWorkItems INTEGER,
+            swqBorrowedWorkItems INTEGER,
+            swqWorkItemShortages INTEGER,
+            swqCurrentClients INTEGER,
+            swqBytesReceivedPerSec INTEGER,
+            swqBytesSentPerSec INTEGER,
+            swqBytesTransferredPerSec INTEGER,
+            swqReadOperationsPerSec INTEGER,
+            swqReadBytesPerSec INTEGER,
+            swqWriteOperationsPerSec INTEGER,
+            swqWriteBytesPerSec INTEGER,
+            swqTotalBytesPerSec INTEGER,
+            swqTotalOperationsPerSec INTEGER,
+            swqContextBlocksQueuedPerSec Counter
+        }
+
+    swqserver-Work-QueuesInstance OBJECT-TYPE
+        SYNTAX DisplayString
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Instance name."
+        ::= { swqserver-Work-QueuesEntry 1 }
+
+    swqQueueLength OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Queue Length is the current length of the server work queue for this CPU. A sustained queue length greater than four may indicate processor congestion. This is an instantaneous count, not an average over time."
+        ::= { swqserver-Work-QueuesEntry 2 }
+
+    swqActiveThreads OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Active Threads is the number of threads currently working on a request from the server client for this CPU. The system keeps this number as low as possible to minimize unnecessary context switching. This is an instantaneous count for the CPU, not an average over time."
+        ::= { swqserver-Work-QueuesEntry 3 }
+
+    swqAvailableThreads OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Available Threads is the number of server threads on this CPU not currently working on requests from a client.  The server dynamically adjusts the number of threads to maximize server performance."
+        ::= { swqserver-Work-QueuesEntry 4 }
+
+    swqAvailableWorkItems OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Every request from a client is represented in the server as a 'work item,' and the server maintains a pool of available work items per CPU to speed processing.  This is the instantaneous number of available work items for this CPU.  A sustained near-zero value indicates the need to increase the MinFreeWorkItems registry value for the Server service.  This value will always be 0 in the Blocking Queue instance."
+        ::= { swqserver-Work-QueuesEntry 5 }
+
+    swqBorrowedWorkItems OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Every request from a client is represented in the server as a 'work item,' and the server maintains a pool of available work items per CPU to speed processing. When a CPU runs out of work items, it borrows a free work item from another CPU.  An increasing value of this running counter may indicate the need to increase the 'MaxWorkItems' or 'MinFreeWorkItems' registry values for the Server service.  This value will always be 0 in the Blocking Queue instance."
+        ::= { swqserver-Work-QueuesEntry 6 }
+
+    swqWorkItemShortages OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Every request from a client is represented in the server as a 'work item,' and the server maintains a pool of available work items per CPU to speed processing. A sustained value greater than zero indicates the need to increase the 'MaxWorkItems' registry value for the Server service.  This value will always be 0 in the Blocking Queue instance."
+        ::= { swqserver-Work-QueuesEntry 7 }
+
+    swqCurrentClients OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Current Clients is the instantaneous count of the clients being serviced by this CPU.  The server actively balances the client load across all of the CPU's in the system.  This value will always be 0 in the Blocking Queue instance."
+        ::= { swqserver-Work-QueuesEntry 8 }
+
+    swqBytesReceivedPerSec OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "The rate at which the Server is receiving bytes from the network clients on this CPU. This value is a measure of how busy the Server is."
+        ::= { swqserver-Work-QueuesEntry 9 }
+
+    swqBytesSentPerSec OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "The rate at which the Server is sending bytes to the network clients on this CPU. This value is a measure of how busy the Server is."
+        ::= { swqserver-Work-QueuesEntry 10 }
+
+    swqBytesTransferredPerSec OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "The rate at which the Server is sending and receiving bytes with the network clients on this CPU. This value is a measure of how busy the Server is."
+        ::= { swqserver-Work-QueuesEntry 11 }
+
+    swqReadOperationsPerSec OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Read Operations/sec is the rate the server is performing file read operations for the clients on this CPU. This value is a measure of how busy the Server is. This value will always be 0 in the Blocking Queue instance."
+        ::= { swqserver-Work-QueuesEntry 12 }
+
+    swqReadBytesPerSec OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Read Bytes/sec is the rate the server is reading data from files for the clients on this CPU. This value is a measure of how busy the Server is."
+        ::= { swqserver-Work-QueuesEntry 13 }
+
+    swqWriteOperationsPerSec OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Write Operations/sec is the rate the server is performing file write operations for the clients on this CPU.  This value is a measure of how busy the Server is.  This value will always be 0 in the Blocking Queue instance."
+        ::= { swqserver-Work-QueuesEntry 14 }
+
+    swqWriteBytesPerSec OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Write Bytes/sec is the rate the server is writing data to files for the clients on this CPU. This value is a measure of how busy the Server is."
+        ::= { swqserver-Work-QueuesEntry 15 }
+
+    swqTotalBytesPerSec OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Total Bytes/sec is the rate the Server is reading and writing data to and from the files for the clients on this CPU. This value is a measure of how busy the Server is."
+        ::= { swqserver-Work-QueuesEntry 16 }
+
+    swqTotalOperationsPerSec OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Total Operations/sec is the rate the Server is performing file read and file write operations for the cliens on this CPU.  This value is a measure of how busy the Server is.  This value will always be 0 in the Blocking Queue instance."
+        ::= { swqserver-Work-QueuesEntry 17 }
+
+    swqContextBlocksQueuedPerSec OBJECT-TYPE
+        SYNTAX Counter
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Context Blocks Queued per second is the rate that work context blocks had to be placed on the server's FSP queue to await server action."
+        ::= { swqserver-Work-QueuesEntry 18 }
+
+    -- system MIB
+
+    system OBJECT IDENTIFIER ::= { performance 23 }
+
+    sysFileReadOperationsPerSec OBJECT-TYPE
+        SYNTAX Counter
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "File Read Operations/sec is an aggregate of all the file system read operations on the computer."
+        ::= { system 1 }
+
+    sysFileWriteOperationsPerSec OBJECT-TYPE
+        SYNTAX Counter
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "File Write Operations/sec is an aggregate of all the file system write operations on the computer."
+        ::= { system 2 }
+
+    sysFileControlOperationsPerSec OBJECT-TYPE
+        SYNTAX Counter
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "File Control Operations/sec is an aggregate of all file system operations that are neither reads nor writes.  These operations usually include file system control requests or requests for information about device characteristics or status."
+        ::= { system 3 }
+
+    sysFileReadBytesPerSec OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "File Read Bytes/sec is an aggregate of the bytes transferred for all the file system read operations on the computer."
+        ::= { system 4 }
+
+    sysFileWriteBytesPerSec OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "File Write Bytes/sec is an aggregate of the bytes transferred for all the file system write operations on the computer."
+        ::= { system 5 }
+
+    sysFileControlBytesPerSec OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "File Control Bytes/sec is an aggregate of bytes transferred for all file system operations that are neither reads nor writes.  These operations usually include file system control requests or requests for information about device characteristics or status."
+        ::= { system 6 }
+
+    sysContextSwitchesPerSec OBJECT-TYPE
+        SYNTAX Counter
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Context Switches/sec is the rate of switches from one thread to another.  Thread switches can occur either inside of a single process or across processes.  A thread switch may be caused either by one thread asking another for information, or by a thread being preempted by another, higher priority thread becoming ready to run.  Unlike some early operating systems, Windows NT uses process boundaries for subsystem protection in addition to the traditional protection of User and Privileged modes.  These subsystem processes provide additional protection.  Therefore, some work done by Windows NT on behalf of an application may appear in other subsystem processes in addition to the Privileged Time in the application.  Switching to the subsystem process causes one Context Switch in the application thread.  Switching back causes another Context Switch in the subsystem thread."
+        ::= { system 7 }
+
+    sysSystemCallsPerSec OBJECT-TYPE
+        SYNTAX Counter
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Systems Calls/sec is the frequency of calls to Windows NT system service routines.  These routines perform all of the basic scheduling and synchronization of activities on the computer, and provide access to non-graphical devices, memory management, and name space management."
+        ::= { system 8 }
+
+    sysPercentTotalProcessorTime OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "The % Total Processor Time is the average percentage of time that all the processors on the system are busy executing non-idle threads.  On a multi-processor system, if all processors are always busy this is 100%, if all processors are 50% busy this is 50% and if 1/4th of the processors are 100% busy this is 25%.  It can be viewed as the fraction of the time spent doing useful work.  Each processor is assigned an Idle thread in the Idle process which consumes those unproductive processor cycles not used by any other threads.  "
+        ::= { system 9 }
+
+    sysPercentTotalUserTime OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "The % Total User Time is the average percentage of time spent in User mode by all processors.  On a multi-processor system, if all processors are always in User mode this is 100%, if all processors are 50% in User mode this is 50% and if 1/4th of the processors are in User mode this is 25%.  Applications execute in User Mode, as do subsystems like the window manager and the graphics engine.  Code executing in User Mode cannot damage the integrity of the Windows NT Executive, Kernel, and device drivers.  Unlike some early operating systems, Windows NT uses process boundaries for subsystem protection in addition to the traditional protection of User and Privileged modes.  These subsystem processes provide additional protection.  Therefore, some work done by Windows NT on behalf of an application may appear in other subsystem processes in addition to the Privileged Time in the application process."
+        ::= { system 10 }
+
+    sysPercentTotalPrivilegedTime OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "The % Total Privileged Time is the average percentage of time spent in Privileged mode by all processors.  On a multi-processor system, if all processors are always in Privileged mode this is 100%, and if 1/4th of the processors are in Privileged mode this is 25%.  When a Windows NT system service is called, the service will often run in Privileged Mode in order to gain access to system-private data.  Such data is protected from access by threads executing in User Mode.  Calls to the system may be explicit, or they may be implicit such as when a page fault or an interrupt occurs.  Unlike some early operating systems, Windows NT uses process boundaries for subsystem protection in addition to the traditional protection of User and Privileged modes.  These subsystem processes provide additional protection.  Therefore, some work done by Windows NT on behalf of an application may appear in other subsystem processes in addition to the Privileged Time in the application process."
+        ::= { system 11 }
+
+    sysTotalInterruptsPerSec OBJECT-TYPE
+        SYNTAX Counter
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Total Interrupts/sec is the rate the computer is receiving and servicing hardware interrupts.  Some devices that may generate interrupts are the system timer, the mouse, data communication lines, network interface cards and other peripheral devices.  This counter provides an indication of how busy these devices are on a computer-wide basis.  See also Processor:Interrupts/sec."
+        ::= { system 12 }
+
+    sysFileDataOperationsPerSec OBJECT-TYPE
+        SYNTAX Counter
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "File Data Operations per second is the rate that the computer is issuing Read and Write operations to file system devices.  It does not include File Control Operations."
+        ::= { system 13 }
+
+    sysSystemUpTime OBJECT-TYPE
+        SYNTAX TimeTicks
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Total Time (in seconds) that the computer has been operational since it was last started."
+        ::= { system 14 }
+
+    sysProcessorQueueLength OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Processor Queue Length is the instantaneous length of the processor queue in units of threads.  This counter is always 0 unless you are also monitoring a thread counter.  All processors use a single queue in which threads wait for processor cycles.  This length does not include the threads that are currently executing.  A sustained processor queue length greater than two generally indicates processor congestion.  This is an instantaneous count, not an average over the time interval."
+        ::= { system 15 }
+
+    sysAlignmentFixupsPerSec OBJECT-TYPE
+        SYNTAX Counter
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Alignment Fixups/sec is the rate of alignment faults fixed by the system."
+        ::= { system 16 }
+
+    sysExceptionDispatchesPerSec OBJECT-TYPE
+        SYNTAX Counter
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Exception Dispatches/sec is the rate of exceptions dispatched by the system."
+        ::= { system 17 }
+
+    sysFloatingEmulationsPerSec OBJECT-TYPE
+        SYNTAX Counter
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Floating Emulations/sec is the rate of floating emulations performed by the system."
+        ::= { system 18 }
+
+    sysPercentTotalDPCTime OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "% Total DPC Time is the sum of % DPC Time of all processors divided by the number of processors in the system.  (See Processor: % DPC Time for detail.)"
+        ::= { system 19 }
+
+    sysPercentTotalInterruptTime OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "% Total Interrupt Time is the sum of % Interrupt Time of all processors divided by the number of processors in the system.  (See Processor: % Interrupt Time for detail.)"
+        ::= { system 20 }
+
+    sysTotalDPCsQueuedPerSec OBJECT-TYPE
+        SYNTAX Counter
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Total DPCs Queued/sec is the rate DPC objects are queued to all processors' DPC queues."
+        ::= { system 21 }
+
+    sysTotalDPCRate OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Total DPC Rate is the average rate DPC objects are queued to all processors' DPC queue per clock tick."
+        ::= { system 22 }
+
+    sysTotalDPCBypassesPerSec OBJECT-TYPE
+        SYNTAX Counter
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Total DPC Bypasses/sec is the overall rate Dispatch interrupts were short-circuited across all processors."
+        ::= { system 23 }
+
+    sysTotalAPCBypassesPerSec OBJECT-TYPE
+        SYNTAX Counter
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Total APC Bypasses/sec is the overall rate kernel APC interrupts were short-circuited across all processors."
+        ::= { system 24 }
+
+    sysPercentRegistryQuotaInUse OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "% Registry Quota In Use indicates the percentage of the Total Registry Quota Allowed currently in use by the system."
+        ::= { system 25 }
+
+    -- tCP MIB
+
+    tCP OBJECT IDENTIFIER ::= { performance 24 }
+
+    tcpSegmentsPerSec OBJECT-TYPE
+        SYNTAX Counter
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Segments/sec is the rate that TCP segments are sent or received using the TCP protocol."
+        ::= { tCP 1 }
+
+    tcpConnectionsEstablished OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Connections Established is the number of TCP connections for which the current state is either ESTABLISHED or CLOSE-WAIT."
+        ::= { tCP 2 }
+
+    tcpConnectionsActive OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Connections Active is the number of times TCP connections have made a direct transition to the SYN-SENT state from the CLOSED state."
+        ::= { tCP 3 }
+
+    tcpConnectionsPassive OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Connections Passive is the number of times TCP connections have made a direct transition to the SYN-RCVD state from the LISTEN state."
+        ::= { tCP 4 }
+
+    tcpConnectionFailures OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Connection Failures is the number of times TCP connections have made a direct transition to the CLOSED state from the SYN-SENT state or the SYN-RCVD state, plus the number of times TCP connections have made a direct transition to the LISTEN state from the SYN-RCVD state."
+        ::= { tCP 5 }
+
+    tcpConnectionsReset OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Connections Reset is the number of times TCP connections have made a direct transition to the CLOSED state from either the ESTABLISHED state or the CLOSE-WAIT state."
+        ::= { tCP 6 }
+
+    tcpSegmentsReceivedPerSec OBJECT-TYPE
+        SYNTAX Counter
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Segments Received/sec is the rate that segments are received, including those received in error.  This count includes segments received on currently established connections."
+        ::= { tCP 7 }
+
+    tcpSegmentsSentPerSec OBJECT-TYPE
+        SYNTAX Counter
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Segments Sent/sec is the rate that segments are sent, including those on current connections, but excluding those containing only retransmitted bytes."
+        ::= { tCP 8 }
+
+    tcpSegmentsRetransmittedPerSec OBJECT-TYPE
+        SYNTAX Counter
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Segments Retransmitted/sec is the rate that segments are retransmitted, that is, segments transmitted containing one or more previously transmitted bytes."
+        ::= { tCP 9 }
+
+    -- telephony MIB
+
+    telephony OBJECT IDENTIFIER ::= { performance 25 }
+
+    teleLines OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "The number of telephone lines serviced by this computer."
+        ::= { telephony 1 }
+
+    teleTelephoneDevices OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "The number of telephone devices serviced by this computer."
+        ::= { telephony 2 }
+
+    teleActiveLines OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "The number of telephone lines serviced by this computer that are currently active."
+        ::= { telephony 3 }
+
+    teleActiveTelephones OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "The number of telephone devices that are currently being monitored."
+        ::= { telephony 4 }
+
+    teleOutgoingCallsPerSec OBJECT-TYPE
+        SYNTAX Counter
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "The rate of outgoing calls made by this computer."
+        ::= { telephony 5 }
+
+    teleIncomingCallsPerSec OBJECT-TYPE
+        SYNTAX Counter
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "The rate of incoming calls answered by this computer."
+        ::= { telephony 6 }
+
+    teleClientApps OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "The number of applications that are currently using telephony services."
+        ::= { telephony 7 }
+
+    teleCurrentOutgoingCalls OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Current outgoing calls being serviced by this computer."
+        ::= { telephony 8 }
+
+    teleCurrentIncomingCalls OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Current incoming calls being serviced by this computer."
+        ::= { telephony 9 }
+
+    -- thread MIB
+
+    thrdthreadTable OBJECT-TYPE
+        SYNTAX SEQUENCE OF ThrdthreadEntry
+        ACCESS not-accessible
+        STATUS mandatory
+        DESCRIPTION
+            "A table containing performance information for instances of 'thread' objects."
+        ::= { performance 26 }
+
+    thrdthreadEntry OBJECT-TYPE
+        SYNTAX ThrdthreadEntry
+        ACCESS not-accessible
+        STATUS mandatory
+        DESCRIPTION
+            "Performance information for one particular instance of 'thread' object."
+        INDEX { thrdthreadInstance }
+        ::= { thrdthreadTable 1 }
+
+    ThrdthreadEntry ::=
+        SEQUENCE {
+            thrdthreadInstance DisplayString,
+            thrdPercentProcessorTime INTEGER,
+            thrdPercentUserTime INTEGER,
+            thrdPercentPrivilegedTime INTEGER,
+            thrdContextSwitchesPerSec Counter,
+            thrdElapsedTime TimeTicks,
+            thrdPriorityCurrent INTEGER,
+            thrdPriorityBase INTEGER,
+            thrdStartAddress INTEGER,
+            thrdThreadState INTEGER,
+            thrdThreadWaitReason INTEGER,
+            thrdIDProcess INTEGER,
+            thrdIDThread INTEGER
+        }
+
+    thrdthreadInstance OBJECT-TYPE
+        SYNTAX DisplayString
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Instance name."
+        ::= { thrdthreadEntry 1 }
+
+    thrdPercentProcessorTime OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Processor Time is the percentage of elapsed time that this thread used the processor to execute instructions.  An instruction is the basic unit of execution in a processor, and a thread is the object that executes instructions.  Code executed to handle certain hardware interrupts or trap conditions may be counted for this thread."
+        ::= { thrdthreadEntry 2 }
+
+    thrdPercentUserTime OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "User Time is the percentage of elapsed time that this thread has spent executing code in User Mode.  Applications execute in User Mode, as do subsystems like the window manager and the graphics engine.  Code executing in User Mode cannot damage the integrity of the Windows NT Executive, Kernel, and device drivers.  Unlike some early operating systems, Windows NT uses process boundaries for subsystem protection in addition to the traditional protection of User and Privileged modes.  These subsystem processes provide additional protection.  Therefore, some work done by Windows NT on behalf of your application may appear in other subsystem processes in addition to the Privileged Time in your process."
+        ::= { thrdthreadEntry 3 }
+
+    thrdPercentPrivilegedTime OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Privileged Time is the percentage of elapsed time that this thread has spent executing code in Privileged Mode.  When a Windows NT system service is called, the service will often run in Privileged Mode in order to gain access to system-private data.  Such data is protected from access by threads executing in User Mode.  Calls to the system may be explicit, or they may be implicit such as when a page fault or an interrupt occurs.  Unlike some early operating systems, Windows NT uses process boundaries for subsystem protection in addition to the traditional protection of User and Privileged modes.  These subsystem processes provide additional protection.  Therefore, some work done by Windows NT on behalf of your application may appear in other subsystem processes in addition to the Privileged Time in your process."
+        ::= { thrdthreadEntry 4 }
+
+    thrdContextSwitchesPerSec OBJECT-TYPE
+        SYNTAX Counter
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Context Switches/sec is the rate of switches from one thread to another.  Thread switches can occur either inside of a single process or across processes.  A thread switch may be caused either by one thread asking another for information, or by a thread being preempted by another, higher priority thread becoming ready to run.  Unlike some early operating systems, Windows NT uses process boundaries for subsystem protection in addition to the traditional protection of User and Privileged modes.  These subsystem processes provide additional protection.  Therefore, some work done by Windows NT on behalf of an application may appear in other subsystem processes in addition to the Privileged Time in the application.  Switching to the subsystem process causes one Context Switch in the application thread.  Switching back causes another Context Switch in the subsystem thread."
+        ::= { thrdthreadEntry 5 }
+
+    thrdElapsedTime OBJECT-TYPE
+        SYNTAX TimeTicks
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "The total elapsed time (in seconds) this thread has been running."
+        ::= { thrdthreadEntry 6 }
+
+    thrdPriorityCurrent OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "The current dynamic priority of this thread.  The system may raise the thread's dynamic priority above the base priority if the thread is handling user input, or lower it towards the base priority if the thread becomes compute bound."
+        ::= { thrdthreadEntry 7 }
+
+    thrdPriorityBase OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "The current base priority of this thread.  The system may raise the thread's dynamic priority above the base priority if the thread is handling user input, or lower it towards the base priority if the thread becomes compute bound."
+        ::= { thrdthreadEntry 8 }
+
+    thrdStartAddress OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Starting virtual address for this thread."
+        ::= { thrdthreadEntry 9 }
+
+    thrdThreadState OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Thread State is the current state of the thread.  It is 0 for Initialized, 1 for Ready, 2 for Running, 3 for Standby, 4 for Terminated, 5 for Wait, 6 for Transition, 7 for Unknown.  A Running thread is using a processor; a Standby thread is about to use one.  A Ready thread wants to use a processor, but is waiting for a processor because none are free.  A thread in Transition is waiting for a resource in order to execute, such as waiting for its execution stack to be paged in from disk.  A Waiting thread has no use for the processor because it is waiting for a peripheral operation to complete or a resource to become free."
+        ::= { thrdthreadEntry 10 }
+
+    thrdThreadWaitReason OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Thread Wait Reason is only applicable when the thread is in the Wait state (see Thread State.)  It is 0 or 7 when the thread is waiting for the Executive, 1 or 8 for a Free Page, 2 or 9 for a Page In, 3 or 10 for a Pool Allocation, 4 or 11 for an Execution Delay, 5 or 12 for a Suspended condition, 6 or 13 for a User Request, 14 for an Event Pair High, 15 for an Event Pair Low, 16 for an LPC Receive, 17 for an LPC Reply, 18 for Virtual Memory, 19 for a Page Out; 20 and higher are not assigned at the time of this writing.  Event Pairs are used to communicate with protected subsystems (see Context Switches.)"
+        ::= { thrdthreadEntry 11 }
+
+    thrdIDProcess OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "ID Process is the unique identifier of this process.  ID Process numbers are reused, so they only identify a process for the lifetime of that process."
+        ::= { thrdthreadEntry 12 }
+
+    thrdIDThread OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "ID Thread is the unique identifier of this thread.  ID Thread numbers are reused, so they only identify a thread for the lifetime of that thread."
+        ::= { thrdthreadEntry 13 }
+
+    -- uDP MIB
+
+    uDP OBJECT IDENTIFIER ::= { performance 27 }
+
+    udpDatagramsPerSec OBJECT-TYPE
+        SYNTAX Counter
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Datagrams/sec is the rate that UDP datagrams are sent or received by the entity."
+        ::= { uDP 1 }
+
+    udpDatagramsReceivedPerSec OBJECT-TYPE
+        SYNTAX Counter
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Datagrams Received/sec is the rate that UDP datagrams are delivered to UDP users."
+        ::= { uDP 2 }
+
+    udpDatagramsNoPortPerSec OBJECT-TYPE
+        SYNTAX Counter
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Datagrams No Port/sec is the rate of received UDP datagrams for which there was no application at the destination port."
+        ::= { uDP 3 }
+
+    udpDatagramsReceivedErrors OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Datagrams Received Errors is the number of received UDP datagrams that could not be delivered for reasons other than the lack of an application at the destination port."
+        ::= { uDP 4 }
+
+    udpDatagramsSentPerSec OBJECT-TYPE
+        SYNTAX Counter
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Datagrams Sent/sec is the rate that UDP datagrams are sent from the entity."
+        ::= { uDP 5 }
+
+    END

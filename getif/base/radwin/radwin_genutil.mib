@@ -1,0 +1,363 @@
+-- RADWin-GENUTIL MIB  
+-- Version:   1.01
+-- Date:      Nov 18, 2008
+-- By:        Yossi Appleboum
+
+
+-- Change History
+
+-- 1.01		  Root OID fixed.
+
+-- 1.00		  BDU version.
+
+
+RADWIN-GENUTIL-MIB DEFINITIONS ::= BEGIN
+
+IMPORTS
+      DisplayString                  FROM SNMPv2-TC
+      OBJECT-TYPE, Counter32,
+      IpAddress                      FROM SNMPv2-SMI;        
+	  --TRAP-TYPE                      FROM RFC-1215;
+      
+      
+
+--  BDU sub tree  
+enterprises     OBJECT IDENTIFIER ::= { iso org(3) dod(6) internet(1) private(4) 1 }
+radwin          OBJECT IDENTIFIER ::= { enterprises 4458 }   
+bdu             OBJECT IDENTIFIER ::= { radwin 7300 }
+bduStd 	    	OBJECT IDENTIFIER ::= { bdu 1} 	
+bduGeneral      OBJECT IDENTIFIER ::= { bduStd 1 }
+bduUtility      OBJECT IDENTIFIER ::= { bduGeneral 10 }
+bduFiles        OBJECT IDENTIFIER ::= { bduGeneral 12 }
+fileServer      OBJECT IDENTIFIER ::= { bduFiles 1 }
+files           OBJECT IDENTIFIER ::= { bduFiles 2 }  
+fileOperations  OBJECT IDENTIFIER ::= { bduFiles 3 }
+bduLicense      OBJECT IDENTIFIER ::= { bduGeneral 14 }
+bduRadius       OBJECT IDENTIFIER ::= { bduGeneral 16 }
+
+--
+------------------------------------------------------------------------------
+--   bduUtility (access control)       
+------------------------------------------------------------------------------
+accessControlVerify OBJECT-TYPE
+	SYNTAX  DisplayString
+	MAX-ACCESS  read-write
+	STATUS  current
+	DESCRIPTION    	 "Internal usage only."
+	::= { bduUtility 1 }
+
+aclTable OBJECT-TYPE
+	SYNTAX SEQUENCE OF AclEntry
+	MAX-ACCESS not-accessible
+	STATUS current
+	DESCRIPTION		"Trap destination table"
+	::= { bduUtility 10 }
+
+aclEntry OBJECT-TYPE
+	SYNTAX AclEntry
+	MAX-ACCESS not-accessible
+	STATUS current
+	DESCRIPTION		"Access list table entry"
+	INDEX  { aclIndex  }
+
+	::= { aclTable 1 }
+ 
+AclEntry ::=
+	SEQUENCE {
+	  aclIndex 	 INTEGER,          
+      aclAddress    IpAddress
+	}
+
+aclIndex OBJECT-TYPE
+	SYNTAX INTEGER 
+	MAX-ACCESS read-only
+	STATUS current
+	DESCRIPTION 	 "Access list table index."
+	::= { aclEntry 1 }
+
+aclAddress OBJECT-TYPE
+	SYNTAX IpAddress 
+	MAX-ACCESS read-only
+	STATUS current
+	DESCRIPTION 	 "IP Address of the allowed hosts."
+	::= { aclEntry 2 }
+
+aclCommands OBJECT IDENTIFIER    ::= { bduUtility 11 }
+
+aclEnable OBJECT-TYPE
+	SYNTAX INTEGER 
+	{
+	  enable(1),
+	  disable(2)
+	} 
+	MAX-ACCESS  read-write
+	STATUS  current
+	DESCRIPTION    	 "Enable or disable IP Access lists mechanism.
+	An SNMP manager cannot enable the ACL if it is not a member of
+	the aclTable."
+	::= { aclCommands 1 }
+
+aclTempAddress OBJECT-TYPE
+	SYNTAX IpAddress 
+	MAX-ACCESS read-write
+	STATUS current
+	DESCRIPTION 	 "Used for temporary storage of the IP address to add
+	                 or remove from the access list table."
+	::= { aclCommands 2 }
+
+aclCommand OBJECT-TYPE
+	SYNTAX INTEGER 
+	{
+	  add(1),
+	  remove(2)
+	} 
+	MAX-ACCESS read-write
+	STATUS current
+	DESCRIPTION 	 "Activation command: setting this OID with value 1(add) adds 
+	                 the IP address that is stored in the aclAddress
+	                 to the access list table. setting this OID with value 2(remove)
+	                 deletes the IP address from the access list table.
+	                 An SNMP manager cannot delete itself from the aclTable."
+	::= { aclCommands 3 }
+ 
+
+--
+------------------------------------------------------------------------------
+-- File server group
+------------------------------------------------------------------------------
+serverIPAddress OBJECT-TYPE
+	SYNTAX  IpAddress
+	MAX-ACCESS read-write
+	STATUS current
+	DESCRIPTION 	"IP address of the FTP/TFTP server." 
+	::= { fileServer 1 }
+
+ftpUsername OBJECT-TYPE
+	SYNTAX  DisplayString 
+	MAX-ACCESS read-write
+	STATUS current
+	DESCRIPTION 	"Username for logging on (for FTP server only)." 
+	::= { fileServer 2 }
+
+ftpPassword OBJECT-TYPE
+	SYNTAX  DisplayString 
+	MAX-ACCESS read-write
+	STATUS current
+	DESCRIPTION 	"Password for logging on (for FTP server only)." 
+	::= { fileServer 3 }
+
+--
+------------------------------------------------------------------------------
+-- files group
+------------------------------------------------------------------------------
+
+
+filesTable OBJECT-TYPE
+	SYNTAX  SEQUENCE OF FilesEntry
+	MAX-ACCESS  not-accessible
+	STATUS  current
+	DESCRIPTION    	 "This table describes the firmware or content files stored 
+                     on the system resident Flash."
+	::= { files 1 }
+
+filesEntry OBJECT-TYPE
+	SYNTAX  FilesEntry
+	MAX-ACCESS  not-accessible
+	STATUS  current
+	DESCRIPTION   	 "The basic data structure used to hold a single file entry."
+    INDEX   { fileIndex }
+    ::= { filesTable 1 }
+
+FilesEntry ::=
+	SEQUENCE {
+      fileIndex	    	        INTEGER,
+	  fileName	    		    DisplayString,
+	  fileSize	    		    INTEGER,
+	  flashLocation	    		DisplayString
+	}
+
+fileIndex OBJECT-TYPE
+	SYNTAX  INTEGER
+	MAX-ACCESS  read-only
+	STATUS  current
+	DESCRIPTION    	 "Index of the files table."
+	::= { filesEntry 1 }
+
+fileName OBJECT-TYPE
+	SYNTAX  DisplayString 
+	MAX-ACCESS read-only
+	STATUS current
+	DESCRIPTION 	 "Name of the stored file (as downloaded by TFTP)." 
+	::= { filesEntry 2 }
+
+fileSize OBJECT-TYPE
+	SYNTAX  INTEGER
+	MAX-ACCESS  read-only
+	STATUS  current
+	DESCRIPTION    	 "Size of the file (in bytes)."
+	::= { filesEntry 3 }
+
+flashLocation OBJECT-TYPE
+	SYNTAX  DisplayString
+	MAX-ACCESS  read-only
+	STATUS  current
+	DESCRIPTION    	 "Base address (and/or bank) of the stored file."
+	::= { filesEntry 4 }
+
+bootVersion OBJECT-TYPE
+	SYNTAX  DisplayString 
+	MAX-ACCESS read-only
+	STATUS current
+	DESCRIPTION 	 "Bootloader version." 
+	::= { files 2 }
+
+--
+------------------------------------------------------------------------------
+-- actions group
+------------------------------------------------------------------------------
+
+fileCommands OBJECT IDENTIFIER    ::= { fileOperations 2 }
+
+downloadFilename OBJECT-TYPE
+	SYNTAX  DisplayString 
+	MAX-ACCESS read-write
+	STATUS current
+	DESCRIPTION 	 "filename to download." 
+	::= { fileCommands 1 }
+
+downloadCommand OBJECT-TYPE
+	SYNTAX  INTEGER
+    { 
+	  ready(1),
+	  downloadImage(21), 
+	  downloadContent(22), 
+	  downloadConfig(25), 
+	  uploadConfig(26), 
+	  busy(30)	  
+	}	
+	MAX-ACCESS  read-write
+	STATUS  current
+	DESCRIPTION    	 "Initiate download session."
+	::= { fileCommands 2 }
+
+downloadStatus OBJECT-TYPE
+	SYNTAX  INTEGER
+    { 
+	  ready(1),	  
+	  downloadingImage(21), 
+	  downloadingContent(22), 
+	  downloadingConfig(25), 
+	  uploadingConfig(26), 
+	  downloadSuccessful(31),	  
+	  downloadFailed(41),	  
+	  downloadFailedFileTooLarge(42),	  
+  	  downloadFailedGeneralError(43)
+	}
+	MAX-ACCESS  read-only
+	STATUS  current
+	DESCRIPTION    	 "The status of the current or last download session."
+	::= { fileCommands 3 }
+
+downloadProgress OBJECT-TYPE
+	SYNTAX  INTEGER
+	MAX-ACCESS  read-only
+	STATUS  current
+	DESCRIPTION    	 "The number of bytes loaded in the current or last session."
+	::= { fileCommands 4 }
+
+
+--
+------------------------------------------------------------------------------
+-- firmware licensing
+------------------------------------------------------------------------------
+
+fwLicFeatures OBJECT-TYPE
+	SYNTAX  DisplayString 
+	MAX-ACCESS read-write
+	STATUS current
+	DESCRIPTION 	 "Features string" 
+	::= { bduLicense 1 }
+
+fwLicKey OBJECT-TYPE
+	SYNTAX  DisplayString 
+	MAX-ACCESS read-write
+	STATUS current
+	DESCRIPTION 	 "License key" 
+	::= { bduLicense 2 }
+
+--
+------------------------------------------------------------------------------
+-- radius
+------------------------------------------------------------------------------
+
+radiusServerIP OBJECT-TYPE
+	SYNTAX  IpAddress 
+	MAX-ACCESS read-only
+	STATUS current
+	DESCRIPTION 	 "IP address of radius server" 
+	::= { bduRadius 1 }
+
+radiusSharedSecret OBJECT-TYPE
+	SYNTAX  DisplayString 
+	MAX-ACCESS read-only
+	STATUS current
+	DESCRIPTION 	 "Shared secret for radius server" 
+	::= { bduRadius 5 }
+
+radiusAuthHTTPusers OBJECT-TYPE
+	SYNTAX  INTEGER
+    { 
+	  enableRadiusAuth(1),	  
+	  disbleRadiusAuth(2)
+	}
+	MAX-ACCESS read-only
+	STATUS current
+	DESCRIPTION 	 "Use (or do not use) radius server for authenticating HTTP users" 
+	::= { bduRadius 10 }
+       
+------------------------------------------------------------------------------
+--   IP settings       
+------------------------------------------------------------------------------
+ipAddress OBJECT-TYPE
+	SYNTAX  IpAddress
+	MAX-ACCESS  read-write
+	STATUS  current
+	DESCRIPTION    	 "Device IP address."
+	::= { bduUtility 2 }
+
+netMask OBJECT-TYPE
+	SYNTAX  IpAddress
+	MAX-ACCESS  read-write
+	STATUS  current
+	DESCRIPTION    	 "Device subnet mask."
+	::= { bduUtility 3 }
+
+defaultGW OBJECT-TYPE
+	SYNTAX  IpAddress
+	MAX-ACCESS  read-write
+	STATUS  current
+	DESCRIPTION    	 "Device default gateway IP address."
+	::= { bduUtility 4 }
+
+snmpGetCommunity OBJECT-TYPE
+	SYNTAX  DisplayString
+	MAX-ACCESS  read-write
+	STATUS  current
+	DESCRIPTION    	 "SNMP agent GET community string."
+	::= { bduUtility 5 }
+
+snmpSetCommunity OBJECT-TYPE
+	SYNTAX  DisplayString
+	MAX-ACCESS  read-write
+	STATUS  current
+	DESCRIPTION    	 "SNMP agent SET community string."
+	::= { bduUtility 6 }
+
+url OBJECT-TYPE
+	SYNTAX  DisplayString
+	MAX-ACCESS  read-write
+	STATUS  current
+	DESCRIPTION    	 "URL string."
+	::= { bduUtility 7 }
+       
+END

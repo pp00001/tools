@@ -1,0 +1,327 @@
+-- These MIBs were created on 08/027/2000
+-- This module defines NetScreen private MIBs for L2tp configuration.
+-- 
+-- Copyright (c) 1999 - 2000 by NetScreen Technologies, Inc.
+-- All rights reserved.
+-- 
+
+-- MODULE-IDENTITY
+--  OrgName
+--    NetScreen Technologies, Inc.
+--  ContactInfo
+--     Customer Support
+--     
+--     2860 San TOmas Expwy
+--     Santa Clara, CA  95051
+--     USA
+--    
+--     Tel: 1.877.NETSCREEN
+--     E-mail: support@netscreen.com
+--     Http://www.netscreen.com
+
+--
+--  Last modified date: 09/28/2001
+--    
+
+NETSCREEN-VPN-L2TP-MIB DEFINITIONS ::= BEGIN
+IMPORTS
+    IpAddress FROM RFC1155-SMI
+    DisplayString 	FROM RFC1213-MIB 
+    netscreenVpn    FROM NETSCREEN-SMI;
+    nsVpnL2TP 	OBJECT IDENTIFIER ::= {netscreenVpn 8}
+
+	nsVpnL2tpDefPool OBJECT-TYPE
+        SYNTAX  DisplayString (SIZE (0..32))
+    	ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION
+             "IP pool used by the default L2TP setting."
+        ::= { nsVpnL2TP 1 }
+
+	nsVpnL2tpDefAuthDb OBJECT-TYPE
+        SYNTAX  INTEGER {
+        	   local(0),
+        	   radius(1)
+        }
+    	ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION
+             "l2tp authentication database."
+        ::= { nsVpnL2TP 2 }
+
+	nsVpnL2tpDefPPPAuth OBJECT-TYPE
+        SYNTAX  INTEGER {
+        	   pap(1),
+        	   chap(2),
+        	   any(3)
+        }
+    	ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION
+             "l2tp PPP authentication algorithm."
+        ::= { nsVpnL2TP 3 }
+
+	nsVpnL2tpDefRadServer OBJECT-TYPE
+        SYNTAX  DisplayString (SIZE (0..32))
+    	ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION
+             "l2tp RADIUS Server's IP address or name."
+        ::= { nsVpnL2TP 4 }
+
+	nsVpnL2tpDefPriDns OBJECT-TYPE
+        SYNTAX  IpAddress
+    	ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION
+             "DNS Primary Server's IP address."
+        ::= { nsVpnL2TP 5 }
+
+	nsVpnL2tpDefSecDns OBJECT-TYPE
+        SYNTAX  IpAddress
+    	ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION
+             "DNS Secondary Server's IP address."
+        ::= { nsVpnL2TP 6 }
+
+	nsVpnL2tpDefPriWins OBJECT-TYPE
+        SYNTAX  IpAddress
+    	ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION
+             "WINS Primary Server's IP address."
+        ::= { nsVpnL2TP 7 }
+
+	nsVpnL2tpDefSecWins OBJECT-TYPE
+        SYNTAX  IpAddress
+    	ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION
+             "WINS Secondary Server's IP address."
+        ::= { nsVpnL2TP 8 }
+
+    
+	nsVpnL2tpTunnelTable OBJECT-TYPE
+		SYNTAX  SEQUENCE OF NsVpnL2tpTunnelEntry
+		ACCESS  not-accessible
+		STATUS  mandatory
+		DESCRIPTION 
+		        "This table specifies the configuration attributes for NetScreen
+		        L2TP tunnel."
+		::= { nsVpnL2TP 9 }
+
+    nsVpnL2tpTunnelEntry OBJECT-TYPE
+        SYNTAX  NsVpnL2tpTunnelEntry
+        ACCESS  not-accessible
+        STATUS  mandatory
+        DESCRIPTION
+               "Each entry in the nsVpnL2tpTunnelTable holds a set of configuration
+               parameters associated with an instance of L2TP tunnel."
+        INDEX   { nsVpnL2tpTunIndex }
+        ::= { nsVpnL2tpTunnelTable 1 }
+
+	NsVpnL2tpTunnelEntry ::=
+		SEQUENCE {
+          nsVpnL2tpTunIndex
+              INTEGER,
+		  nsVpnL2tpTunId
+		      INTEGER,
+		  nsVpnL2tpTunName
+		      DisplayString,
+		  nsVpnL2tpTunUsrOrGroup
+		      DisplayString,
+		  nsVpnL2tpTunPeerIp
+		      IpAddress,
+		  nsVpnL2tpTunHost
+		      DisplayString, 
+		  nsVpnL2tpTunKeepAlive
+		      INTEGER
+       }
+
+	nsVpnL2tpTunIndex OBJECT-TYPE
+    	SYNTAX  INTEGER
+        ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION
+             "A unique value for l2tp tunnel table.  Its value
+              ranges between 0 and 65535 and may not be contigous." 
+        ::= { nsVpnL2tpTunnelEntry 1 }
+
+	nsVpnL2tpTunId OBJECT-TYPE
+        SYNTAX  INTEGER
+    	ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION
+             "l2tp tunnel id."
+        ::= { nsVpnL2tpTunnelEntry 2 }
+
+	nsVpnL2tpTunName OBJECT-TYPE
+        SYNTAX  DisplayString (SIZE (0..32))
+    	ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION
+             "l2tp tunnel name."
+        ::= { nsVpnL2tpTunnelEntry 3 }
+
+	nsVpnL2tpTunUsrOrGroup OBJECT-TYPE
+        SYNTAX  DisplayString (SIZE (0..32))
+    	ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION
+             "Dialup user or group using this l2tp tunnel."
+        ::= { nsVpnL2tpTunnelEntry 4 }
+
+	nsVpnL2tpTunPeerIp OBJECT-TYPE
+        SYNTAX  IpAddress
+    	ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION
+             "L2tp tunnel peer's IP address."
+        ::= { nsVpnL2tpTunnelEntry 5 }
+
+	nsVpnL2tpTunHost OBJECT-TYPE
+        SYNTAX  DisplayString(SIZE(0..32))
+    	ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION
+             "L2tp tunnel's host name."
+        ::= { nsVpnL2tpTunnelEntry 6 }
+
+	nsVpnL2tpTunKeepAlive OBJECT-TYPE
+        SYNTAX  INTEGER
+    	ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION
+             "Keep alive time threshold for a l2tp tunnel."
+        ::= { nsVpnL2tpTunnelEntry 7 }
+        
+END
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

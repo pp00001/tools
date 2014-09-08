@@ -1,0 +1,567 @@
+-- =========================================================
+-- Copyright (c) 2001-2004, Harbour Networks Limited
+-- All rights reserved.
+--
+-- Name     : HARBOUR-SYSTEM-MIB
+-- Intro    : The MIB definition for pppoe management.
+-- History  : When          Who         What & Why
+--            2002.12.18    Yaoliyong   Create
+--            2004.01.12    Suran       Add pppoeOnlineUserNum
+--            2004.01.13    Lida        Clean up for Hos
+--            2004.06.10    Liaoyuxia   Changed
+-- =========================================================
+
+HARBOUR-PPPOE-MIB DEFINITIONS ::= BEGIN
+
+IMPORTS
+    MODULE-IDENTITY,
+    OBJECT-TYPE,
+    Unsigned32          FROM SNMPv2-SMI
+    DisplayString,
+    MacAddress,
+    PhysAddress,
+    RowStatus           FROM SNMPv2-TC
+    harbourAgent        FROM HARBOUR-BASE-MIB;
+
+
+harbourPPPoEConf MODULE-IDENTITY
+    LAST-UPDATED    "200401130000Z"
+    ORGANIZATION    "Harbour Networks Limited"
+    CONTACT-INFO    "www.harbournetworks.com"
+    DESCRIPTION
+        "PPPoE MIB Module."
+    ::= { harbourAgent 26 }
+
+
+-- PPPoE Configuration Group
+
+pppoeConfGroup      OBJECT IDENTIFIER  ::= { harbourPPPoEConf 1}
+
+pppoeVirtualTemplateConf    OBJECT-TYPE
+    SYNTAX      INTEGER
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "Select the VT number."
+    ::= { pppoeConfGroup 1}
+
+dhcpServerIpAddress    OBJECT-TYPE
+    SYNTAX      DisplayString
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "Config dhcp server ip address."
+    ::= { pppoeConfGroup 2}
+
+dhcpListenVlanAdd    OBJECT-TYPE
+    SYNTAX      DisplayString
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "Config dhcpc-proxy add vlan to listen."
+    ::= { pppoeConfGroup 3}
+
+dhcpListenVlanDel    OBJECT-TYPE
+    SYNTAX      DisplayString
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "Config dhcpc-proxy cancel vlan on listen."
+    ::= { pppoeConfGroup 4}
+
+dhcpProxyService    OBJECT-TYPE
+    SYNTAX      INTEGER {
+                    disable(0),
+                    enable(1)
+                }
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "Config dhcpc-proxy service."
+    ::= { pppoeConfGroup 5}
+
+pppoeEnableStatisticStatus  OBJECT-TYPE
+    SYNTAX      INTEGER {
+                    enabled(1),
+                    disabled(0)
+                }
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        " ---PPPoE connecting statistic----
+        Enable /disable the function of PPPoE connecting statistic."
+    ::= { pppoeConfGroup 6 }
+
+pppoeAllDialNum  OBJECT-TYPE
+    SYNTAX      INTEGER
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "---PPPoE connecting statistic----
+        the number of establishing PPPoE connection."
+    ::= { pppoeConfGroup 7 }
+
+pppoeDialSuccess  OBJECT-TYPE
+    SYNTAX      INTEGER
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        " ---PPPoE connecting statistic----
+        the number of dialing success."
+    ::= { pppoeConfGroup 8 }
+
+pppoeDialErrorLCP  OBJECT-TYPE
+    SYNTAX      INTEGER
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        " ---PPPoE connecting statistic----
+        the number of LCP negotiating failed."
+    ::= { pppoeConfGroup 9 }
+
+pppoeDialErrorAuth  OBJECT-TYPE
+    SYNTAX      INTEGER
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        " ---PPPoE connecting statistic----
+        the number of authenticating failed.
+        (user name or password error)"
+    ::= { pppoeConfGroup 10 }
+
+pppoeDialErrorIPCP  OBJECT-TYPE
+    SYNTAX      INTEGER
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        " ---PPPoE connecting statistic----
+        the number of getting IP address failed ."
+    ::= { pppoeConfGroup 11 }
+
+pppoeDialErrorInterface  OBJECT-TYPE
+    SYNTAX      INTEGER
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        " ---PPPoE connecting statistic----
+        the number of configerating network interface failed ."
+    ::= { pppoeConfGroup 12 }
+
+pppoeDialErrorUnknown  OBJECT-TYPE
+    SYNTAX      INTEGER
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        " ---PPPoE connecting statistic----
+        the number of dialing failed without knowing the reason."
+    ::= { pppoeConfGroup 13 }
+
+pppoeOnlineUserNum    OBJECT-TYPE
+    SYNTAX      INTEGER
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "The number of current online pppoe users."
+    ::= { pppoeConfGroup 14 }
+
+
+-- Local IP Pool Configuration Group
+
+ipLocalpoolConfGroup    OBJECT IDENTIFIER  ::= { harbourPPPoEConf 2}
+
+ipLocalpoolConfTable    OBJECT-TYPE
+    SYNTAX      SEQUENCE OF IpLocalpoolConfEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "This table contains information used to
+        configure the virtual-template."
+    ::= { ipLocalpoolConfGroup 1}
+
+ipLocalpoolConfEntry    OBJECT-TYPE
+    SYNTAX      IpLocalpoolConfEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "The table'index used virual-template number."
+    INDEX       {IMPLIED ipLocalPoolName }
+    ::= { ipLocalpoolConfTable 1}
+
+IpLocalpoolConfEntry ::= SEQUENCE {
+    ipLocalPoolName                     DisplayString,
+    ipLocalPoolStartIp                  DisplayString,
+    ipLocalPoolEndIp                    DisplayString,
+    ipLocalPoolConfRowStatus            RowStatus,
+    pppoeAddressPoolMaxEngrossRatio     INTEGER,
+    pppoeAddressPoolEngrossRatioThresh  INTEGER,
+    pppoeAddressPoolFreeIpNum           INTEGER
+}
+
+ipLocalPoolName     OBJECT-TYPE
+    SYNTAX      DisplayString
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "Set Local pool."
+    ::= { ipLocalpoolConfEntry 1}
+
+ipLocalPoolStartIp  OBJECT-TYPE
+    SYNTAX      DisplayString
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "Set Local pool.If select default,can't config this ip"
+    ::= { ipLocalpoolConfEntry 2}
+
+ipLocalPoolEndIp  OBJECT-TYPE
+    SYNTAX      DisplayString
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "Set Local pool.If select default,can't config this ip"
+    ::= { ipLocalpoolConfEntry 3}
+
+ipLocalPoolConfRowStatus OBJECT-TYPE
+    SYNTAX      RowStatus
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "This object is used to create a new row or modify or
+        delete an existing row in this table.
+        A profile activated by setting this object to
+        `active'.  When `active' is set, the system
+        will validate the profile.
+
+        Before a profile can be deleted or taken out of
+        service, (by setting this object to `destroy' or
+        `outOfService') it must be first unreferenced
+        from all associated lines.
+
+        If the implementator of this MIB has chosen not
+        to implement `dynamic assignment' of profiles, this
+        object's MIN-ACCESS is read-only and its value
+        is always to be `active'."
+    ::= { ipLocalpoolConfEntry 4 }
+
+pppoeAddressPoolMaxEngrossRatio    OBJECT-TYPE
+    SYNTAX      INTEGER
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "The engrossing ratio of pppoe address pool."
+    ::= { ipLocalpoolConfEntry 5}
+
+pppoeAddressPoolEngrossRatioThresh    OBJECT-TYPE
+    SYNTAX      INTEGER(0..100)
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "The engrossing ratio thresh of pppoe address pool.
+        The range is from 0 to 100.
+        Zero means not alarming. The other values means alarming the NMS
+        when the address pool engross ratio reachs that value. "
+    ::= { ipLocalpoolConfEntry 6}
+
+pppoeAddressPoolFreeIpNum    OBJECT-TYPE
+    SYNTAX      INTEGER
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "The number of free IP addresses in pppoe address pool."
+    ::= { ipLocalpoolConfEntry 7}
+
+
+-- PPPOE Sessions Configuration
+
+pppoeSessions         OBJECT IDENTIFIER   ::= { harbourPPPoEConf 3 }
+
+pppoeSystemCurrentSessions OBJECT-TYPE
+    SYNTAX  INTEGER (0..8212)
+    ACCESS  read-only
+    STATUS  mandatory
+    DESCRIPTION
+        "The current number of sessions."
+    ::= { pppoeSessions 1 }
+
+pppoeSystemMaxAllowedSessions OBJECT-TYPE
+    SYNTAX  INTEGER   (0..8212)
+    ACCESS  read-write
+    STATUS  mandatory
+    DESCRIPTION
+        "The max number of sessions allowed by the system.
+        If the pppoeSystemCurrentSessions exceeds this number,
+        pppoeSystemMaxAllowedTrap should be sent out."
+    ::= { pppoeSessions 2 }
+
+pppoeSystemThresholdSessions  OBJECT-TYPE
+    SYNTAX  INTEGER   (0..8212)
+    ACCESS  read-write
+    STATUS  mandatory
+    DESCRIPTION
+        "The threshold number of sessions.
+        If the pppoeSystemCurrentSessions exceeds this number,
+        pppoeSystemSessionThresholdTrap should be sent out.
+        Attention: pppoeSystemThresholdSessions should be less
+        than pppoeSystemThresholdSessions."
+    ::= { pppoeSessions 3 }
+
+pppoeSystemExceededSessionsErrors  OBJECT-TYPE
+    SYNTAX  INTEGER
+    ACCESS  read-only
+    STATUS  mandatory
+    DESCRIPTION
+        "The number of times that pppoeSystemCurrentSessions exceeds
+        pppoeSystemMaxAllowedSessions."
+    ::= { pppoeSessions 4 }
+
+pppoeUpLinkThresholdPerSession     OBJECT-TYPE
+    SYNTAX      INTEGER
+    ACCESS      read-write
+    STATUS      current
+    DESCRIPTION
+        "Upload traffic threshold of every session.
+         If the pppoe user download traffic exceeds pppoeDownLinkThresholdPerUser,
+         pppoeUpLinkThresholdPerUserExceededTrap trap should be sent out.
+        "
+    ::= { pppoeSessions 5}
+
+pppoeDownLinkThresholdPerSession     OBJECT-TYPE
+    SYNTAX      INTEGER
+    ACCESS      read-write
+    STATUS      current
+    DESCRIPTION
+        "Download traffic threshold of every session.
+         If the pppoe user download traffic exceeds pppoeDownLinkThresholdPerUser,
+         pppoeDownLinkThresholdPerUserExceededTrap trap should be sent out.
+        "
+    ::= { pppoeSessions 6}
+
+
+-- PPPoE Port Traffic Table
+
+pppoePortTrafficTable    OBJECT-TYPE
+    SYNTAX      SEQUENCE OF PPPoePortTrafficEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "This table contains information used to
+        pppoe port."
+    ::= { pppoeSessions 7}
+
+pppoePortTrafficEntry    OBJECT-TYPE
+    SYNTAX      PPPoePortTrafficEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "The table port ifindex."
+    INDEX       { pppoePortIfIndex }
+    ::= { pppoePortTrafficTable 1}
+
+PPPoePortTrafficEntry ::= SEQUENCE {
+    pppoePortIfIndex                        INTEGER,
+    pppoePortUploadTraffic                  INTEGER,
+    pppoePortDownloadTraffic                INTEGER,
+    pppoePortSessionNumber                  INTEGER
+}
+
+pppoePortIfIndex     OBJECT-TYPE
+    SYNTAX      INTEGER
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "port ifindex."
+    ::= { pppoePortTrafficEntry 1}
+
+pppoePortUploadTraffic     OBJECT-TYPE
+    SYNTAX      INTEGER
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "Pppoe upload traffic value of the port."
+    ::= { pppoePortTrafficEntry 2}
+
+pppoePortDownloadTraffic     OBJECT-TYPE
+    SYNTAX      INTEGER
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "PPPoe download traffic value of the port."
+    ::= { pppoePortTrafficEntry 3}
+
+pppoePortSessionNumber     OBJECT-TYPE
+    SYNTAX      INTEGER
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "The current number of sessions of the port."
+    ::= { pppoePortTrafficEntry 4}
+
+
+pppoeSubInterfaceTrafficTable    OBJECT-TYPE
+    SYNTAX      SEQUENCE OF PPPoeSubInterfaceTrafficEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "This table contains information used to
+        pppoe subinterface."
+    ::= { pppoeSessions 8}
+
+pppoeSubinterfaceTrafficEntry    OBJECT-TYPE
+    SYNTAX      PPPoeSubInterfaceTrafficEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "The table SubInterface ifindex."
+    INDEX       { pppoeSubInterfaceIfIndex }
+    ::= { pppoeSubInterfaceTrafficTable 1}
+
+PPPoeSubInterfaceTrafficEntry ::= SEQUENCE {
+    pppoeSubInterfaceIfIndex                        INTEGER,
+    pppoeSubInterfaceUploadTraffic                  INTEGER,
+    pppoeSubInterfaceDownloadTraffic                INTEGER,
+    pppoeSubInterfaceSessionNumber                  INTEGER
+}
+
+pppoeSubInterfaceIfIndex     OBJECT-TYPE
+    SYNTAX      INTEGER
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "SubInterface ifindex."
+    ::= { pppoeSubinterfaceTrafficEntry 1}
+
+pppoeSubInterfaceUploadTraffic     OBJECT-TYPE
+    SYNTAX      INTEGER
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "Pppoe upload traffic value of the SubInterface."
+    ::= { pppoeSubinterfaceTrafficEntry 2}
+
+pppoeSubInterfaceDownloadTraffic     OBJECT-TYPE
+    SYNTAX      INTEGER
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "PPPoe download traffic value of the SubInterface."
+    ::= { pppoeSubinterfaceTrafficEntry 3}
+
+pppoeSubInterfaceSessionNumber     OBJECT-TYPE
+    SYNTAX      INTEGER
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "The current number of sessions of the SubInterface."
+    ::= { pppoeSubinterfaceTrafficEntry 4}
+
+pppoeVlanTrafficTable    OBJECT-TYPE
+    SYNTAX      SEQUENCE OF PPPoeVlanTrafficEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "This table contains information used to
+        pppoe Vlan."
+    ::= { pppoeSessions 9}
+
+pppoeVlanTrafficEntry    OBJECT-TYPE
+    SYNTAX      PPPoeVlanTrafficEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "The table Vlan ifindex."
+    INDEX       { pppoeVlanIfIndex }
+    ::= { pppoeVlanTrafficTable 1}
+
+PPPoeVlanTrafficEntry ::= SEQUENCE {
+    pppoeVlanIfIndex                        INTEGER,
+    pppoeVlanUploadTraffic                  INTEGER,
+    pppoeVlanDownloadTraffic                INTEGER,
+    pppoeVlanSessionNumber                  INTEGER
+}
+
+pppoeVlanIfIndex     OBJECT-TYPE
+    SYNTAX      INTEGER
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "Vlan ifindex."
+    ::= { pppoeVlanTrafficEntry 1}
+
+pppoeVlanUploadTraffic     OBJECT-TYPE
+    SYNTAX      INTEGER
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "Pppoe upload traffic value of the Vlan."
+    ::= { pppoeVlanTrafficEntry 2}
+
+pppoeVlanDownloadTraffic     OBJECT-TYPE
+    SYNTAX      INTEGER
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "PPPoe download traffic value of the Vlan."
+    ::= { pppoeVlanTrafficEntry 3}
+
+pppoeVlanSessionNumber     OBJECT-TYPE
+    SYNTAX      INTEGER
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "The current number of sessions of the vlan."
+    ::= { pppoeVlanTrafficEntry 4}
+
+--  PPPoE Trap Session Group
+
+pppoeTrapSessionGroup      OBJECT IDENTIFIER  ::= { harbourPPPoEConf 4 }
+
+pppoeTrapSessionIp     OBJECT-TYPE
+    SYNTAX      IpAddress
+    MAX-ACCESS  accessible-for-notify
+    STATUS      current
+    DESCRIPTION
+        "Session ip address."
+    ::= { pppoeTrapSessionGroup 1}
+
+pppoeTrapSessionName     OBJECT-TYPE
+    SYNTAX      DisplayString  ( SIZE( 0 .. 63  ) )
+    MAX-ACCESS  accessible-for-notify
+    STATUS      current
+    DESCRIPTION
+        "User Name."
+    ::= { pppoeTrapSessionGroup 2}
+
+pppoeTrapSessionMac     OBJECT-TYPE
+    SYNTAX      PhysAddress
+    MAX-ACCESS  accessible-for-notify
+    STATUS      current
+    DESCRIPTION
+        "Session Mac."
+    ::= { pppoeTrapSessionGroup 3}
+
+pppoeTrapSessionVlanId     OBJECT-TYPE
+    SYNTAX      INTEGER
+    MAX-ACCESS  accessible-for-notify
+    STATUS      current
+    DESCRIPTION
+        "Session belong to the vlan id."
+    ::= { pppoeTrapSessionGroup 4}
+
+pppoeTrapSessionLoginTime     OBJECT-TYPE
+    SYNTAX      TimeTicks
+    MAX-ACCESS  accessible-for-notify
+    STATUS      current
+    DESCRIPTION
+        "Session login time."
+    ::= { pppoeTrapSessionGroup 5}
+
+pppoeTrapSessionUpDownType     OBJECT-TYPE
+    SYNTAX      INTEGER
+    MAX-ACCESS  accessible-for-notify
+    STATUS      current
+    DESCRIPTION
+        "Session login up or down type, if uplink the value is 1,else 0."
+    ::= { pppoeTrapSessionGroup 6}
+
+
+END

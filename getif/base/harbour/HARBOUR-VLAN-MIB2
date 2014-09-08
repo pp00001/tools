@@ -1,0 +1,888 @@
+-- =========================================================
+-- Copyright (c) 2001-2003, Harbour Networks Ltd.
+-- All rights reserved.
+--
+-- Name     : HARBOUR-VLAN-MIB2
+-- Intro    : The MIB definition for VLAN management.
+-- History  : When          Who         What & Why
+--            2002.         Jinfusheng  Created
+--            2002.4.16     Liyan       reestablished
+--            2003.5.27     Liuaijun    added HarbourSuperVlanName
+--            2003.5.23     Liuaijun    added harbourSuperVlanARPGroupTable
+--            2003.5.25     Liuaijun    added harbourSubVlanTable
+--            2003.11.11    Liaoyuxia   Clean up for Hos
+--            2004.04.14    Luoguixing  Add harbourVlanMode
+--            2004.05.24    Luoguixing  Add harbourBaseLevel
+-- =========================================================
+
+HARBOUR-VLAN-MIB2 DEFINITIONS ::= BEGIN
+
+IMPORTS
+    MODULE-IDENTITY,
+    OBJECT-TYPE,
+    IpAddress          FROM SNMPv2-SMI
+    RowStatus          FROM SNMPv2-TC
+    DisplayString      FROM RFC1213-MIB
+    harbourAgent       FROM HARBOUR-BASE-MIB
+    Unsigned32         FROM SNMPv2-SMI
+    PortList           FROM Q-BRIDGE-MIB
+    VlanIndex,
+    VlanId             FROM Q-BRIDGE-MIB
+    harbourSystem      FROM HARBOUR-SYSTEM-MIB;
+
+
+harbourVlan  MODULE-IDENTITY
+    LAST-UPDATED  "200311110000Z"
+    ORGANIZATION  "harbourNetworks, Inc."
+    CONTACT-INFO  "www.harbournetworks.com"
+    DESCRIPTION
+            "The MIB module defining objects for VLAN ."
+    ::= { harbourAgent 10 }
+
+
+-- The objects are arranged into the following groups:
+
+    harbourVlanBase         OBJECT IDENTIFIER ::= { harbourVlan 1 }
+
+    harbourVlanGroup        OBJECT IDENTIFIER ::= { harbourVlan 2 }
+
+    harbourSuperVlanGroup   OBJECT IDENTIFIER ::= { harbourVlan 3 }
+
+
+-- harbourVlanBase group is copied from dot1qBase of Q-BRIDGE-MIB
+
+harbourVlanVerNumber OBJECT-TYPE
+    SYNTAX      INTEGER { version1(1) }
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "The version number of IEEE 802.1Q that this device
+            supports."
+    REFERENCE
+            "IEEE 802.1Q/D11 Section 12.10.1.1"
+    ::= { harbourVlanBase 1 }
+
+harbourVlanMaxVid OBJECT-TYPE
+    SYNTAX      VlanId
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "The maximum IEEE 802.1Q VLAN ID that this device
+            supports."
+    REFERENCE
+            "IEEE 802.1Q/D11 Section 9.3.2.3"
+    ::= { harbourVlanBase 2 }
+
+harbourVlanMaxSupportedVlans OBJECT-TYPE
+    SYNTAX      Unsigned32
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "The maximum number of IEEE 802.1Q VLANs that this
+            device supports."
+    REFERENCE
+            "IEEE 802.1Q/D11 Section 12.10.1.1"
+    ::= { harbourVlanBase 3 }
+
+harbourVlanNumVlans OBJECT-TYPE
+    SYNTAX      Unsigned32
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "The current number of IEEE 802.1Q VLANs that are
+         configured in this device."
+    REFERENCE
+        "IEEE 802.1Q/D11 Section 12.7.1.1"
+    ::= { harbourVlanBase 4 }
+
+harbourVlanGvrpStatus OBJECT-TYPE
+    SYNTAX      INTEGER {
+                    enabled (1),
+                    disabled (2)
+                }
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "The administrative status requested by management for
+            GVRP.  The value enabled(1) indicates that GVRP should
+            be enabled on this device, on all ports for which it has
+            not been specifically disabled.  When disabled(2), GVRP
+            is disabled on all ports and all GVRP packets will be
+            forwarded transparently.  This object affects all GVRP
+            Applicant and Registrar state machines.  A transition
+            from disabled(2) to enabled(1) will cause a reset of all
+            GVRP state machines on all ports."
+    DEFVAL     { enabled }
+    ::= { harbourVlanBase 5 }
+
+harbourNewVlanIndex OBJECT-TYPE
+    SYNTAX      VlanIndex
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "A harbourVlanIndex of last created vlan.
+            This object just promote NMS programmer's convenience."
+    ::= { harbourVlanBase 6 }
+
+harbourVlanMode OBJECT-TYPE
+    SYNTAX      INTEGER {
+                       multiple(1),
+                       single(2)
+                }
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "This object indicate the vlan mode."
+    DEFVAL     { multiple }
+    ::= { harbourVlanBase 7 }
+
+   harbourBaseLevel OBJECT-TYPE
+    SYNTAX      INTEGER(0..15)
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "This object indicate the vlan baselevel."
+    DEFVAL     { 7 }
+    ::= { harbourVlanBase 8 }
+
+-- Harbour Vlan Group
+
+-- Harbour Vlan Prop Table
+
+harbourVlanPropTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF HarbourVlanPropEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+            "harbour vlan's properties."
+    ::= { harbourVlanGroup 1 }
+
+harbourVlanPropEntry OBJECT-TYPE
+    SYNTAX      HarbourVlanPropEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+            "An entry in the harbourVlanPropTable."
+    INDEX       { harbourVlanIndex }
+    ::= { harbourVlanPropTable 1 }
+
+HarbourVlanPropEntry ::= SEQUENCE {
+    harbourVlanIndex                        VlanIndex,
+    harbourVlanName                         DisplayString,
+    harbourVlanAllPorts                     PortList,
+    harbourVlanForbiddenPorts               PortList,
+    harbourVlanUntaggedPorts                PortList,
+    harbourVlanID                           VlanId,
+    harbourVlanRowStatus                    RowStatus,
+    harbourVlanType                         INTEGER,
+    harbourVlanifIndex                      INTEGER,
+    harbourVlanIP                           IpAddress,
+    harbourVlanMask                         IpAddress,
+    harbourVlanConsole                      INTEGER,
+    harbourVlanInputPorts                   PortList,
+    harbourVlanIGMPPorts                    PortList,
+    harbourVlanUserLimit                    INTEGER,
+    harbourVlanPPPOE                        INTEGER,
+    harbourVlanUserLimitstatus              INTEGER,
+    harbourVlanPPPOEListen                  INTEGER,
+    pppLcpFastStart                         INTEGER,
+    pppLcpDelayTime                         INTEGER,
+    pppIpcpAcceptAddress                    INTEGER,
+    pppIpcpDnsAcceptPrimaryIpAddress        DisplayString,
+    pppIpcpDnsAcceptSecondaryIpAddress      DisplayString,
+    pppIpcpDnsAcceptAddress                 INTEGER,
+    pppIpcpWinsAcceptPrimaryIpAddress       DisplayString,
+    pppIpcpWinsAcceptSecondaryIpAddress     DisplayString,
+    pppIpcpWinsAcceptAddress                INTEGER,
+    pppAuthenticationStatus                 INTEGER,
+    pppAuthenticationProtocol               INTEGER,
+    pppTimeoutRetryNum                      INTEGER,     --Number
+    pppTimeoutAuthenticatonTime             INTEGER,
+    pppPeerIpAddressPoolConf                DisplayString,
+    pppPeerIpAddressDhcpProxy               INTEGER,
+    pppPeerIpAddressPoolName                DisplayString,
+    pppLcpInterval                          INTEGER,
+    pppLcpRetransmit                        INTEGER
+}
+
+harbourVlanIndex OBJECT-TYPE
+    SYNTAX      VlanIndex
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "A subscript of vlan's array which is used by 2 layer.
+            This object is the same as dot1qVlanIndex of Q-BRIDGE-MIB."
+    ::= { harbourVlanPropEntry 1 }
+
+harbourVlanName OBJECT-TYPE
+    SYNTAX      DisplayString (SIZE(0 .. 32))
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+            "This object is the same as dot1qVlanStaticName of Q-BRIDGE-MIB."
+    ::= { harbourVlanPropEntry 2 }
+
+harbourVlanAllPorts OBJECT-TYPE
+    SYNTAX      PortList
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+            "This object is the same as dot1qVlanStaticEgressPorts of
+            Q-BRIDGE-MIB."
+    ::= { harbourVlanPropEntry 3 }
+
+harbourVlanForbiddenPorts OBJECT-TYPE
+    SYNTAX      PortList
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+            "This object is the same as dot1qVlanForbiddenEgressPorts
+            of Q-BRIDGE-MIB."
+    ::= { harbourVlanPropEntry 4 }
+
+harbourVlanUntaggedPorts OBJECT-TYPE
+    SYNTAX      PortList
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+            "This object is the same as dot1qVlanStaticUntaggedPorts of
+            Q-BRIDGE-MIB."
+    ::= { harbourVlanPropEntry 5 }
+
+harbourVlanID OBJECT-TYPE
+    SYNTAX      VlanId
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+            "Vlan's vid."
+    ::= { harbourVlanPropEntry 6 }
+
+harbourVlanRowStatus OBJECT-TYPE
+    SYNTAX      RowStatus
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+            "This object indicates the status of this entry."
+    ::= { harbourVlanPropEntry 7 }
+
+harbourVlanType OBJECT-TYPE
+    SYNTAX      INTEGER {
+                    normalvlan (0),
+                    supervlan (1),
+                    subvlan (2)
+                }
+        MAX-ACCESS      read-create
+    STATUS      current
+    DESCRIPTION
+            "This object indicates the vlan's type."
+    ::= { harbourVlanPropEntry 8 }
+
+harbourVlanifIndex OBJECT-TYPE
+    SYNTAX      INTEGER
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "This object indicates vlan's ifIndex."
+    ::= { harbourVlanPropEntry 9 }
+
+harbourVlanIP OBJECT-TYPE
+    SYNTAX      IpAddress
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+            "This object indicates vlan's IP address."
+    ::= { harbourVlanPropEntry 10 }
+
+harbourVlanMask OBJECT-TYPE
+    SYNTAX      IpAddress
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+            "This object indicates vlan's IP mask."
+    ::= { harbourVlanPropEntry 11 }
+
+harbourVlanConsole OBJECT-TYPE
+    SYNTAX      INTEGER {
+                    disable (0),
+                    enable (1)
+                }
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+            "Enable or disable a vlan's console function."
+    ::= { harbourVlanPropEntry 12 }
+
+harbourVlanInputPorts OBJECT-TYPE
+    SYNTAX      PortList
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+            "This object indicates vlan's InputPorts."
+    ::= { harbourVlanPropEntry 13 }
+
+harbourVlanIGMPPorts OBJECT-TYPE
+    SYNTAX      PortList
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+            "This object indicates vlan's IGMP ports."
+    ::= { harbourVlanPropEntry 14 }
+
+harbourVlanUserLimit OBJECT-TYPE
+    SYNTAX      INTEGER(0.. 1024)
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "The max number of user can connect to this vlan."
+    ::= { harbourVlanPropEntry 15 }
+
+harbourVlanPPPOE OBJECT-TYPE
+    SYNTAX      INTEGER {
+                    on (1),
+                    off (2),
+                    invalid (3)
+                }
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+            "This object indicates vlan's PPPOE status."
+    ::= { harbourVlanPropEntry 16 }
+
+harbourVlanUserLimitstatus OBJECT-TYPE
+    SYNTAX      INTEGER{
+                    nouserlimit(0),
+                    userlimit(1)
+                }
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+            "The max number of user can connect to this vlan."
+    ::= { harbourVlanPropEntry 17 }
+
+harbourVlanPPPOEListen OBJECT-TYPE
+    SYNTAX      INTEGER{
+                    yes(0),
+                    no(1)
+                }
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+            "The object use for config dhcpc-proxy add vlan to listen."
+    ::= { harbourVlanPropEntry 18 }
+
+pppLcpFastStart OBJECT-TYPE
+    SYNTAX      INTEGER {
+                    fast-start (1),
+                    nofast-start (2)
+                }
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+            "Config interface virtual-template ppp
+            lcp fast-start or no fast-start."
+    ::= { harbourVlanPropEntry 19 }
+
+pppLcpDelayTime OBJECT-TYPE
+    SYNTAX      INTEGER
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+            "Config interface virtual-template ppp
+            lcp delay time,if the value equal to 0
+            It's no ppp lcp delay."
+    ::= { harbourVlanPropEntry 20 }
+
+pppIpcpAcceptAddress OBJECT-TYPE
+    SYNTAX      INTEGER{
+                    none (0),
+                    accept (1)
+                }
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+            "Config interface virtual-template ppp
+            lpcp accept address,if select config DNS
+        or WINS this value is NULL."
+    ::= { harbourVlanPropEntry 21 }
+
+pppIpcpDnsAcceptPrimaryIpAddress OBJECT-TYPE
+    SYNTAX      DisplayString
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+            "Config interface virtual-template ppp
+            lpcp DNS accept Primary address,if select config others
+            the value is NULL."
+    ::= { harbourVlanPropEntry 22 }
+
+pppIpcpDnsAcceptSecondaryIpAddress OBJECT-TYPE
+    SYNTAX      DisplayString
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+            "Config interface virtual-template ppp
+            lpcp DNS accept Secondary address,if select config others
+            the value is NULL."
+    ::= { harbourVlanPropEntry 23 }
+
+pppIpcpDnsAcceptAddress  OBJECT-TYPE
+    SYNTAX      INTEGER{
+                    accept (1),
+                    reject (2),
+                    none   (3)
+                }
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+            "Config interface virtual-template ppp
+            lpcp accept or reject dns address."
+    ::= { harbourVlanPropEntry 24 }
+
+pppIpcpWinsAcceptPrimaryIpAddress OBJECT-TYPE
+    SYNTAX      DisplayString
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+            "Config interface virtual-template ppp
+            lpcp WINS accept address,if select config others
+            the value is NULL."
+    ::= { harbourVlanPropEntry 25 }
+
+pppIpcpWinsAcceptSecondaryIpAddress OBJECT-TYPE
+    SYNTAX      DisplayString
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+            "Config interface virtual-template ppp
+            lpcp WINS accept Secondary address,if select config others
+            the value is NULL."
+    ::= { harbourVlanPropEntry 26 }
+
+pppIpcpWinsAcceptAddress  OBJECT-TYPE
+    SYNTAX      INTEGER {
+                    accept (1),
+                    reject (2),
+                    none   (3)
+                }
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+            "Config interface virtual-template ppp
+            lpcp accept or reject wins address."
+    ::= { harbourVlanPropEntry 27 }
+
+pppAuthenticationStatus OBJECT-TYPE
+    SYNTAX      INTEGER {noauthentication(0),authentication(1)}
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+            "Config interface virtual-template ppp
+            Authentication."
+    ::= { harbourVlanPropEntry 28 }
+
+pppAuthenticationProtocol OBJECT-TYPE
+    SYNTAX      INTEGER {pap(1),chap(2)}
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+            "Config interface virtual-template ppp
+            authentication protocol."
+    ::= { harbourVlanPropEntry 29 }
+
+pppTimeoutRetryNum OBJECT-TYPE
+    SYNTAX      INTEGER
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+            "Config interface virtual-template ppp
+            authentication,if auth fialed,retry num."
+    ::= { harbourVlanPropEntry 30 }
+
+pppTimeoutAuthenticatonTime OBJECT-TYPE
+    SYNTAX      INTEGER
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+            "Config the time value."
+    ::= { harbourVlanPropEntry 31 }
+
+pppPeerIpAddressPoolConf OBJECT-TYPE
+    SYNTAX      DisplayString
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+            "Config the time value."
+    ::= { harbourVlanPropEntry 32 }
+
+pppPeerIpAddressDhcpProxy OBJECT-TYPE
+    SYNTAX      INTEGER {yes(1),no(2),none(3)}
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+            "Config DHCP-PROXY.If config this variable
+            can't config ip pool name"
+    ::= { harbourVlanPropEntry 33 }
+
+pppPeerIpAddressPoolName OBJECT-TYPE
+    SYNTAX      DisplayString
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+            "Config peer ip address pool,if no specify
+            this ip address,that's value is NULL"
+    ::= { harbourVlanPropEntry 34 }
+
+
+pppLcpInterval  OBJECT-TYPE
+    SYNTAX      INTEGER
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+            "Config interface virtual-template
+            ppp lcp interval value"
+    ::= { harbourVlanPropEntry 35 }
+
+pppLcpRetransmit  OBJECT-TYPE
+    SYNTAX      INTEGER
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+            "Config interface virtual-template
+            ppp lcp retransmit number"
+    ::= { harbourVlanPropEntry 36 }
+
+
+-- Harbour SuperVlan Group
+
+harbourVlanSearchListAgingTime OBJECT-TYPE
+    SYNTAX      INTEGER
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "This object is to set the searchlist aging time
+            for all of the super vlan."
+    ::= { harbourSuperVlanGroup 1 }
+
+-- Harbour SuperVlan Prop Table
+
+harbourSuperVlanPropTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF HarbourSuperVlanPropEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+            "harbour SuperVlan's properties."
+    ::= { harbourSuperVlanGroup 2 }
+
+harbourSuperVlanPropEntry OBJECT-TYPE
+    SYNTAX      HarbourSuperVlanPropEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+            "An entry in the harbourSuperVlanPropTable."
+    INDEX      { harbourSuperVlanIndex }
+    ::= { harbourSuperVlanPropTable 1 }
+
+HarbourSuperVlanPropEntry ::= SEQUENCE {
+    harbourSuperVlanIndex      VlanIndex,
+    harbourSuperVlanProxyARP   INTEGER,
+    HarbourSuperVlanName       DisplayString
+}
+
+harbourSuperVlanIndex OBJECT-TYPE
+    SYNTAX      VlanIndex
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "A SuperVlan's harbourVlanIndex."
+    ::= { harbourSuperVlanPropEntry 1 }
+
+harbourSuperVlanProxyARP OBJECT-TYPE
+    SYNTAX      INTEGER {
+                   disable (0),
+                   enable (1)
+                }
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "Enable or disable a SuperVlan's proxy ARP function."
+    ::= { harbourSuperVlanPropEntry 2 }
+
+HarbourSuperVlanName OBJECT-TYPE
+    SYNTAX     DisplayString (SIZE(0 .. 32))
+    MAX-ACCESS read-only
+    STATUS     current
+    DESCRIPTION
+            "name of super vlan."
+    ::= { harbourSuperVlanPropEntry 3 }
+
+-- Harbour SuperVlan Table
+
+harbourSuperVlanTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF HarbourSuperVlanEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+            "This table describe relationship between SuperVlans
+            and SubVlans."
+::= { harbourSuperVlanGroup 3 }
+
+harbourSuperVlanEntry OBJECT-TYPE
+    SYNTAX      HarbourSuperVlanEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+            "An entry in the harbourSuperVlanTable."
+    INDEX           { harbourSuperVlanIndex, harbourSubVlanIndex }
+::= { harbourSuperVlanTable 1 }
+
+HarbourSuperVlanEntry ::= SEQUENCE {
+    harbourSubVlanIndex        VlanIndex,
+    harbourSuperVlanName       DisplayString,
+    harbourSubVlanName         DisplayString,
+    harbourSuperVlanRowStatus  RowStatus
+}
+
+harbourSubVlanIndex OBJECT-TYPE
+    SYNTAX      VlanIndex
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "A SubVlan's harbourVlanIndex."
+    ::= { harbourSuperVlanEntry 1 }
+
+harbourSuperVlanName OBJECT-TYPE
+    SYNTAX      DisplayString (SIZE(0 .. 32))
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "A SuperVlan's harbourVlanName."
+    ::= { harbourSuperVlanEntry 2 }
+
+harbourSubVlanName OBJECT-TYPE
+    SYNTAX      DisplayString (SIZE(0 .. 32))
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "A SubVlan's harbourVlanName."
+    ::= { harbourSuperVlanEntry 3 }
+
+harbourSuperVlanRowStatus OBJECT-TYPE
+    SYNTAX      RowStatus
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+            "This object indicates the status of this entry."
+    ::= { harbourSuperVlanEntry 4 }
+
+-- Harbour SuperVlan ProxyARP Filter Table
+
+harbourSuperVlanProxyARPFilterTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF HarbourSuperVlanProxyARPFilterEntry
+    MAX-ACCESS  not-accessible
+    STATUS      obsolete
+    DESCRIPTION
+            "This table describe proxy ARP filter in a SuperVlan."
+    ::= { harbourSuperVlanGroup 4 }
+
+harbourSuperVlanProxyARPFilterEntry OBJECT-TYPE
+    SYNTAX      HarbourSuperVlanProxyARPFilterEntry
+    MAX-ACCESS  not-accessible
+    STATUS      obsolete
+    DESCRIPTION
+            "An entry in the harbourSuperVlanProxyARPFilterTable."
+    INDEX       { harbourSuperVlanIndex, proxyARPFilterIndex }
+::= { harbourSuperVlanProxyARPFilterTable 1 }
+
+HarbourSuperVlanProxyARPFilterEntry ::= SEQUENCE {
+    proxyARPFilterIndex      INTEGER,
+    SuperVlanName            DisplayString,
+    srcSubVlanName           DisplayString,
+    destSubVlanName          DisplayString,
+    proxyARPFilterRowStatus  RowStatus
+}
+
+proxyARPFilterIndex OBJECT-TYPE
+    SYNTAX      INTEGER
+    MAX-ACCESS  read-only
+    STATUS      obsolete
+    DESCRIPTION
+            "A sequence number from 1."
+    ::= { harbourSuperVlanProxyARPFilterEntry 1 }
+
+SuperVlanName OBJECT-TYPE
+    SYNTAX      DisplayString (SIZE(0 .. 32))
+    MAX-ACCESS  read-create
+    STATUS      obsolete
+    DESCRIPTION
+            "SuperVlan's name."
+    ::= { harbourSuperVlanProxyARPFilterEntry 2 }
+
+srcSubVlanName OBJECT-TYPE
+    SYNTAX      DisplayString (SIZE(0 .. 32))
+    MAX-ACCESS  read-create
+    STATUS      obsolete
+    DESCRIPTION
+            "Source SubVlan's name."
+    ::= { harbourSuperVlanProxyARPFilterEntry 3 }
+
+destSubVlanName OBJECT-TYPE
+    SYNTAX      DisplayString (SIZE(0 .. 32))
+    MAX-ACCESS  read-create
+    STATUS      obsolete
+    DESCRIPTION
+            "Destination SubVlan's name."
+    ::= { harbourSuperVlanProxyARPFilterEntry 4 }
+
+proxyARPFilterRowStatus OBJECT-TYPE
+    SYNTAX      RowStatus
+    MAX-ACCESS  read-create
+    STATUS      obsolete
+    DESCRIPTION
+            "This object indicates the status of this entry."
+    ::= { harbourSuperVlanProxyARPFilterEntry 5 }
+
+-- Harbour SuperVlan ARP Group Table
+
+harbourSuperVlanARPGroupTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF HarbourSuperVlanARPGroupEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+            "This table describe ARP Group in a SuperVlan."
+    ::= { harbourSuperVlanGroup 5 }
+
+harbourSuperVlanARPGroupEntry OBJECT-TYPE
+    SYNTAX      HarbourSuperVlanARPGroupEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+            "An entry in the harbourSuperVlanARPGroupTable."
+    INDEX       { harbourSuperVlanIndex, arpGroupIndex }
+    ::= { harbourSuperVlanARPGroupTable 1 }
+
+HarbourSuperVlanARPGroupEntry ::= SEQUENCE {
+    arpGroupIndex            INTEGER,
+    arpGroupName             DisplayString,
+    arpGroupPortList         PortList,
+    arpGroupRowStatus        RowStatus
+}
+
+arpGroupIndex OBJECT-TYPE
+    SYNTAX      INTEGER
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "A sequence number from 1."
+    ::= { harbourSuperVlanARPGroupEntry 1 }
+
+arpGroupName OBJECT-TYPE
+    SYNTAX      DisplayString (SIZE(0 .. 32))
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+            "arp Group's name."
+    ::= { harbourSuperVlanARPGroupEntry 2 }
+
+arpGroupPortList OBJECT-TYPE
+    SYNTAX      PortList
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+            "This object indicates the ports in the arp group of the super vlan."
+    ::= { harbourSuperVlanARPGroupEntry 3 }
+
+arpGroupRowStatus OBJECT-TYPE
+    SYNTAX      RowStatus
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+            "This object indicates the status of this entry."
+    ::= { harbourSuperVlanARPGroupEntry 4 }
+
+-- Harbour SubVlan Table
+
+harbourSubVlanTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF HarbourSubVlanEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+            "This table describe ARP Group in a SuperVlan."
+    ::= { harbourSuperVlanGroup 6 }
+
+ harbourSubVlanEntry OBJECT-TYPE
+    SYNTAX      HarbourSubVlanEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+            "An entry in the harbourSubVlanTable."
+    INDEX       { SubVlanIndex }
+    ::= { harbourSubVlanTable 1 }
+
+HarbourSubVlanEntry ::= SEQUENCE {
+    SubVlanIndex             INTEGER,
+    SubVlanName              DisplayString,
+    SubVlanPort              INTEGER,
+    superVlanName            DisplayString,
+    SubVlanType              INTEGER,
+    SubVlanTagFlag           INTEGER,
+    SubVlanRowStatus         RowStatus
+}
+
+SubVlanIndex OBJECT-TYPE
+    SYNTAX      INTEGER
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "This is the sub vlan's VID!"
+    ::= { harbourSubVlanEntry 1 }
+
+SubVlanName OBJECT-TYPE
+    SYNTAX      DisplayString (SIZE(0 .. 32))
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+            "SubVlan's name."
+    ::= { harbourSubVlanEntry 2 }
+
+SubVlanPort OBJECT-TYPE
+    SYNTAX      INTEGER
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "The port number of the sub vlan."
+    ::= { harbourSubVlanEntry 3 }
+
+superVlanName OBJECT-TYPE
+    SYNTAX      DisplayString (SIZE(0 .. 32))
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "the name of the Super vlan including this SubVlan."
+    ::= { harbourSubVlanEntry 4 }
+
+SubVlanType OBJECT-TYPE
+    SYNTAX      INTEGER { changable(1),unchangable(2) }
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "The type indicates whether this vlan can be configed or deleted."
+    ::= { harbourSubVlanEntry 5 }
+
+SubVlanTagFlag OBJECT-TYPE
+    SYNTAX      INTEGER { tag(1),untag(2)}
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+            "The type indicates whether this vlan is tagged or untaged."
+    ::= { harbourSubVlanEntry 6 }
+
+SubVlanRowStatus OBJECT-TYPE
+    SYNTAX      RowStatus
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+            "This object indicates the status of this entry."
+    ::= { harbourSubVlanEntry 7 }
+
+
+END

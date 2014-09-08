@@ -1,0 +1,70 @@
+
+ -- ********************************************************************
+
+--  UnitransMib-MS-root
+
+--  Copyright (c) 2008 ZTE CORPORATION.All rights reserved.
+
+--  Description: The general difinitions of the Unitrans mibs.
+
+--  Version     v1.0
+
+--  Modification Record:
+
+--********************************************************************
+UnitransMib-MS-root
+DEFINITIONS ::= BEGIN
+
+IMPORTS
+	MODULE-IDENTITY , 	enterprises 										
+	FROM SNMPv2-SMI;
+	
+	
+ztemgt MODULE-IDENTITY
+    LAST-UPDATED "0603150000Z"
+    ORGANIZATION "ZTE Corp."
+    CONTACT-INFO
+      "ZTE CORPORATION ZTE Plaza,Keji Road South,Hi-Tech Industrial Park Nanshan District Shenzhen P.R.China Tel 86-755-6790000 www: http://www.zte.com.cn"
+    DESCRIPTION
+         "ZTE MIB Module"
+	REVISION 		"200809150000Z"
+	DESCRIPTION		
+		" ZTEMGT-MIB "
+    REVISION      "200809150000Z"
+    DESCRIPTION  "version 1.0"
+	::= { zte 2001}
+
+-- ********************************************************************
+-- The MIB module for the ZTE unitrans objects
+-- zteUnitrans OID scope 3902.2001-3902.2500
+-- ********************************************************************
+        zte			             OBJECT IDENTIFIER ::= { enterprises 3902 }
+        zteUniMsProducts              OBJECT IDENTIFIER  ::=  { zte 3400 } 
+        zteUnitransMS              OBJECT IDENTIFIER  ::=  { zteUniMsProducts 4 } 	
+-- ********************************************************************
+
+-- zte(3902) 
+             -- zteUniMsProducts(3400) 
+			        -- zteUnitransMS(4)
+				               -- zteuCommon(1)
+                               -- zteuEMS(2)
+							   -- zteuME(3)
+							   -- zteuEquipmentHolder(4)
+							   -- zteuEquipment(5)
+							   -- zteuTerminationPoint(6)
+							   -- zteuSubnetworkConnection(7)
+							   -- zteuAlmObjects(8)
+							   -- zteuPfmObjects(9)
+							   -- zteuREG(10)
+							   -- zteuChannelMonitor(11)
+							   -- zteuGCC(12)
+							   -- zteuFAN(13)
+							   -- zteuMETime(14)
+							   -- zteuMaintenance(15)
+							   -- zteuTrap(16)
+							   -- zteuTopoLogicalLink(17)
+
+
+END
+	
+	

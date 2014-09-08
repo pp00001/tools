@@ -1,0 +1,136 @@
+-- RADWin-SFP MIB  
+-- Version:   1.01
+-- Date:      Nov 18, 2008
+-- By:        Yossi Appleboum
+
+
+-- Change History
+
+-- 1.01		  Root OID fixed.
+
+-- 1.00		  BDU version.
+
+
+RADWIN-SFP-MIB DEFINITIONS ::= BEGIN
+
+IMPORTS
+      OBJECT-TYPE                    FROM SNMPv2-SMI
+   	  DisplayString,PhysAddress      FROM SNMPv2-TC;   
+   	  
+
+--  BDU sub tree  
+enterprises     OBJECT IDENTIFIER ::= { iso org(3) dod(6) internet(1) private(4) 1 }
+radwin          OBJECT IDENTIFIER ::= { enterprises 4458 }   
+bdu             OBJECT IDENTIFIER ::= { radwin 7300 }
+bduStd 	    	OBJECT IDENTIFIER ::= { bdu 1} 	 
+bduGeneral OBJECT IDENTIFIER ::= { bduStd 1 }
+bduSfp     OBJECT IDENTIFIER ::= { bduGeneral 9 }
+
+
+--
+------------------------------------------------------------------------------
+--   MAC group       
+------------------------------------------------------------------------------
+sfpMode OBJECT-TYPE
+		SYNTAX        INTEGER {
+                        na(1),                        
+                      	partialReg(2),       		
+                        fullReg(3)
+                      } 
+        MAX-ACCESS    read-only
+        STATUS        current
+        DESCRIPTION   "SFP parameter monitoring mode."
+        ::= { bduSfp 1 }
+
+portSfpTable OBJECT-TYPE
+	SYNTAX SEQUENCE OF PortSfpEntry
+	MAX-ACCESS not-accessible
+	STATUS current
+	DESCRIPTION 	"A table that contains all SFP module info"
+	::= { bduSfp 10 }
+
+portSfpEntry OBJECT-TYPE
+	SYNTAX PortSfpEntry
+	MAX-ACCESS not-accessible
+	STATUS current
+	DESCRIPTION 	"An SFP module entry in the SFP table."
+	INDEX  { sfpPortIx  }
+	::= { portSfpTable 1 }
+ 
+PortSfpEntry ::=
+	SEQUENCE {
+	  sfpPortIx     		INTEGER,          
+	  sfpConnector     		INTEGER,          	  
+	  sfpNominalBitrate		INTEGER,
+	  sfpVendorName			DisplayString,	  
+	  sfpVendorPN			DisplayString,	  	  
+	  sfpVendorSN			DisplayString,
+      sfpWavelength	        INTEGER
+	}
+
+sfpPortIx OBJECT-TYPE
+	SYNTAX INTEGER 
+	MAX-ACCESS read-only
+	STATUS current
+	DESCRIPTION 	 "Port index in table."
+	::= { portSfpEntry 1 }
+
+sfpConnector OBJECT-TYPE
+		SYNTAX        INTEGER {
+                        sc(1),                        
+                      	fiberChannelStyle1Copper(2),       		
+                      	fiberChannelStyle2Copper(3),       		                      	
+                        bncOrTnc(4),
+                        fiberChannelCoaxHeaders(5),
+                        fiberJack(6),
+                        lc(7),
+                        mtrj(8),
+                        mu(9),
+                        sg(10),
+                        opticalPigtail(11),
+                        hssdc2(32),
+                        copperPigtail(33)
+                      } 
+	MAX-ACCESS read-only
+	STATUS current
+	DESCRIPTION 	 "SFP connector type."
+	::= { portSfpEntry 2 }
+
+sfpNominalBitrate OBJECT-TYPE
+	SYNTAX INTEGER 
+	MAX-ACCESS read-only
+	STATUS current
+	DESCRIPTION 	 "SFP nominal bitrate. units of 1Mbps."
+	::= { portSfpEntry 4 }
+
+sfpVendorName OBJECT-TYPE
+	SYNTAX DisplayString 
+	MAX-ACCESS read-only
+	STATUS current
+	DESCRIPTION 	 "SFP vendor name."
+	::= { portSfpEntry 6 }
+
+sfpVendorPN OBJECT-TYPE
+	SYNTAX DisplayString 
+	MAX-ACCESS read-only
+	STATUS current
+	DESCRIPTION 	 "SFP vendor's part number."
+	::= { portSfpEntry 7 }
+
+sfpVendorSN OBJECT-TYPE
+	SYNTAX DisplayString 
+	MAX-ACCESS read-only
+	STATUS current
+	DESCRIPTION 	 "SFP vendor's serial number."
+	::= { portSfpEntry 8 }
+
+sfpWavelength OBJECT-TYPE
+	SYNTAX INTEGER 
+	MAX-ACCESS read-only
+	STATUS current
+	DESCRIPTION 	 "SFP wavelength."
+	::= { portSfpEntry 9 }
+
+END
+    
+    

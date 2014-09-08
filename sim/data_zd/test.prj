@@ -1,0 +1,66 @@
+<?xml version="1.0"  encoding="UTF-8"?>
+<Networks name="Test">
+<Simulator initialState="up" port="161"
+  name="test" ipAddress="10.10.10.1">
+  <configFile name="data/config.xml"/>
+  <trapFile/>
+  <dataFile name="data/test.xml"/>
+  <device name="generic"/>
+</Simulator>
+<Simulator initialState="up" port="161"
+  name="10.150.51.195" ipAddress="10.10.10.2">
+  <configFile name="data/config.xml"/>
+  <trapFile/>
+  <dataFile name="data/10.150.51.195.xml"/>
+  <device name="generic"/>
+</Simulator>
+<Simulator initialState="up" port="161"
+  name="10.54.14.2" ipAddress="10.10.10.3">
+  <configFile name="data/config.xml"/>
+  <trapFile/>
+  <dataFile name="data/10.54.14.2.xml"/>
+  <device name="generic"/>
+</Simulator>
+<Simulator initialState="up" port="161"
+  name="10.54.14.252" ipAddress="10.10.10.4">
+  <configFile name="data/config.xml"/>
+  <trapFile/>
+  <dataFile name="data/10.54.14.252.xml"/>
+  <device name="generic"/>
+</Simulator>
+<Simulator initialState="up" port="161"
+  name="10.54.14.253" ipAddress="10.10.10.5">
+  <configFile name="data/config.xml"/>
+  <trapFile/>
+  <dataFile name="data/10.54.14.253.xml"/>
+  <device name="generic"/>
+</Simulator>
+<Simulator initialState="up" port="161"
+  name="172.16.130.83" ipAddress="10.10.10.6">
+  <configFile name="data/config.xml"/>
+  <trapFile/>
+  <dataFile name="data/172.16.130.83.xml"/>
+  <device name="generic"/>
+</Simulator>
+<Simulator initialState="up" port="161"
+  name="192.168.203.28" ipAddress="10.10.10.7">
+  <configFile name="data/config.xml"/>
+  <trapFile/>
+  <dataFile name="data/192.168.203.28.xml"/>
+  <device name="generic"/>
+</Simulator>
+<Simulator initialState="up" port="161"
+  name="192.168.203.29" ipAddress="10.10.10.8">
+  <configFile name="data/config.xml"/>
+  <trapFile/>
+  <dataFile name="data/192.168.203.29.xml"/>
+  <device name="generic"/>
+</Simulator>
+<Simulator initialState="up" port="161"
+  name="win" ipAddress="10.10.10.9">
+  <configFile name="data/config.xml"/>
+  <trapFile/>
+  <dataFile name="data/win.xml"/>
+  <device name="generic"/>
+</Simulator>
+</Networks>

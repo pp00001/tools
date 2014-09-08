@@ -1,0 +1,131 @@
+-- =======================================================================
+-- Version info 
+--
+-- Version 0.1 Created 2002.8.12 
+-- This version of MIB is created just for the use of Network Management Systems
+-- display the HammerSeries Switch 's IP and MACADDRESS binded with port.
+-- Now just apply to H3300.
+-- 
+-- Copyright(c) 2002-2003 by Harbour Networks Limited
+-- =======================================================================
+
+-- ===========================================================================
+
+--
+-- HARBOUR port objects
+--
+
+HARBOUR-H3300-CHARACTER-MIB DEFINITIONS ::= BEGIN
+
+	IMPORTS
+                MODULE-IDENTITY 
+                	FROM SNMPv2-SMI
+		OBJECT-TYPE     
+			FROM SNMPv2-SMI
+                Unsigned32	
+                	FROM SNMPv2-SMI
+		DisplayString   
+			FROM RFC-1213
+		DSLAMSeries    
+			FROM HARBOUR-BASE-MIB
+		IpAddress	
+			FROM RFC1155-SMI;
+			
+        MacAddress ::= OCTET STRING (SIZE (6)) 			
+			
+			
+			
+			
+harbourH3300Char     MODULE-IDENTITY
+                LAST-UPDATED 	"2002.8.12"
+                ORGANIZATION 	"Harbour Networks Limited"
+                CONTACT-INFO 	"www.harbournetworks.com"
+                DESCRIPTION 
+                		"Harbour System objects: objects common to all platforms."
+        	::= { DSLAMSeries 5 }
+      
+       adslharbourportstatis    OBJECT IDENTIFIER  ::= { harbourH3300Char 1 }
+
+   
+    adslportBindIpAndMacDataTable       OBJECT-TYPE
+        SYNTAX       SEQUENCE OF adslportBindIpAndMacDataEntry
+        MAX-ACCESS   not-accessible
+        STATUS       current
+
+        DESCRIPTION
+            "This table provides one row for each ADSL physical
+            interface.  Hammer3300 have 32 adsl ports."
+         ::= { adslharbourportstatis 1 }
+
+    adslportBindIpAndMacDataEntry       OBJECT-TYPE
+        SYNTAX        adslportBindIpAndMacDataEntry
+        MAX-ACCESS    not-accessible
+        STATUS        current
+        DESCRIPTION     
+            "An entry in the adslportBindIpAndMacDataTable."
+        INDEX { index }
+            ::= { adslportBindIpAndMacDataTable  1  }
+
+   adslportBindIpAndMacDataEntry ::=
+        SEQUENCE 
+            { 
+            index		INTEGER,
+            ifBindIp		INTEGER,          
+            BindIp		IpAddress,
+            ifBindMac		INTEGER,
+            BindMac		MacAddress
+            }
+    
+        index OBJECT-TYPE
+		SYNTAX  	INTEGER
+		MAX-ACCESS  	read-only
+		STATUS 		current
+		DESCRIPTION
+				"A unique integer identifying the particular index 
+				in the chassis."
+		::= { adslportBindIpAndMacDataEntry 1 }
+		
+
+        ifBindIp    OBJECT-TYPE
+        SYNTAX       INTEGER{  disable (0),  enable (1)   }
+        MAX-ACCESS   read-write
+        STATUS       current
+        DESCRIPTION
+            "Binding state of ip with adslport."
+        ::= { adslportBindIpAndMacDataEntry 2 }
+        
+
+    	BindIp OBJECT-TYPE
+
+        SYNTAX       IpAddress
+        MAX-ACCESS   read-write
+        STATUS       current
+        DESCRIPTION
+            "The IpAddress with which adslport binded. "
+        
+        ::= { adslportBindIpAndMacDataEntry 3 }
+
+     
+
+     	ifBindMac    OBJECT-TYPE
+        SYNTAX       INTEGER{ disable (0), enable (1) } 
+        MAX-ACCESS   read-write
+        STATUS       current
+        DESCRIPTION
+            "Binding state of Mac with adslport."
+     
+        ::= { adslportBindIpAndMacDataEntry 4 }
+        
+        
+    	BindMac      OBJECT-TYPE
+        SYNTAX       MacAddress   
+        MAX-ACCESS   read-write
+        STATUS       current
+        DESCRIPTION
+            "The MacAddress with which adslport binded. "
+        ::= { adslportBindIpAndMacDataEntry 5 }
+
+
+
+
+END

@@ -1,0 +1,205 @@
+<?xml version="1.0"  encoding="UTF-8"?>
+<Networks name="Test">
+<Simulator initialState="up" port="161"
+  name="Windows-soonseah" ipAddress="10.10.10.1">
+  <configFile
+    name="data/config.xml"/>
+  <trapFile/>
+  <dataFile
+    name="data/windows/soonseah.xml"/>
+  <device name="generic"/>
+</Simulator>
+<Simulator initialState="up" port="161" name="Test"
+  ipAddress="10.10.10.2">
+  <configFile
+    name="data/config.xml"/>
+  <trapFile/>
+  <dataFile name="data/test.xml"/>
+  <device name="generic"/>
+</Simulator>
+<Simulator initialState="up" port="161" name="Linux"
+  ipAddress="10.10.10.3">
+  <configFile
+    name="data/config.xml"/>
+  <trapFile/>
+  <dataFile name="data/linux/linux1.xml"/>
+  <device name="generic"/>
+</Simulator>
+<Simulator initialState="up" port="161" name="Ruckuer"
+  ipAddress="10.10.10.4">
+  <configFile
+    name="data/config.xml"/>
+  <trapFile/>
+  <dataFile name="data/ruckus/ruckus.xml"/>
+  <device name="generic"/>
+</Simulator>
+<Simulator initialState="down" port="161" name="H3C - S36xx"
+  ipAddress="10.10.10.5">
+  <configFile
+    name="data/config.xml"/>
+  <trapFile/>
+  <dataFile
+    name="data/h3c/S36xx.xml"/>
+  <device name="generic"/>
+</Simulator>
+<Simulator initialState="down" port="161" name="H3C - E126"
+  ipAddress="10.10.10.6">
+  <configFile
+    name="data/config.xml"/>
+  <trapFile/>
+  <dataFile
+    name="data/h3c/E126.xml"/>
+  <device name="generic"/>
+</Simulator>
+<Simulator initialState="down" port="161"
+  name="DocuCentre-IV C5570" ipAddress="10.10.10.7">
+  <configFile
+    name="data/config.xml"/>
+  <trapFile/>
+  <dataFile
+    name="data/fuji_xerox/DocuCentre-IV-C5570.xml"/>
+  <device name="generic"/>
+</Simulator>
+<Simulator initialState="down" port="161"
+  name="WebLogic-Cluster" ipAddress="10.10.10.8">
+  <configFile
+    name="data/config.xml"/>
+  <trapFile/>
+  <dataFile
+    name="data/weblogic/weblogic_cluster.xml"/>
+  <device name="generic"/>
+</Simulator>
+<Simulator initialState="up" port="161" name="Lenova-WY"
+  ipAddress="10.10.10.9">
+  <configFile
+    name="data/config.xml"/>
+  <trapFile/>
+  <dataFile
+    name="data/lenova/wangyu.xml"/>
+  <device name="generic"/>
+</Simulator>
+<Simulator initialState="up" port="161" name="Huawei-DPTech"
+  ipAddress="10.10.10.10">
+  <configFile
+    name="data/config.xml"/>
+  <trapFile/>
+  <dataFile
+    name="data/huawei/dptech.xml"/>
+  <device name="generic"/>
+</Simulator>
+<Simulator initialState="up" port="161"
+  name="Radware-AppDirector" ipAddress="10.10.10.11">
+  <configFile
+    name="data/config.xml"/>
+  <trapFile/>
+  <dataFile
+    name="data/radware/app_director.xml"/>
+  <device name="generic"/>
+</Simulator>
+<Simulator initialState="up" port="161"
+  name="Radware-LinkProof" ipAddress="10.10.10.12">
+  <configFile
+    name="data/config.xml"/>
+  <trapFile/>
+  <dataFile
+    name="data/radware/linkproof_appswitch.xml"/>
+  <device name="generic"/>
+</Simulator>
+<Simulator initialState="up" port="161"
+  name="VMware - ESX 3.5" ipAddress="10.10.10.13">
+  <configFile
+    name="data/config.xml"/>
+  <trapFile/>
+  <dataFile
+    name="data/vmware/esx3.5.xml"/>
+  <device name="generic"/>
+</Simulator>
+<Simulator initialState="up" port="161"
+  name="VMware - ESXi4" ipAddress="10.10.10.14">
+  <configFile
+    name="data/config.xml"/>
+  <trapFile/>
+  <dataFile
+    name="data/vmware/esxi4.xml"/>
+  <device name="generic"/>
+</Simulator>
+<Simulator initialState="up" port="161" name="VMware - ESXi5"
+  ipAddress="10.10.10.15">
+  <configFile
+    name="data/config.xml"/>
+  <trapFile/>
+  <dataFile
+    name="data/vmware/esxi5.xml"/>
+  <device name="generic"/>
+</Simulator>
+<Simulator initialState="up" port="161"
+  name="Hillstone-SG_6000_G3150" ipAddress="10.10.10.16">
+  <configFile
+    name="data/config.xml"/>
+  <trapFile/>
+  <dataFile
+    name="data/hillstone/sg-6000-g3150.xml"/>
+  <device name="generic"/>
+</Simulator>
+<Simulator initialState="up" port="161"
+  name="NetApp-Standard" ipAddress="10.10.10.20">
+  <configFile
+    name="data/config.xml"/>
+  <trapFile/>
+  <dataFile
+    name="data/netapp/netapp.xml"/>
+  <device name="generic"/>
+</Simulator>
+<Simulator initialState="up" port="161" name="AS400"
+  ipAddress="10.10.10.30">
+  <configFile
+    name="data/config.xml"/>
+  <trapFile/>
+  <dataFile
+    name="data/as400/as400.xml"/>
+  <device name="generic"/>
+</Simulator>
+<Simulator initialState="up" port="161"
+  name="HP Procurve Wireless Controller" ipAddress="10.10.10.40">
+  <configFile
+    name="data/config.xml"/>
+  <trapFile/>
+  <dataFile
+    name="data/hp/wl_controller.xml"/>
+  <device name="generic"/>
+</Simulator>
+<Simulator initialState="up" port="161"
+  name="HP Procurve 6200" ipAddress="10.10.10.41">
+  <configFile
+    name="data/config.xml"/>
+  <trapFile/>
+  <dataFile
+    name="data/hp/procurve_6200.xml"/>
+  <device name="generic"/>
+</Simulator>
+<Simulator initialState="up" port="161"
+  name="HP Procurve 3500" ipAddress="10.10.10.42">
+  <configFile
+    name="data/config.xml"/>
+  <trapFile/>
+  <dataFile
+    name="data/hp/procurve_3500.xml"/>
+  <device name="generic"/>
+</Simulator>
+<Simulator initialState="up" port="161" name="F5-1" ipAddress="10.10.10.50">
+  <configFile
+    name="data/config.xml"/>
+  <trapFile/>
+  <dataFile
+    name="data/f5/f5-1.xml"/>
+  <device name="generic"/>
+</Simulator>
+<Simulator initialState="up" port="161" name="F5-2" ipAddress="10.10.10.51">
+  <configFile
+    name="data/config.xml"/>
+  <trapFile/>
+  <dataFile
+    name="data/f5/f5-2.xml"/>
+  <device name="generic"/>
+</Simulator>
+</Networks>

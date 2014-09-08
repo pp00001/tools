@@ -1,0 +1,12 @@
+<?xml version="1.0"  encoding="UTF-8"?>
+<Networks name="Test">
+  <Simulator initialState="up" port="161"
+    name="AceNet-G100e" ipAddress="10.10.10.2">
+    <configFile
+      name="/Users/tohss/dev/simulator/data//Users/tohss/win/tools/simulator/data/config.xml"/>
+    <trapFile/>
+    <dataFile
+      name="/Users/tohss/dev/simulator/data/acenet/g100e.xml"/>
+    <device name="generic"/>
+  </Simulator>
+</Networks>

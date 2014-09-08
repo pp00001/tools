@@ -1,0 +1,282 @@
+-- ********************************************************************
+
+--  UnitransMib-MS-terminationpoint.mib
+
+--  Copyright (c) 2008 ZTE CORPORATION.All rights reserved.
+
+--  Description: This file includes the difinitions os terminationpoint related  
+
+--  Version     v1.0
+
+--  Modification Record:
+
+--********************************************************************
+UnitransMib-MS-terminationpoint 
+DEFINITIONS ::= BEGIN
+IMPORTS
+    MODULE-IDENTITY, OBJECT-TYPE, NOTIFICATION-TYPE,
+    enterprises, Integer32, Unsigned32, IpAddress
+        FROM SNMPv2-SMI
+    TEXTUAL-CONVENTION, DisplayString, TimeStamp, DateAndTime
+        FROM SNMPv2-TC  
+    MODULE-COMPLIANCE, OBJECT-GROUP, NOTIFICATION-GROUP
+        FROM SNMPv2-CONF        
+        zteUnitransMS
+	FROM 
+	UnitransMib-MS-root
+	BOOL-TC,Time-TC,Unit-TC,       
+        ObjectNVSList-T,NamingAttributes-T,LayeredParameterList-T
+        FROM 
+        UnitransMib-MS-common;   
+        
+--*********************************************************************
+--
+--*********************************************************************         
+zteuTerminationPoint MODULE-IDENTITY
+        LAST-UPDATED   "0602130000Z"
+        ORGANIZATION   "ZTE"
+        CONTACT-INFO   "
+           ZTE Corporation
+           
+           Postal: 518057      
+           
+           via the WEB:  http://www.zte.com.cn                           
+            
+           via phone:    86-755-26773000"
+   DESCRIPTION
+      "The module describing ZTE Unitrans MIB."
+::= { zteUnitransMS 6 }
+      
+   
+
+  TPType-TC ::= TEXTUAL-CONVENTION
+   STATUS current
+   DESCRIPTION "
+   This textual convention presents termination point type
+   tpt-PTP         physical termination point
+   tpt-CTP         connection termination point
+   tpt-TPPool      termination pool,reserved
+   "
+   SYNTAX INTEGER 
+   {
+        tpt-PTP(1),
+        tpt-CTP(2),
+        tpt-TPPool(3)           
+   }
+   
+   TPConnectionState-TC ::= TEXTUAL-CONVENTION
+   STATUS current
+   DESCRIPTION "
+   This textual convention presents termination state
+    TPCS-NA                             Unknown
+        TPCS-SOURCE-CONNECTED   Termination point is source and connected
+        TPCS-SINK-CONNECTED             Termination point is sink and connected
+        TPCS-BI-CONNECTED               Termination point is bi-direction connected
+        TPCS-NOT-CONNECTED              Termination poiint is not connected
+   "
+   SYNTAX INTEGER 
+   {
+        tpcs-NA(1),
+        tpcs-SOURCE-CONNECTED(2),
+        tpcs-SINK-CONNECTED(3),
+        tpcs-BI-CONNECTED(4),
+        tpcs-NOT-CONNECTED(5)           
+   }
+
+   TerminationMode-TC ::= TEXTUAL-CONVENTION
+   STATUS current
+   DESCRIPTION "
+   This textual convention presents termination mode of a tp
+        tm-NA                                                                                Unknown
+        tm-NEITHER-TERMINATED-NOR-AVAILABLE-FOR-MAPPING Neither terminated nor available for mapping
+        tm-TERMINATED-AND-AVAILABLE-FOR-MAPPING                 Terminated and available for mapping
+
+   "
+   SYNTAX INTEGER 
+   {
+        tm-NA(0),
+        tm-NEITHER-TERMINATED-NOR-AVAILABLE-FOR-MAPPING(2),
+        tm-TERMINATED-AND-AVAILABLE-FOR-MAPPING(3)
+   }
+    
+   Directionality-TC ::= TEXTUAL-CONVENTION
+   STATUS current
+   DESCRIPTION "
+   This textual convention presents termination point's direction
+           d-NA                         Unkown
+           d-BIDIRECTIONAL      Bidirection
+           d-SOURCE                     Source
+           d-SINK                       Sink
+   "
+   SYNTAX INTEGER 
+   {
+        d-NA(1),
+        d-SOURCE(2),
+        d-SINK(3),
+        d-BIDIRECTIONAL(4)
+   }
+   
+        
+-- ********************************************************************
+-- Table And Object  Definition
+-- ********************************************************************
+    
+      
+    zteuTerminationPointTable    OBJECT-TYPE
+        SYNTAX          SEQUENCE OF     ZTEUTerminationPointEntry
+        MAX-ACCESS      not-accessible
+        STATUS          current
+        DESCRIPTION
+                "
+                This object presents termination point table
+                "
+        ::= { zteuTerminationPoint 1 }
+    
+    zteuTerminationPointEntry  OBJECT-TYPE
+        SYNTAX  ZTEUTerminationPointEntry
+        MAX-ACCESS  not-accessible
+        STATUS  current
+        DESCRIPTION
+                "This object presents termination point entry,for
+				this entry,Physical ports and user-defined internal
+				ports(usually called FTP,means flow termination point)
+				can be retrived from client side.the query for CTP
+				data is reserved.
+				"
+        INDEX  {tpName }
+        ::= { zteuTerminationPointTable 1 }
+
+    ZTEUTerminationPointEntry ::= SEQUENCE 
+    {    	
+        tpName                NamingAttributes-T,
+        tpUserLabel           DisplayString,
+	    tpType                TPType-TC,         
+        tpConnectionState     TPConnectionState-TC,
+        tpMappingMode         TerminationMode-TC, 
+        tpDirection           Directionality-TC, 
+        tpTransmissionParams  LayeredParameterList-T,
+		tpAdminStatus         INTEGER,
+		tpOperStatus          INTEGER,
+        tpAdditionalInfo      ObjectNVSList-T 
+    }
+         
+     tpName OBJECT-TYPE
+     SYNTAX NamingAttributes-T
+     MAX-ACCESS read-only
+     STATUS current
+     DESCRIPTION "
+     This variable presents  object identifier
+     For details,please refer NamingAttributes-T's definition
+     "
+     ::= {zteuTerminationPointEntry 1}
+    
+    tpUserLabel OBJECT-TYPE
+     SYNTAX DisplayString
+     MAX-ACCESS read-write
+     STATUS current
+     DESCRIPTION "
+     This variable presents  user label
+     "
+     ::= {zteuTerminationPointEntry 2}
+     
+         
+     tpType   OBJECT-TYPE
+     SYNTAX TPType-TC
+     MAX-ACCESS read-only
+     STATUS current
+     DESCRIPTION "
+     This variable presents termination point type
+      "
+     ::= {zteuTerminationPointEntry 3}
+     
+     tpConnectionState   OBJECT-TYPE
+     SYNTAX TPConnectionState-TC
+     MAX-ACCESS read-only
+     STATUS current
+     DESCRIPTION "
+     This variable presents connection state 
+     "
+     ::= {zteuTerminationPointEntry 4}  
+     
+     tpMappingMode    OBJECT-TYPE
+     SYNTAX TerminationMode-TC
+     MAX-ACCESS read-only
+     STATUS current
+     DESCRIPTION "
+     This variable presents mapping mode of termination point
+     "
+     ::= {zteuTerminationPointEntry 5}
+           
+     tpDirection     OBJECT-TYPE
+     SYNTAX Directionality-TC
+     MAX-ACCESS read-only
+     STATUS current
+     DESCRIPTION "
+     This variable presents direction of termination point
+     "
+     ::= {zteuTerminationPointEntry 6}
+                
+     tpTransmissionParams      OBJECT-TYPE
+     SYNTAX LayeredParameterList-T
+     MAX-ACCESS read-only
+     STATUS current
+     DESCRIPTION "
+     This variable presents transmission parameters,reserved.
+     
+	 "
+     ::= {zteuTerminationPointEntry 7}
+
+	 
+	 tpAdminStatus OBJECT-TYPE
+                        SYNTAX INTEGER
+                                {
+								locked(1),
+                                unlocked(2)                                      
+                                }
+                        MAX-ACCESS read-only
+                        STATUS current
+                        DESCRIPTION
+                                "Port administrative status."
+                        ::= { zteuTerminationPointEntry 8 }
+	  tpOperStatus OBJECT-TYPE
+                        SYNTAX INTEGER
+                                {
+								disable(1),
+                                enable(2)                                      
+                                }
+                        MAX-ACCESS read-only
+                        STATUS current
+                        DESCRIPTION
+                                "Port operational status."
+                        ::= { zteuTerminationPointEntry 9 }
+     
+     tpAdditionalInfo OBJECT-TYPE
+     SYNTAX ObjectNVSList-T
+     MAX-ACCESS read-write
+     STATUS current
+     DESCRIPTION "
+     This variable presents additional information
+      " 
+     ::= {zteuTerminationPointEntry 10}
+	
+	zteuTerminationPointEntryGroup OBJECT-GROUP
+	OBJECTS
+    {    	
+        tpName,
+        tpUserLabel,          
+        tpType,         
+        tpConnectionState,
+        tpMappingMode, 
+        tpDirection, 
+        tpTransmissionParams,
+		tpAdminStatus,
+		tpOperStatus,
+        tpAdditionalInfo 
+    }		
+    STATUS current
+    DESCRIPTION 
+    "A collection of zteuTerminationPointEntry objects"
+    ::= {zteuTerminationPoint 24}		
+   
+		
+    END

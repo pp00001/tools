@@ -1,0 +1,1201 @@
+HARBOUR-802DOT1X-MIB DEFINITIONS ::= BEGIN
+
+	IMPORTS
+		harbourAgent
+			FROM HARBOUR-BASE-MIB
+		OBJECT-TYPE
+			FROM SNMPv2-SMI
+		DisplayString
+			FROM RFC1213-MIB
+		IpAddress,TimeTicks
+                      	FROM RFC1155-SMI;
+
+
+	-- All representations of MAC addresses in this MIB Module
+                -- use, as a textual convention (i.e. this convention does
+          	-- not affect their encoding), the data type:
+
+         	MacAddress ::= OCTET STRING (SIZE (6))    -- a 6 octet address
+                                                    -- in the
+                                                    -- "canonical"
+                                                    -- order
+                -- defined by IEEE 802.1a, i.e., as if it were transmitted
+                -- least significant bit first, even though 802.5 (in
+          	-- contrast to other n802.x protoco802dot1x) requires MAC
+          	-- addresses to be transmitted most significant bit first.
+          	--
+          	-- 16-bit addresses, if needed, are represented by setting
+          	-- their upper 4 octets to all 0's, i.e., AAFF would be
+          	-- represented as 00000000AAFF.
+
+
+	--The RowStatus textual convention is used to manage
+	-- the creation and deletion of conceptual rows, and
+	--is used as the value of the SYNTAX clause for the
+	--status column of a conceptual row.
+
+	RowStatus::=	INTEGER{
+				active(1),
+				notInServer(2),
+				notReady(3),
+				creatAndGo(4),
+				creatAndWait(5),
+				destroy(6)
+			}
+
+
+   	harbour802dot1x 	OBJECT IDENTIFIER 		::= {harbourAgent 29}
+
+   	harbour802dot1xProtocolGroup OBJECT IDENTIFIER 		::= {harbour802dot1x 1}
+
+   	harbour802dot1xPortGroup OBJECT IDENTIFIER 		::= {harbour802dot1x 2}
+
+   	harbour802dot1xUserGroup OBJECT IDENTIFIER 		::= {harbour802dot1x 3}
+
+   	harbour802dot1xPaeGroup OBJECT IDENTIFIER 		::= {harbour802dot1x 4}
+
+   	harbour802dot1xForceLogoffGroup OBJECT IDENTIFIER 	::= {harbour802dot1x 5}
+
+	harbour802dot1xStatisticGroup OBJECT IDENTIFIER 	::= {harbour802dot1x 6}
+
+
+--ProtocolGroup
+	harbour802dot1xStatus OBJECT-TYPE
+
+		SYNTAX  INTEGER {
+		  	disable(0),
+		  	enable(1)
+		}
+
+		ACCESS  read-write
+		STATUS  mandatory
+		DESCRIPTION
+			"Read 0 means 802.1x is not running.
+			 Read 1 means 802.1x is running.
+			 Set to 0 means to disable 802.1x.
+			 Set to 1 means to enable 802.1x.
+			 Notice: Only used in NAS v1.0."
+
+		::= {harbour802dot1xProtocolGroup 1}
+
+	harbour802dot1xAccessCtrlMode OBJECT-TYPE
+
+		SYNTAX  INTEGER {
+		  	normal(0),
+		  	np(1)
+		}
+
+		ACCESS  read-write
+		STATUS  mandatory
+		DESCRIPTION
+			"Read 0 means 802.1x access control mode is normal.
+			 Read 1 means 802.1x access control mode is np.
+			 Set to 0 means to normal mode.
+			 Set to 1 means to np mode.
+			 Notice: Only used in NP module."
+
+		::= {harbour802dot1xProtocolGroup 2}
+
+	harbour802dot1xQuietPeriod OBJECT-TYPE
+
+		SYNTAX  INTEGER (0..65535)
+		ACCESS  read-write
+		STATUS  mandatory
+		DESCRIPTION
+			"The period of time, authentication has rejecting any
+			 auth request when the failed auth occured."
+
+		::= {harbour802dot1xProtocolGroup 3}
+
+	harbour802dot1xTxPeriod OBJECT-TYPE
+
+		SYNTAX  INTEGER (1..65535)
+		ACCESS  read-write
+		STATUS  mandatory
+		DESCRIPTION
+			"It means 802.1x authentication EAPOL waiting time
+			 before re-transportation without the reply from the client."
+
+		::= {harbour802dot1xProtocolGroup 4}
+
+harbour802dot1xReAuthMax OBJECT-TYPE
+	SYNTAX  INTEGER
+	ACCESS  read-write
+	STATUS  current
+	DESCRIPTION
+		"It means 802.1x re-authentication maximum of times."
+	::= {harbour802dot1xProtocolGroup 5}
+
+
+	harbour802dot1xSuppTimeout OBJECT-TYPE
+
+		SYNTAX  INTEGER (1..65535)
+		ACCESS  read-write
+		STATUS  mandatory
+		DESCRIPTION
+			"It means time out of the system data packet from
+			 the client."
+
+		::= {harbour802dot1xProtocolGroup 6}
+
+
+	harbour802dot1xServerTimeout OBJECT-TYPE
+
+		SYNTAX  INTEGER (1..65535)
+		ACCESS  read-write
+		STATUS  mandatory
+		DESCRIPTION
+			"It means time out of the system data packet from
+			 the authentication server."
+
+		::= {harbour802dot1xProtocolGroup 7}
+
+
+	harbour802dot1xMaxReq OBJECT-TYPE
+
+		SYNTAX  INTEGER (1..10)
+		ACCESS  read-write
+		STATUS  mandatory
+		DESCRIPTION
+			"It means maximum times of timeout when system is waiting
+			 for the reply from client."
+
+		::= {harbour802dot1xProtocolGroup 8}
+
+	harbour802dot1xReAuthStatus OBJECT-TYPE
+
+		SYNTAX  INTEGER {
+		  	disable(0),
+		  	enable(1)
+		}
+		ACCESS  read-write
+		STATUS  mandatory
+		DESCRIPTION
+			"Read 0 means 802.1x re-authentication is disabled.
+			 Read 1 means 802.1x re-authentication is enabled.
+			 Set to 0 means to disable 802.1x re-authentication.
+			 Set to 1 means to enable 802.1x re-authentication."
+
+		::= {harbour802dot1xProtocolGroup 9}
+
+
+	harbour802dot1xReAuthPeriod OBJECT-TYPE
+
+		SYNTAX  INTEGER (1..65535)
+		ACCESS  read-write
+		STATUS  mandatory
+		DESCRIPTION
+			"It means 802.1x re-authentication interval."
+
+		::= {harbour802dot1xProtocolGroup 10}
+
+
+	harbour802dot1xKeepAliveStatus OBJECT-TYPE
+
+		SYNTAX  INTEGER {
+			disable(0),
+			enable(1)
+		}
+		ACCESS  read-write
+		STATUS  mandatory
+		DESCRIPTION
+			"Read 0 means keepalive is disabled.
+			 Read 1 means keepalive is enabled.
+			 Set to 0 means to disable keepalive.
+			 Set to 1 means to enable keepalive."
+
+		::= {harbour802dot1xProtocolGroup 11}
+
+
+	harbour802dot1xKeepAliveMechanism OBJECT-TYPE
+
+		SYNTAX  INTEGER {
+			state-machine(0),
+			ping-pong(1)
+		}
+		ACCESS  read-write
+		STATUS  mandatory
+		DESCRIPTION
+			"The Mechanism of keep alive."
+
+		::= {harbour802dot1xProtocolGroup 12}
+
+
+	harbour802dot1xKeepAlivePingPongPeriod OBJECT-TYPE
+
+		SYNTAX  INTEGER (30..600)
+		ACCESS  read-write
+		STATUS  mandatory
+		DESCRIPTION
+			"The period of keep-alive detecting from switcher."
+
+		::= {harbour802dot1xProtocolGroup 13}
+
+
+	harbour802dot1xKeepAliveStateMachinePeriod OBJECT-TYPE
+
+		SYNTAX  INTEGER (10..3600)
+		ACCESS  read-write
+		STATUS  mandatory
+		DESCRIPTION
+			"The period of keep-alive request from the supplicant
+			 system."
+
+		::= {harbour802dot1xProtocolGroup 14}
+
+
+	harbour802dot1xKeepAliveMaxNoRespCount OBJECT-TYPE
+
+		SYNTAX  INTEGER (2..30)
+		ACCESS  read-write
+		STATUS  mandatory
+		DESCRIPTION
+			"The max no-response count of keep-alive request."
+
+		::= {harbour802dot1xProtocolGroup 15}
+
+
+	harbour802dot1xAccessLimitRouteEngine OBJECT-TYPE
+
+		SYNTAX  INTEGER {
+			disable(0),
+			acl(1),
+			rate(2)
+		}
+		ACCESS  read-write
+		STATUS  mandatory
+		DESCRIPTION
+			"The access control and speed-limit L3 based."
+
+		::= {harbour802dot1xProtocolGroup 16 }
+
+
+	harbour802dot1xUplinkPort OBJECT-TYPE
+
+		SYNTAX  INTEGER
+		ACCESS  read-write
+		STATUS  mandatory
+		DESCRIPTION
+			"It specify the uplink port."
+
+		::= {harbour802dot1xProtocolGroup 17 }
+
+	harbour802dot1xSuppUpgradeForceStatus OBJECT-TYPE
+
+		SYNTAX  INTEGER{
+		  	disable(0),
+		  	enable(1)
+		}
+
+		ACCESS  read-write
+		STATUS  mandatory
+		DESCRIPTION
+			"Read 0 means not forcing the supplicant system to update.
+			 Read 1 means forcing the supplicant system to update.
+			 Set to 0 means to disable the supplicant system to update.
+			 Set to 1 means to enable forcing the supplicant system to update.
+			 Notice:Only used in NAS v2.0."
+
+		::= {harbour802dot1xProtocolGroup 18 }
+
+	harbour802dot1xSuppUpgradeURL   	OBJECT-TYPE
+		SYNTAX  	DisplayString (SIZE(1..100))
+		MAX-ACCESS  	read-write
+		STATUS 		mandatory
+		DESCRIPTION
+			"It denotes the URL where you can update you supplicant software,
+			such as :www.harbournetworks.com.cn/supplicant.exe.
+			Notice:Only used in NAS v2.0."
+		::= { harbour802dot1xProtocolGroup 19 }
+
+harbour802dot1xAuthProtocolType OBJECT-TYPE
+	SYNTAX		INTEGER {
+					chap(1),
+					eap_mod5(2),
+					pap(3)
+				}
+	MAX-ACCESS  read-write
+	STATUS  	current
+	DESCRIPTION
+		"chap(1) means chap protocol.
+		 eap_mod5(2) means eap_mod5 protocol.
+		 pap(3)  means pap protocol."
+	::= {harbour802dot1xProtocolGroup 20}
+
+--ProtocolGroupEnd
+
+--PortGroup
+	harbour802dot1xAllPortsStatus OBJECT-TYPE
+
+		SYNTAX  INTEGER {
+		  	disable(0),
+		  	enable(1)
+		}
+
+		ACCESS  write-only
+		STATUS  mandatory
+		DESCRIPTION
+			" Set to 0 means to disable 802dot1x service for all ports.
+			  Set to 1 means to enable 802dot1x service for all ports.
+			  This object is only used in nas v2.0"
+		::= {harbour802dot1xPortGroup 1}
+
+	harbour802dot1xAllPortsAuthCtrlMode OBJECT-TYPE
+
+		SYNTAX  INTEGER {
+			auto(0),
+			forceauth(1),
+			forceunauth(2)
+		}
+
+		ACCESS  write-only
+		STATUS  mandatory
+		DESCRIPTION
+			"auto means that it should be authenticated when needed.
+			 forceauth means that it be forced to be authenticated.
+			 forceunauth means that it be forced not to be authenticated."
+
+		::= {harbour802dot1xPortGroup 2}
+
+
+	harbour802dot1xAllPortsCtrlMode OBJECT-TYPE
+
+		SYNTAX  INTEGER {
+		  	MAC-based(0),
+		  	port-based(1)
+		}
+
+		ACCESS  write-only
+		STATUS  mandatory
+		DESCRIPTION
+			" Set to 0 means to mode MAC based to all ports.
+			  Set to 1 means to mode port based to all ports."
+
+		::= {harbour802dot1xPortGroup 3}
+
+	harbour802dot1xMaxHostsPerPort OBJECT-TYPE
+
+		SYNTAX  INTEGER (1..128)
+
+		ACCESS  read-write
+		STATUS  mandatory
+		DESCRIPTION
+			"It denotes the maximum number of hosts which can connect
+			to any Mac_based port.
+			This object is only used in nas v1.0"
+
+		::= {harbour802dot1xPortGroup 4}
+
+	harbour802dot1xAllPortsMaxHosts OBJECT-TYPE
+
+		SYNTAX  INTEGER (2..512)
+
+		ACCESS  write-only
+		STATUS  mandatory
+		DESCRIPTION
+			"It denotes the maximum number of hosts which can connect
+			to all Mac_based port.
+			This object is only used in nas v2.0"
+
+		::= {harbour802dot1xPortGroup 5}
+
+	harbour802dot1xPortTable 	OBJECT-TYPE
+		SYNTAX 			SEQUENCE OF harbour802dot1xPortEntry
+		ACCESS 			not-accessible
+		STATUS 			mandatory
+		DESCRIPTION
+			"A table that contains all the attributes of the port.
+			 such as adminstate,autonegotiation,duplex,flowcontrol,
+			 speed,uplinkstate and linkstate.These attributes can
+			 be read or write corresponding to a PortNo of a exact
+			 remote device."
+		::= { harbour802dot1xPortGroup 6}
+
+
+	harbour802dot1xPortEntry	OBJECT-TYPE
+		SYNTAX  		harbour802dot1xPortEntry
+		MAX-ACCESS  		not-accessible
+		STATUS 			mandatory
+		DESCRIPTION
+			"A set of attribute information about this
+			 port indexed by harbour802dot1xPortNo."
+		INDEX	  		{
+						harbour802dot1xPortNo
+				 	}
+		::= { harbour802dot1xPortTable 1 }
+
+ 	harbour802dot1xPortEntry ::=
+	   	SEQUENCE {
+			harbour802dot1xPortNo
+					INTEGER,
+			harbour802dot1xPortStatus
+					INTEGER,
+			harbour802dot1xPortAuthCtrlMode
+					INTEGER,
+			harbour802dot1xPortCtrlMode
+					INTEGER,
+			harbour802dot1xPortMaxHosts
+					INTEGER,
+			harbour802dot1xPortPaeCount
+					INTEGER,
+			harbour802dot1xPortHighestPaeCount
+					INTEGER,
+			harbour802dot1xPortStandbyPaeCount
+					INTEGER
+	 	}
+
+
+ 	harbour802dot1xPortNo   	OBJECT-TYPE
+		SYNTAX  		INTEGER
+		MAX-ACCESS  		read-only
+		STATUS 			mandatory
+		DESCRIPTION
+			"A unique integer identifying the particular
+			 hlink client device .When this integer is a
+			 positive number,it represent a exact remote
+			 device,and when this integer is '0' ,it
+			 represent a virtual remote device .This
+			 virtual remote device can control all the
+			 exact same type device that logined with the
+			 name consistenting with virtual device."
+		::= { harbour802dot1xPortEntry 1 }
+
+	harbour802dot1xPortStatus OBJECT-TYPE
+
+		SYNTAX  INTEGER {
+		  	disable(0),
+		  	enable(1)
+		}
+
+		ACCESS  read-write
+		STATUS  mandatory
+		DESCRIPTION
+			" Read 0 means disable 802dot1x service for a port.
+			  Read 1 means enable 802dot1x service for a port.
+			  Set to 0 means to disable 802dot1x service for a port.
+			  Set to 1 means to enable 802dot1x service for a port.
+			  This object is only used in nas v2.0"
+		::= {harbour802dot1xPortEntry 2}
+
+	harbour802dot1xPortAuthCtrlMode   	OBJECT-TYPE
+		SYNTAX			INTEGER{
+					auto(0),
+					forceauth(1),
+					forceunauth(2)
+					}
+		MAX-ACCESS  			read-write
+		STATUS 				mandatory
+		DESCRIPTION
+			"auto means that it should be authenticated when needed;
+			  forceauth means that it be forced to be authenticated;
+			  forceunauth means that it be forced not to be authenticated."
+		::= { harbour802dot1xPortEntry 3 }
+
+
+	harbour802dot1xPortCtrlMode   	OBJECT-TYPE
+		SYNTAX  			INTEGER{
+		  	MAC-based(0),
+		  	port-based(1)
+					}
+
+		MAX-ACCESS  			read-write
+		STATUS 				mandatory
+		DESCRIPTION
+			"Read 0 means mode Mac based to a port.
+			 Read 1 means mode port based to a port.
+			 Set to 0 means to mode MAC based to a port.
+			 Set to 1 means to mode port based to a port."
+		::= { harbour802dot1xPortEntry 4 }
+
+	harbour802dot1xPortMaxHosts OBJECT-TYPE
+
+		SYNTAX  INTEGER (2..512)
+
+		ACCESS  read-write
+		STATUS  mandatory
+		DESCRIPTION
+			"It denotes the maximum number of hosts which can connect
+			to a Mac_based port.
+			This object is only used in nas v2.0"
+
+		::= {harbour802dot1xPortEntry 5}
+
+	harbour802dot1xPortPaeCount	OBJECT-TYPE
+
+		SYNTAX  INTEGER
+		ACCESS  read-only
+		STATUS  mandatory
+		DESCRIPTION
+			""
+
+		::= {harbour802dot1xPortEntry 6 }
+
+
+	harbour802dot1xPortHighestPaeCount	OBJECT-TYPE
+
+		SYNTAX  INTEGER
+		ACCESS  read-only
+		STATUS  mandatory
+		DESCRIPTION
+			""
+
+		::= {harbour802dot1xPortEntry 7 }
+
+
+	harbour802dot1xPortStandbyPaeCount	OBJECT-TYPE
+
+		SYNTAX  INTEGER
+		ACCESS  read-only
+		STATUS  mandatory
+		DESCRIPTION
+			""
+
+		::= {harbour802dot1xPortEntry 8 }
+
+--PortGroupEnd
+
+
+--UserGroup
+	harbour802dot1xBindUserStatus OBJECT-TYPE
+
+		SYNTAX  INTEGER {
+			disable(0),
+			enable(1)
+		}
+		ACCESS  read-write
+		STATUS  mandatory
+		DESCRIPTION
+			" when set to 1,It enable the binduser service;
+			  otherwise it's disabled."
+
+		::= {harbour802dot1xUserGroup 1}
+
+
+	harbour802dot1xMultiPortPerBindUser OBJECT-TYPE
+
+		SYNTAX  INTEGER {
+			disable(0),
+			enable(1)
+		}
+		ACCESS  read-write
+		STATUS  mandatory
+		DESCRIPTION
+			" when set to 1,It enable the binduser MultiPortPerUser service ;
+			  otherwise it's disabled."
+
+		::= {harbour802dot1xUserGroup 2}
+
+
+	harbour802dot1xBindUserClearAll	OBJECT-TYPE
+
+		SYNTAX  INTEGER {
+			ready(0),
+			clear(1)
+		}
+		ACCESS  read-write
+		STATUS  mandatory
+		DESCRIPTION
+			"
+			  when set to 1,It clears all users bound informations
+			  ."
+
+		::= {harbour802dot1xUserGroup 3}
+
+
+	harbour802dot1xBindUserTable 	OBJECT-TYPE
+		SYNTAX SEQUENCE OF harbour802dot1xBindUserEntry
+		ACCESS not-accessible
+		STATUS mandatory
+		DESCRIPTION
+			"The table of users, recording  the operator who ever used 802dot1x service
+	                 	."
+		::= {harbour802dot1xUserGroup 4}
+
+
+	harbour802dot1xBindUserEntry 	OBJECT-TYPE
+		SYNTAX  	harbour802dot1xBindUserEntry
+		MAX-ACCESS  	not-accessible
+		STATUS 		mandatory
+		DESCRIPTION
+				"A table entry containing information about the module in
+				each user of the server."
+		INDEX	  	{
+				harbour802dot1xPortNo,
+				harbour802dot1xBindUserName
+		}
+		::= { harbour802dot1xBindUserTable 1 }
+
+ 	harbour802dot1xBindUserEntry ::=
+	   	SEQUENCE {
+			harbour802dot1xBindUserName	    	DisplayString,
+			harbour802dot1xBindUserRowStatus	RowStatus
+	 	}
+
+
+	harbour802dot1xBindUserName 		OBJECT-TYPE
+		SYNTAX  			DisplayString (SIZE (1..31))
+		ACCESS  			read-create
+		STATUS 				mandatory
+		DESCRIPTION
+			"This object forces the user to logoff."
+		::={ harbour802dot1xBindUserEntry 1 }
+
+	harbour802dot1xBindUserRowStatus 	OBJECT-TYPE
+		SYNTAX  			RowStatus
+		ACCESS  			read-create
+		STATUS 				mandatory
+		DESCRIPTION
+			"This object  bind user to port entry status."
+		::={ harbour802dot1xBindUserEntry 2 }
+
+harbour802dot1xOnlineUserNum   OBJECT-TYPE
+	SYNTAX          INTEGER
+	MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION
+    	"The number of current online 802dot1x users."
+    ::= { harbour802dot1xUserGroup 5 }
+--UserGroupEnd
+
+
+--PaeGroup
+	harbour802dot1xPaeCount	OBJECT-TYPE
+
+		SYNTAX  INTEGER
+		ACCESS  read-only
+		STATUS  mandatory
+		DESCRIPTION
+			""
+
+		::= {harbour802dot1xPaeGroup 1}
+
+	harbour802dot1xHighestPaeCount	OBJECT-TYPE
+
+		SYNTAX  INTEGER
+		ACCESS  read-only
+		STATUS  mandatory
+		DESCRIPTION
+			"."
+		::= {harbour802dot1xPaeGroup 2}
+
+
+	harbour802dot1xPaeTable 	OBJECT-TYPE
+		SYNTAX SEQUENCE OF harbour802dot1xPaeEntry
+		ACCESS not-accessible
+		STATUS mandatory
+		DESCRIPTION
+			"The table of paes, recording  the operator who ever used 802dot1x service."
+		::= {harbour802dot1xPaeGroup 3}
+
+
+	harbour802dot1xPaeEntry 	OBJECT-TYPE
+		SYNTAX  	harbour802dot1xPaeEntry
+		MAX-ACCESS  	not-accessible
+		STATUS 		mandatory
+		DESCRIPTION
+				"A table entry containing information about the module in
+				each user of the server."
+		INDEX	  	{
+					harbour802dot1xPaeId
+		}
+		::= { harbour802dot1xPaeTable 1 }
+
+ 	harbour802dot1xPaeEntry ::=
+	   	SEQUENCE {
+
+			harbour802dot1xPaeId	    	INTEGER,
+			harbour802dot1xPaeUserName 	DisplayString,
+			harbour802dot1xPaePort		INTEGER,
+			harbour802dot1xPaeMac		MacAddress,
+			harbour802dot1xPaeIp		IpAddress,
+			harbour802dot1xPaeVlanId	INTEGER,
+			harbour802dot1xPaeDomainName	DisplayString,
+			harbour802dot1xPaeState		INTEGER,
+			harbour802dot1xPaeTime		TimeTicks
+
+	 	}
+
+
+	harbour802dot1xPaeId   	OBJECT-TYPE
+		SYNTAX  	INTEGER
+		MAX-ACCESS  	read-only
+		STATUS 		mandatory
+		DESCRIPTION
+				"A identifier of the 802dot1x client , identifying the particular  client connectvity."
+		::= { harbour802dot1xPaeEntry 1 }
+	harbour802dot1xPaeUserName 	OBJECT-TYPE
+		SYNTAX  			DisplayString (SIZE (1..31))
+		ACCESS  			read-only
+		STATUS 				mandatory
+		DESCRIPTION
+			"This object denotes the user name of specific pae."
+		::={ harbour802dot1xPaeEntry 2 }
+
+	harbour802dot1xPaePort		OBJECT-TYPE
+		SYNTAX  			INTEGER
+		ACCESS  			read-only
+		STATUS 				mandatory
+		DESCRIPTION
+			"This object denotes the user port from which specific pae is."
+		::={ harbour802dot1xPaeEntry 3 }
+
+	harbour802dot1xPaeMac		OBJECT-TYPE
+		SYNTAX  			MacAddress
+		ACCESS  			read-only
+		STATUS 				mandatory
+		DESCRIPTION
+			"This object denotes the mac address of specific pae."
+		::={ harbour802dot1xPaeEntry 4 }
+	harbour802dot1xPaeIp		OBJECT-TYPE
+		SYNTAX  			IpAddress
+		ACCESS  			read-only
+		STATUS 				mandatory
+		DESCRIPTION
+			"This object denotes the ip address of specific pae."
+		::={ harbour802dot1xPaeEntry 5 }
+	harbour802dot1xPaeVlanId	OBJECT-TYPE
+		SYNTAX  			INTEGER
+		ACCESS  			read-only
+		STATUS 				mandatory
+		DESCRIPTION
+			"This object forces the user status."
+		::={ harbour802dot1xPaeEntry 6 }
+	harbour802dot1xPaeDomainName   	OBJECT-TYPE
+
+		SYNTAX  	DisplayString (SIZE (1..19))
+		MAX-ACCESS  	read-only
+		STATUS 		mandatory
+		DESCRIPTION
+				"A name of the 802dot1x client user, identifying the particular hlink client one,
+				such as username1 or username2 and so on."
+
+		::= { harbour802dot1xPaeEntry 7 }
+
+	harbour802dot1xPaeState 	OBJECT-TYPE
+		SYNTAX  			INTEGER{
+				NULL(0),
+            			Initialize(1),
+            			Disconnected(2),
+            			Connecting(3),
+            			Authenticating(4),
+            			Authenticated(5),
+            			Aborting(6),
+            			Held(7),
+             			ForceAuth(8),
+             			ForceUnauth(9)    }
+		ACCESS  			read-only
+		STATUS 				mandatory
+		DESCRIPTION
+			"This object forces the user status."
+		::={ harbour802dot1xPaeEntry 8 }
+	harbour802dot1xPaeTime		OBJECT-TYPE
+		SYNTAX  			TimeTicks
+		ACCESS  			read-only
+		STATUS 				mandatory
+		DESCRIPTION
+			"This object tell you the time when user log on."
+		::={ harbour802dot1xPaeEntry 9 }
+
+
+--PaeGroupEnd
+
+
+--ForceLogoffGroup
+
+	harbour802dot1xPaeForceLogoffAllUsers OBJECT-TYPE
+
+		SYNTAX  INTEGER {
+			ready(0),
+			logoff(1)
+		}
+		ACCESS  read-write
+		STATUS  mandatory
+		DESCRIPTION
+			" when set to 1,It force all users to log off."
+
+		::= {harbour802dot1xForceLogoffGroup 1}
+
+	harbour802dot1xUserForceLogoffTable 	OBJECT-TYPE
+		SYNTAX SEQUENCE OF harbour802dot1xUserForceLogoffEntry
+		ACCESS not-accessible
+		STATUS mandatory
+		DESCRIPTION
+			"The table of users, recording the operator who ever used 802dot1x service
+	                 	."
+		::= {harbour802dot1xForceLogoffGroup 2}
+
+
+	harbour802dot1xUserForceLogoffEntry 	OBJECT-TYPE
+		SYNTAX  	harbour802dot1xUserForceLogoffEntry
+		MAX-ACCESS  	not-accessible
+		STATUS 		mandatory
+		DESCRIPTION
+				"A table entry containing information about the module in
+				each user of the server."
+		INDEX	  	{
+					harbour802dot1xUserName
+		}
+		::= { harbour802dot1xUserForceLogoffTable 1 }
+
+
+ 	harbour802dot1xUserForceLogoffEntry ::=
+	   	SEQUENCE {
+
+			harbour802dot1xUserName	    	DisplayString,
+			harbour802dot1xUserForceLogoff 	INTEGER
+	 	}
+
+
+	harbour802dot1xUserName   	OBJECT-TYPE
+		SYNTAX  	DisplayString (SIZE (1..31))
+		MAX-ACCESS  	read-only
+		STATUS 		mandatory
+		DESCRIPTION
+				"A name of the 802dot1x client user, identifying the particular hlink client one,
+				such as username1 or username2 and so on."
+		::= { harbour802dot1xUserForceLogoffEntry 1 }
+
+
+	harbour802dot1xUserForceLogoff 	OBJECT-TYPE
+		SYNTAX  			INTEGER{ready(0),logoffing(1) }
+		ACCESS  			read-write
+		STATUS 				mandatory
+		DESCRIPTION
+			"This object forces the user to logoff."
+		::={ harbour802dot1xUserForceLogoffEntry 2 }
+
+
+	harbour802dot1xMACForceLogoffTable 	OBJECT-TYPE
+		SYNTAX SEQUENCE OF harbour802dot1xMACForceLogoffEntry
+		ACCESS not-accessible
+		STATUS mandatory
+		DESCRIPTION
+			"The table of users, recording  the operator who ever used 802dot1x service
+	                 	."
+		::= {harbour802dot1xForceLogoffGroup 3}
+
+
+	harbour802dot1xMACForceLogoffEntry 	OBJECT-TYPE
+		SYNTAX  	harbour802dot1xMACForceLogoffEntry
+		MAX-ACCESS  	not-accessible
+		STATUS 		mandatory
+		DESCRIPTION
+				"A table entry containing information about the module in
+				each user of the server."
+		INDEX	  	{
+					harbour802dot1xMAC
+		}
+		::= { harbour802dot1xMACForceLogoffTable 1 }
+
+ 	harbour802dot1xMACForceLogoffEntry ::=
+	   	SEQUENCE {
+
+			harbour802dot1xMAC	    	MacAddress,
+			harbour802dot1xMACForceLogoff 	INTEGER
+	 	}
+
+
+	harbour802dot1xMAC   	OBJECT-TYPE
+		SYNTAX  	MacAddress
+		MAX-ACCESS  	read-only
+		STATUS 		mandatory
+		DESCRIPTION
+				"A name of the 802dot1x client user, identifying the particular hlink client one,
+				such as username1 or username2 and so on."
+		::= { harbour802dot1xMACForceLogoffEntry 1 }
+
+
+	harbour802dot1xMACForceLogoff 	OBJECT-TYPE
+		SYNTAX  			INTEGER{ready(0),logoff(1) }
+		ACCESS  			read-write
+		STATUS 				mandatory
+		DESCRIPTION
+			"This object forces the user to logoff."
+		::={ harbour802dot1xMACForceLogoffEntry 2 }
+
+
+	harbour802dot1xPortForceLogoffTable 	OBJECT-TYPE
+		SYNTAX SEQUENCE OF harbour802dot1xPortForceLogoffEntry
+		ACCESS not-accessible
+		STATUS mandatory
+		DESCRIPTION
+			"The table of users, recording  the operator who ever used 802dot1x service
+	                 	."
+		::= {harbour802dot1xForceLogoffGroup 4}
+
+
+	harbour802dot1xPortForceLogoffEntry 	OBJECT-TYPE
+		SYNTAX  	harbour802dot1xPortForceLogoffEntry
+		MAX-ACCESS  	not-accessible
+		STATUS 		mandatory
+		DESCRIPTION
+				"A table entry containing information about the module in
+				each user of the server."
+		INDEX	  	{
+					harbour802dot1xPortNo
+		}
+		::= { harbour802dot1xPortForceLogoffTable 1 }
+
+ 	harbour802dot1xPortForceLogoffEntry ::=
+	   	SEQUENCE {
+			harbour802dot1xPortForceLogoff 	INTEGER
+	 	}
+
+	harbour802dot1xPortForceLogoff 	OBJECT-TYPE
+		SYNTAX  			INTEGER{ready(0),logoff(1) }
+		ACCESS  			read-write
+		STATUS 				mandatory
+		DESCRIPTION
+			"This object forces the user to logoff."
+		::={ harbour802dot1xPortForceLogoffEntry 1 }
+
+
+	harbour802dot1xPaeForceLogoffTable 	OBJECT-TYPE
+		SYNTAX SEQUENCE OF harbour802dot1xPaeForceLogoffEntry
+		ACCESS not-accessible
+		STATUS mandatory
+		DESCRIPTION
+			"The table of users, recording  the operator who ever used 802dot1x service
+	                 	."
+		::= {harbour802dot1xForceLogoffGroup 5}
+
+
+	harbour802dot1xPaeForceLogoffEntry 	OBJECT-TYPE
+		SYNTAX  	harbour802dot1xPaeForceLogoffEntry
+		MAX-ACCESS  	not-accessible
+		STATUS 		mandatory
+		DESCRIPTION
+				"A table entry containing information about the module in
+				each user of the server."
+		INDEX	  	{
+					harbour802dot1xPaeId
+		}
+		::= { harbour802dot1xPaeForceLogoffTable 1 }
+
+ 	harbour802dot1xPaeForceLogoffEntry ::=
+	   	SEQUENCE {
+			harbour802dot1xPaeForceLogoff 	INTEGER
+	 	}
+
+	harbour802dot1xPaeForceLogoff	 	OBJECT-TYPE
+		SYNTAX  			INTEGER{ready(0),logoff(1) }
+		ACCESS  			read-write
+		STATUS 				mandatory
+		DESCRIPTION
+			"This object forces the user to logoff."
+		::={ harbour802dot1xPaeForceLogoffEntry 1 }
+
+
+	harbour802dot1xDomainLogoffTable 	OBJECT-TYPE
+		SYNTAX SEQUENCE OF harbour802dot1xDomainLogoffEntry
+		ACCESS not-accessible
+		STATUS mandatory
+		DESCRIPTION
+			"The table of users, recording  the operator who ever used 802dot1x service ."
+		::= {harbour802dot1xForceLogoffGroup 6}
+
+
+	harbour802dot1xDomainLogoffEntry 	OBJECT-TYPE
+		SYNTAX  	harbour802dot1xDomainLogoffEntry
+		MAX-ACCESS  	not-accessible
+		STATUS 		mandatory
+		DESCRIPTION
+				"A table entry containing information about the module in
+				each user of the server."
+		INDEX	  	{
+					harbour802dot1xDomain
+		}
+		::= { harbour802dot1xDomainLogoffTable 1 }
+
+ 	harbour802dot1xDomainLogoffEntry ::=
+	   	SEQUENCE {
+
+			harbour802dot1xDomain	    		DisplayString,
+			harbour802dot1xDomainForceLogoff 	INTEGER
+	 	}
+
+
+	harbour802dot1xDomain   	OBJECT-TYPE
+		SYNTAX  	DisplayString (SIZE (1..19))
+		MAX-ACCESS  	read-only
+		STATUS 		mandatory
+		DESCRIPTION
+				"A name of Domain  of the 802dot1x client user, identifying the particular Domain,
+				such as default and so on."
+		::= { harbour802dot1xDomainLogoffEntry 1 }
+	harbour802dot1xDomainForceLogoff 	OBJECT-TYPE
+		SYNTAX  			INTEGER{ready(0),logoff(1) }
+		ACCESS  			read-write
+		STATUS 				mandatory
+		DESCRIPTION
+			"This object forces the user to logoff by Domain name."
+		::={ harbour802dot1xDomainLogoffEntry 2 }
+
+
+	harbour802dot1xIpForceLogoffTable 	OBJECT-TYPE
+		SYNTAX SEQUENCE OF harbour802dot1xIpForceLogoffEntry
+		ACCESS not-accessible
+		STATUS mandatory
+		DESCRIPTION
+			"The table of users, recording  the operator who ever used 802dot1x service
+	                 	."
+		::= {harbour802dot1xForceLogoffGroup 7}
+
+
+	harbour802dot1xIpForceLogoffEntry 	OBJECT-TYPE
+		SYNTAX  	harbour802dot1xIpForceLogoffEntry
+		MAX-ACCESS  	not-accessible
+		STATUS 		mandatory
+		DESCRIPTION
+				"A table entry containing information about the module in
+				each user of the server."
+		INDEX	  	{
+					harbour802dot1xIpAddr
+		}
+		::= { harbour802dot1xIpForceLogoffTable 1 }
+
+ 	harbour802dot1xIpForceLogoffEntry ::=
+	   	SEQUENCE {
+
+			harbour802dot1xIpAddr	    	IpAddress,
+			harbour802dot1xIpAddrForceLogoff 	INTEGER
+	 	}
+
+
+	harbour802dot1xIpAddr   	OBJECT-TYPE
+		SYNTAX  	IpAddress
+		MAX-ACCESS  	read-only
+		STATUS 		mandatory
+		DESCRIPTION
+				"A name of the 802dot1x client user, identifying the particular hlink client one,
+				such as username1 or username2 and so on."
+		::= { harbour802dot1xIpForceLogoffEntry 1 }
+
+
+	harbour802dot1xIpAddrForceLogoff 	OBJECT-TYPE
+		SYNTAX  			INTEGER{ready(0),logoff(1) }
+		ACCESS  			read-write
+		STATUS 				mandatory
+		DESCRIPTION
+			"This object forces the user to logoff."
+		::={ harbour802dot1xIpForceLogoffEntry 2 }
+--ForceLogoffGroupEnd
+
+
+--StatisticGroup
+	harbour802dot1xClearStatistic OBJECT-TYPE
+
+		SYNTAX  INTEGER {
+		  	ready(0),
+		  	clearing(1)
+		}
+
+		ACCESS  read-write
+		STATUS  mandatory
+		DESCRIPTION
+			" Read 0 means is ready to clear statistic.
+			  Set to 1 means to clear all 802dot1x Statistic."
+
+		::= {harbour802dot1xStatisticGroup 1}
+
+	harbour802dot1xStatisticTable 	OBJECT-TYPE
+		SYNTAX SEQUENCE OF harbour802dot1xStatisticEntry
+		ACCESS not-accessible
+		STATUS mandatory
+		DESCRIPTION
+			"The table of dot1x statistics ."
+		::= {harbour802dot1xStatisticGroup 2}
+
+
+	harbour802dot1xStatisticEntry 	OBJECT-TYPE
+		SYNTAX  	harbour802dot1xStatisticEntry
+		MAX-ACCESS  	not-accessible
+		STATUS 		mandatory
+		DESCRIPTION
+				"A table entry containing information about the module in
+				each user of the server."
+		INDEX	  	{
+					harbour802dot1xStatisticItem
+		}
+		::= { harbour802dot1xStatisticTable 1 }
+
+ 	harbour802dot1xStatisticEntry ::=
+	   	SEQUENCE {
+
+			harbour802dot1xStatisticItem	    	INTEGER,
+			harbour802dot1xStatisticPackets 	INTEGER
+	 	}
+
+
+	harbour802dot1xStatisticItem   	OBJECT-TYPE
+		SYNTAX  	INTEGER{
+			EAPOL-StartFromSupp(1),EAP-Req-IdFromNAS(2),EAP-Resp-IdFromSupp(3),
+			Access-Req-IdFromNAS(4),Challenge(5),EAP-Req-MD5(6),EAP-Resp-MD5(7),
+	   		Access-Req-MD5(8),Accept(9),EAP-Success(10),EAPOL-Logoff(11),Reject(12),
+			EAP-Failure(13)
+	 	}
+		MAX-ACCESS  	read-only
+		STATUS 		mandatory
+		DESCRIPTION
+				"Dot1x Statistic Item."
+		::= { harbour802dot1xStatisticEntry 1 }
+
+	harbour802dot1xStatisticPackets 	OBJECT-TYPE
+		SYNTAX  			INTEGER
+		ACCESS  			read-only
+		STATUS 				mandatory
+		DESCRIPTION
+			"This object denotes packet count in Dot1x Statistic."
+		::={ harbour802dot1xStatisticEntry 2 }
+
+
+
+	harbour802dot1xAccountSatatisticTable 	OBJECT-TYPE
+		SYNTAX SEQUENCE OF harbour802dot1xAccountSatatisticEntry
+		ACCESS not-accessible
+		STATUS mandatory
+		DESCRIPTION
+			"The table of accounting statistics."
+		::= {harbour802dot1xStatisticGroup 3}
+
+
+	harbour802dot1xAccountSatatisticEntry 	OBJECT-TYPE
+		SYNTAX  	harbour802dot1xAccountSatatisticEntry
+		MAX-ACCESS  	not-accessible
+		STATUS 		mandatory
+		DESCRIPTION
+				"A table entry containing information about the module in
+				each user of the server."
+		INDEX	  	{
+					harbour802dot1xAccountSatatisticItem
+		}
+		::= { harbour802dot1xAccountSatatisticTable 1 }
+
+ 	harbour802dot1xAccountSatatisticEntry ::=
+	   	SEQUENCE {
+			harbour802dot1xAccountSatatisticItem	    INTEGER,
+			harbour802dot1xAccountSatatisticPackets 	INTEGER
+	 	}
+
+	harbour802dot1xAccountSatatisticItem   	OBJECT-TYPE
+		SYNTAX  	INTEGER {
+			StartSendReq(1),StartGotResp(2),StopSentReq(3),
+			StopGotResp(4),TotalSentReq(5),TotalGotResp(6)
+	 	}
+		MAX-ACCESS  	read-only
+		STATUS 		mandatory
+		DESCRIPTION
+				"Account Satatistic Item."
+		::= { harbour802dot1xAccountSatatisticEntry 1 }
+
+	harbour802dot1xAccountSatatisticPackets	OBJECT-TYPE
+		SYNTAX  			INTEGER
+		ACCESS  			read-only
+		STATUS 				mandatory
+		DESCRIPTION
+			"This object denotes packet count in Account Satatistic."
+		::={ harbour802dot1xAccountSatatisticEntry 2 }
+
+--StatisticGroupEnd
+
+END

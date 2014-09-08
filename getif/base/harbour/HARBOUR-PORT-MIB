@@ -1,0 +1,694 @@
+-- =========================================================
+-- Copyright (c) 2001-2003, Harbour Networks Limited
+-- All rights reserved.
+--
+-- Name     : HARBOUR-PORT-MIB
+-- Intro    : The MIB definition for panel and port management.
+-- History  : When          Who         What & Why
+--            2001.12.11    Jinfusheng  Create
+--            2002.4.2      Liyan       Modified
+--            2003.2.24     Liyan       Modified
+--            2003.6.10     Guoxuexu    Added the portVlanID
+--            2003.6.3      liuaijun    Changed for dislam v2.0
+--            2003.11.8     Liaoyuxia   Clean up for Hos
+--            2004.01.13    Suran       Add portUplinkNumber
+--            2004.04.14    Luoguixing  Add portInputVlan
+-- =========================================================
+
+HARBOUR-PORT-MIB DEFINITIONS ::= BEGIN
+
+IMPORTS
+    MODULE-IDENTITY,
+    OBJECT-TYPE        FROM SNMPv2-SMI
+    DisplayString,
+    MacAddress         FROM SNMPv2-TC
+    PortList           FROM Q-BRIDGE-MIB
+    EnabledStatus      FROM P-BRIDGE-MIB
+    harbourAgent       FROM HARBOUR-BASE-MIB;
+
+
+harbourport MODULE-IDENTITY
+    LAST-UPDATED       "200311080000Z"
+    ORGANIZATION       "Harbour Networks Limited"
+    CONTACT-INFO       "www.harbournetworks.com"
+    DESCRIPTION
+            "The MIB module for panel and port management."
+    ::= { harbourAgent 6 }
+
+
+LargePortList ::= OCTET STRING (SIZE (1024))
+
+
+harbourportglobal  OBJECT IDENTIFIER  ::= { harbourport 1 }
+
+harbourportconf    OBJECT IDENTIFIER  ::= { harbourport 2 }
+
+harbourportstatis  OBJECT IDENTIFIER  ::= { harbourport 3 }
+
+
+-- Harbour Port Global Group
+
+-- Harbour Port Global Table
+
+harbourportglobalTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF PortEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+            "This table lists harbour port that are globally
+            identified.  A single entry exists in this list for
+            each harbour port in the system that is bound to
+            a global identifier"
+    ::= { harbourportglobal  1 }
+
+portEntry OBJECT-TYPE
+    SYNTAX      PortEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+            "An entry in the harbourportglobalTable."
+    INDEX      { portindex }
+    ::= { harbourportglobalTable 1 }
+
+PortEntry ::= SEQUENCE {
+    portindex                 INTEGER,
+    harbourportglobalIfIndex  INTEGER
+}
+
+portindex OBJECT-TYPE
+    SYNTAX      INTEGER
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "A unique integer identifying the particular ifIndex
+        in the chassis."
+    ::= { portEntry 1 }
+
+harbourportglobalIfIndex OBJECT-TYPE
+    SYNTAX      INTEGER
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "A unique value, greater than zero, for each
+            interface. It is recommended that values are assigned
+            contiguously starting from 1. The value for each
+            interface sub-layer must remain constant at least from
+            one re-initialization of the entity's network
+            management system to the next re-initialization."
+    ::= { portEntry 2 }
+
+
+-- Harbour Port Configuration Group
+
+-- PortConfProfile Table
+
+PortConfProfileTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF PORTConfProfileEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+            "This table contains information on the VDSL line
+            configuration. One entry in this table reflects a
+            profile defined by a manager which can be used to
+            configure the VDSL line."
+   ::= { harbourportconf 1 }
+
+PortConfProfileEntry OBJECT-TYPE
+    SYNTAX      PORTConfProfileEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+            "Each entry consists of a list of parameters that
+            represents the configuration of a VDSL modem. A
+            default profile will always exist. This profile's
+            name will be set to `DEFVAL' and its parameters will
+            be set to vendor specific values, unless otherwise
+            specified in this document."
+    INDEX      { harbourifIndex }
+    ::= { PortConfProfileTable 1 }
+
+PORTConfProfileEntry ::= SEQUENCE {
+    harbourifIndex              INTEGER,
+    portauto                    INTEGER,
+    portspeed                   INTEGER,
+    portduplex                  INTEGER,
+    portflowcontrol             INTEGER,
+    portenablestatus            INTEGER,
+    portlearning                INTEGER,
+    porttype                    INTEGER,
+    portmode                    INTEGER,
+    portencapsulation           INTEGER,
+    portl2forward               INTEGER,
+    portmac                     MacAddress,
+    portmirror                  INTEGER,
+    portmtu                     INTEGER,
+    portDescription             DisplayString,
+    portVlanID                  INTEGER,
+    pppoeFunctionEnableStatus   INTEGER,
+    dot1xFunctionEnableStatus   INTEGER,
+    portInputVlan               DisplayString
+
+}
+
+harbourifIndex OBJECT-TYPE
+    SYNTAX      INTEGER
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "The index value of this row and the vlan's ifIndex in the
+            ifTable. The NMS obtains the index value for this row by
+            reading the harbourportglobalIfIndex object."
+    ::= { PortConfProfileEntry 1 }
+
+portauto  OBJECT-TYPE
+    SYNTAX      INTEGER { off(0), on(1) }
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "A unique integer identifying the particular port's
+            auto negotiate status."
+   ::= { PortConfProfileEntry 2 }
+
+portspeed OBJECT-TYPE
+    SYNTAX      INTEGER {
+                    speed10M(0),
+                    speed100M(1),
+                    speed1000M(2),
+                    speed10G(3)
+                }
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "A unique integer identifying the particular port's
+            speed status."
+    ::= { PortConfProfileEntry 3 }
+
+portduplex OBJECT-TYPE
+    SYNTAX      INTEGER { half(0), full(1) }
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "A unique integer identifying the particular port's
+            duplex status."
+   ::= { PortConfProfileEntry 4 }
+
+portflowcontrol OBJECT-TYPE
+    SYNTAX      INTEGER { off(0),on(1) }
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "A unique integer identifying the particular port's
+            flowcontrol status."
+    ::= { PortConfProfileEntry 5 }
+
+portenablestatus  OBJECT-TYPE
+    SYNTAX      INTEGER {
+                    disablelinkdown(0),
+                    enablelinkup(1),
+                    enablelinkdown(2),
+                    syn(3),
+                    disablelinkup(4)
+                }
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "A unique integer identifying the particular port's
+            enable status."
+    ::= { PortConfProfileEntry 6 }
+
+portlearning OBJECT-TYPE
+    SYNTAX      INTEGER { disable(0), enable(1) }
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "Identifying the particular port's MAC address learning
+            enable status."
+    ::= { PortConfProfileEntry 7 }
+
+porttype OBJECT-TYPE
+    SYNTAX      INTEGER {
+                    PortType10BaseTX(1),
+                    PortType100BaseTX(2),
+                    PortType1000BaseTX(3),
+                    PortType1000BaseSX(4),
+                    PortType1000BaseLX(5),
+                    PortType100BaseFX-SMF(6),
+                    PortType100BaseFX-MMF(7),
+                    PortType10G(8),
+                    portType1000BaseST(9)
+                }
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "This object is to show the type of a port."
+    ::= { PortConfProfileEntry 8 }
+
+portmode OBJECT-TYPE
+    SYNTAX      INTEGER {
+                    disable(0),
+                    master(1),
+                    slave(2)
+                }
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "This object is to show the mode of GTx as port auto is off."
+    ::= { PortConfProfileEntry 9 }
+
+portencapsulation OBJECT-TYPE
+    SYNTAX      INTEGER { dix(1), snap(2) }
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "Encapsulation format of the header which be sent the
+            Ethernet port."
+    ::= { PortConfProfileEntry 10 }
+
+portl2forward OBJECT-TYPE
+    SYNTAX      EnabledStatus
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "Enable or disable layer 2 forwarding."
+    ::= { PortConfProfileEntry 11 }
+
+portmac OBJECT-TYPE
+    SYNTAX      MacAddress
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "MAC Address of the port."
+    ::= { PortConfProfileEntry 12 }
+
+portmirror OBJECT-TYPE
+    SYNTAX      EnabledStatus
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "Enable or disable port mirror."
+    ::= { PortConfProfileEntry 13 }
+
+portmtu OBJECT-TYPE
+    SYNTAX      INTEGER
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "The size of the largest datagram which can be sent/received
+            on the interface, specified in octets."
+    ::= { PortConfProfileEntry 14 }
+
+portDescription OBJECT-TYPE
+    SYNTAX      DisplayString
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "Description of the port user information."
+    ::= { PortConfProfileEntry 15 }
+
+portVlanID OBJECT-TYPE
+    SYNTAX      INTEGER
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "ID of the VLAN that contains the port"
+    ::= {PortConfProfileEntry 16}
+
+pppoeFunctionEnableStatus     OBJECT-TYPE
+    SYNTAX      INTEGER { enable (1), disable (2) }
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "Enable or Disable the PPPOE fuction to port."
+    ::= {PortConfProfileEntry 17}
+
+dot1xFunctionEnableStatus     OBJECT-TYPE
+    SYNTAX     INTEGER { enable (1), disable (2) }
+    MAX-ACCESS read-write
+    STATUS     current
+    DESCRIPTION
+            "Enable or Disable the 802.1x fuction to port."
+    ::= {PortConfProfileEntry 18}
+
+portInputVlan     OBJECT-TYPE
+    SYNTAX     DisplayString
+    MAX-ACCESS read-write
+    STATUS     current
+    DESCRIPTION
+            "This object indicate port default's vlan name."
+    ::= {PortConfProfileEntry 19}
+
+portenablestatuslist OBJECT-TYPE
+    SYNTAX      LargePortList
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "A list identifying the particular ports
+            enable status:
+            disablelinkdown(0),
+            enablelinkup(1),
+            enablelinkdown(2),
+            syn(3),
+            disablelinkup(4)"
+    ::= { harbourportconf 2 }
+
+-- Port Test Table
+
+PortTestTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF PORTTestEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+            "This table is for the function testing ports.Such as
+            loopback test. Maybe more test funtions will be added
+            to this table in the future."
+    ::= { harbourportconf 3 }
+
+PortTestEntry OBJECT-TYPE
+    SYNTAX      PORTTestEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "Each entry consists of a list of parameters that
+         represents the test result for the corresponding port."
+    INDEX      { harbourifIndex }
+    ::= { PortTestTable 1 }
+
+PORTTestEntry ::= SEQUENCE {
+    interLoopbackTest   INTEGER,
+    exterLoopbackTest   INTEGER
+}
+
+interLoopbackTest OBJECT-TYPE
+    SYNTAX      INTEGER { success(1), failure(2) }
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "This object is to test the inter loopback for port."
+    ::= { PortTestEntry 1 }
+
+exterLoopbackTest OBJECT-TYPE
+    SYNTAX      INTEGER { success(1), failure(2) }
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "This object is to test the inter loopback for port."
+    ::= { PortTestEntry 2 }
+
+portUplinkNumber    OBJECT-TYPE
+    SYNTAX      INTEGER
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "The current number of the ports in uplink status."
+    ::= { harbourportconf 4 }
+
+-- Harbour Port Statis Group
+
+-- Port Perfstat Data Table
+
+portPerfstatDataTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF PortPerfstatDataEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+            "This table provides one row for each VDSL physical
+            interface. VDSL physical interfaces are those ifEntries
+            where ifType is equal to vdsl(97)."
+    ::= { harbourportstatis 1 }
+
+portPerfstatDataEntry OBJECT-TYPE
+    SYNTAX      PortPerfstatDataEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+            "An entry in the vdslPerfDataTable."
+    INDEX      { harbourifIndex }
+    ::= { portPerfstatDataTable 1 }
+
+PortPerfstatDataEntry ::= SEQUENCE {
+    alignmentErrors        Counter32,
+    tooshortErrors         Counter32,
+    toolongErrors          Counter32,
+    checkseqErrors         Counter32,
+    fragementErrors        Counter32,
+    jabberErrors           Counter32,
+    crcErrors              Counter32,
+    trancount              Counter32,
+    rececount              Counter32,
+    singlecollision        Counter32,
+    multiplecollision      Counter32,
+    latecollisionErrors    Counter32,
+    failcnt                Counter32
+}
+
+alignmentErrors OBJECT-TYPE
+    SYNTAX      Counter32
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "This counter contains the number of frames received
+            with alignment errors (an oddnumber of nibbles)."
+    ::= { portPerfstatDataEntry 1 }
+
+tooshortErrors OBJECT-TYPE
+    SYNTAX      Counter32
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "This counter contains the number of frames received
+            with less than 64 bytes. Theseframes are discarded."
+    ::= { portPerfstatDataEntry 2 }
+
+toolongErrors OBJECT-TYPE
+    SYNTAX      Counter32
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "This counter contains the number of frames received with
+            more than maximum length(configured in BPCNTL). These frames
+            are discarded"
+    ::= { portPerfstatDataEntry 3 }
+
+checkseqErrors OBJECT-TYPE
+    SYNTAX      Counter32
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "the number of Frame Check Sequence Errors."
+    ::= { portPerfstatDataEntry 4 }
+
+fragementErrors OBJECT-TYPE
+    SYNTAX      Counter32
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "the number of Frame fragement Errors."
+    ::= { portPerfstatDataEntry 5 }
+
+jabberErrors OBJECT-TYPE
+    SYNTAX      Counter32
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "the number of Frame jabber Errors."
+    ::= { portPerfstatDataEntry 6 }
+
+crcErrors OBJECT-TYPE
+    SYNTAX      Counter32
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "the number of Frame crc Errors."
+    ::= { portPerfstatDataEntry 7 }
+
+trancount OBJECT-TYPE
+    SYNTAX      Counter32
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "A count of data and padding octets of frames that
+            are successfully transmitted."
+    ::= { portPerfstatDataEntry 8 }
+
+rececount OBJECT-TYPE
+    SYNTAX      Counter32
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "A count of data and padding octets of frames that
+         are successfully received."
+    ::= { portPerfstatDataEntry 9 }
+
+singlecollision OBJECT-TYPE
+    SYNTAX      Counter32
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "The number of frames when a single collision occurs"
+    ::= { portPerfstatDataEntry 10 }
+
+multiplecollision OBJECT-TYPE
+    SYNTAX      Counter32
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "The number of frames when a single collision occurs"
+    ::= { portPerfstatDataEntry 11 }
+
+latecollisionErrors OBJECT-TYPE
+    SYNTAX      Counter32
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "The number of frames when late collision occurs"
+    ::= { portPerfstatDataEntry 12 }
+
+failcnt OBJECT-TYPE
+    SYNTAX      Counter32
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "Counts the number of times the link went down.
+         This counteris reset when ACT bit is deasserted."
+    ::= { portPerfstatDataEntry 13 }
+
+-- Port Utilization Stat Table
+
+portUtilizationTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF PortUtilizationEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+            "This table provides one row for each interface. "
+    ::= { harbourportstatis 2 }
+
+portUtilizationEntry OBJECT-TYPE
+    SYNTAX      PortUtilizationEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+            "An entry in the portUtilizationTable."
+    INDEX          { utPortNo }
+    ::= { portUtilizationTable 1 }
+
+PortUtilizationEntry ::= SEQUENCE {
+    utPortNo                INTEGER,
+    utilizationThreshold    INTEGER,
+    utilizationValue        INTEGER,
+    portInRateThreshold     INTEGER,
+    portOutRateThreshold    INTEGER,
+    portRateAlarmTime       DisplayString
+}
+
+utPortNo OBJECT-TYPE
+    SYNTAX      INTEGER
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "The index of this table for each port."
+    ::= { portUtilizationEntry 1 }
+
+
+utilizationThreshold OBJECT-TYPE
+    SYNTAX      INTEGER
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "The utilization threshold for each port."
+    ::= { portUtilizationEntry 2 }
+
+
+utilizationValue OBJECT-TYPE
+    SYNTAX      INTEGER
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "The utilization current value for each port."
+    ::= { portUtilizationEntry 3 }
+
+portInRateThreshold OBJECT-TYPE
+    SYNTAX      INTEGER
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "The receiving rate threshold on each port. "
+    ::= { portUtilizationEntry 4 }
+
+portOutRateThreshold OBJECT-TYPE
+    SYNTAX      INTEGER
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "The transmitting rate threshold on each port. "
+    ::= { portUtilizationEntry 5 }
+
+portRateAlarmTime OBJECT-TYPE
+    SYNTAX      DisplayString
+    MAX-ACCESS  accessible-for-notify
+    STATUS      current
+    DESCRIPTION
+            "The time when harbourPortRateAlarm is sent. "
+    ::= { portUtilizationEntry 6 }
+
+
+
+
+utilizationModeStatus OBJECT-TYPE
+    SYNTAX      INTEGER { disable(0), enable(1) }
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "To get the status of utilization function."
+    ::= { harbourportstatis 3 }
+
+-- Port Drop Rate Table
+
+portDropRateTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF PortDropRateEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+            "This table provides one row for each interface. "
+    ::= { harbourportstatis 4 }
+
+portDropRateEntry OBJECT-TYPE
+    SYNTAX      PortDropRateEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+            "An entry in the portDropRateTable."
+    INDEX          { drPortNo }
+    ::= { portDropRateTable 1 }
+
+PortDropRateEntry ::= SEQUENCE {
+    drPortNo                  INTEGER,
+    portDropRate              INTEGER,
+    portDropRateThreshold     INTEGER
+}
+
+drPortNo OBJECT-TYPE
+    SYNTAX      INTEGER
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "The index of this table for each port."
+    ::= { portDropRateEntry 1 }
+
+portDropRate OBJECT-TYPE
+    SYNTAX      INTEGER
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "The drop rate of each port."
+    ::= { portDropRateEntry 2 }
+
+portDropRateThreshold OBJECT-TYPE
+    SYNTAX      INTEGER
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "The drop rate threshold of each port."
+::= { portDropRateEntry 3 }
+
+
+END

@@ -1,0 +1,1130 @@
+-- RADWin- MIB  
+-- Version:   1.01
+-- Date:      Nov 18, 2008
+-- By:        Yossi Appleboum
+
+
+-- Change History
+
+-- 1.01		  Root OID fixed.
+
+-- 1.00		  BDU version.
+
+
+RADWIN-5-MIB DEFINITIONS ::= BEGIN
+
+IMPORTS
+
+   OBJECT-TYPE
+        FROM SNMPv2-SMI
+   DisplayString
+        FROM SNMPv2-TC;   
+
+
+--  BDU sub tree  
+enterprises     OBJECT IDENTIFIER ::= { iso org(3) dod(6) internet(1) private(4) 1 }
+radwin          OBJECT IDENTIFIER ::= { enterprises 4458 }   
+bdu             OBJECT IDENTIFIER ::= { radwin 7300 }
+bduStd 	    	OBJECT IDENTIFIER ::= { bdu 1} 	 
+bdu5 	    	OBJECT IDENTIFIER ::= { bduStd 5} 	 
+bduGeneral  OBJECT IDENTIFIER ::= { bdu5 1 }
+bduPorts    OBJECT IDENTIFIER ::= { bdu5 3 }
+bduVLAN     OBJECT IDENTIFIER ::= { bdu5 5 }
+
+
+------------------------------------------------------------
+-- the general group
+
+serialNumber OBJECT-TYPE
+        SYNTAX        DisplayString 
+        MAX-ACCESS    read-only
+        STATUS        current
+        DESCRIPTION   "The serial number of the current module."
+        ::= { bduGeneral 1 }
+
+ethernetAddress OBJECT-TYPE
+        SYNTAX        DisplayString 
+        MAX-ACCESS    read-only
+        STATUS        current
+        DESCRIPTION   "The MAC address of the current module."
+        ::= { bduGeneral 2 }
+
+firmwareVersion OBJECT-TYPE
+        SYNTAX        DisplayString 
+        MAX-ACCESS    read-only
+        STATUS        current
+        DESCRIPTION   "The firmware version details."
+        ::= { bduGeneral 3 }
+
+inputVoltage OBJECT-TYPE
+        SYNTAX        INTEGER
+        MAX-ACCESS    read-only
+        STATUS        current
+        DESCRIPTION   "Input voltage readout in millivolts."
+        ::= { bduGeneral 4 }
+
+ambientTemp OBJECT-TYPE
+        SYNTAX        INTEGER
+        MAX-ACCESS    read-only
+        STATUS        current
+        DESCRIPTION   "Ambient temperature in deg. celsius."
+        ::= { bduGeneral 5 }
+
+mountingOrientation OBJECT-TYPE
+        SYNTAX        INTEGER {
+                      	or0deg(1),    
+                        or90deg(2),
+                        or180deg(3),
+                        or270deg(4),
+                      	na(5)    
+					  }        
+        MAX-ACCESS    read-only
+        STATUS        current
+        DESCRIPTION   "The orientation the device is istalled at."
+        ::= { bduGeneral 6 }
+
+deviceReset OBJECT-TYPE
+        SYNTAX        INTEGER {
+                      	ready(1), 
+                        reset(2),
+                        restoreFactoryDefaults(3)                        
+					  }        
+        MAX-ACCESS    read-write
+        STATUS        current
+        DESCRIPTION   "Reset command. used for booting device or restoring factory 
+                       defaults"
+        ::= { bduGeneral 10 }
+
+highTempThreshold OBJECT-TYPE
+        SYNTAX        INTEGER
+        MAX-ACCESS    read-write
+        STATUS        current
+        DESCRIPTION   "Ambient temperature threshold for traps in deg. celsius."
+        ::= { bduGeneral 20 }
+
+lowVoltageThreshold OBJECT-TYPE
+        SYNTAX        INTEGER
+        MAX-ACCESS    read-write
+        STATUS        current
+        DESCRIPTION   "low voltage threshold for traps."
+        ::= { bduGeneral 21 }
+
+highVoltageThreshold OBJECT-TYPE
+        SYNTAX        INTEGER
+        MAX-ACCESS    read-write
+        STATUS        current
+        DESCRIPTION   "high voltage threshold for traps."
+        ::= { bduGeneral 22 }
+
+specificModel OBJECT-TYPE
+		SYNTAX        INTEGER {
+                      	wlm220(1),       		
+                        wlm520(10),
+                        wlm525(11),                        
+                        wp560(20),
+                        wp560C(21),
+                        wp640(30),
+                        wp660(40),
+                        wlm620(50),
+                        wm610(51),
+                        wm612(52),
+                        wm616(53),                        
+                        wm820(60),
+                        wm825(61)            
+                      } 
+        MAX-ACCESS    read-only
+        STATUS        current
+        DESCRIPTION   "Specific model within family."
+        ::= { bduGeneral 30 }
+
+hardwareVersion OBJECT-TYPE
+        SYNTAX        DisplayString 
+        MAX-ACCESS    read-only
+        STATUS        current
+        DESCRIPTION   "The hardware version details."
+        ::= { bduGeneral 31 }
+
+manufacturingDate OBJECT-TYPE
+        SYNTAX        DisplayString 
+        MAX-ACCESS    read-only
+        STATUS        current
+        DESCRIPTION   "The manufacturing date of the module."
+        ::= { bduGeneral 32 }
+
+loaderVersion OBJECT-TYPE
+        SYNTAX        DisplayString 
+        MAX-ACCESS    read-only
+        STATUS        current
+        DESCRIPTION   "The bootloader version in use in the module."
+        ::= { bduGeneral 33 }
+
+schedulingPolicy OBJECT-TYPE
+        SYNTAX        INTEGER { 
+                        na(1), 
+                        sched1111(2),
+                        sched8421(3)
+                      }
+        MAX-ACCESS    read-write
+        STATUS        current
+        DESCRIPTION   "Core switch scheduling policy."
+        ::= { bduGeneral 39 }
+
+ponl OBJECT-TYPE
+        SYNTAX        INTEGER { 
+                        na(1), 
+                        noPropogation(2),
+                        fiberToCoper(3),
+                        coperToFiber(4),
+                        fiberToCoperAndCoperToFiber(5)
+                      }
+        MAX-ACCESS    read-write
+        STATUS        current
+        DESCRIPTION   "PONL - for converter applications only."
+        ::= { bduGeneral 40 }
+
+aging OBJECT-TYPE
+		SYNTAX        INTEGER {
+                        na(1),                        
+                      	age16sec(2),       		
+                        age300sec(3),
+                        age1800sec(4),
+                        ageNoAging(5)
+                      } 
+        MAX-ACCESS    read-write
+        STATUS        current
+        DESCRIPTION   "Switch aging timeout."
+        ::= { bduGeneral 41 }
+
+learning OBJECT-TYPE
+		SYNTAX        INTEGER {
+                        na(1),                        
+                      	enable(2),       		
+                        disable(3)
+                      } 
+        MAX-ACCESS    read-write
+        STATUS        current
+        DESCRIPTION   "Learning - for converter applications only."
+        ::= { bduGeneral 42 }
+
+converterMgmtMode OBJECT-TYPE
+        SYNTAX        INTEGER {
+                        na(1),
+                        mgmtModeOpen(2), 
+                        mgmtModeVlanSecured(3), 
+                        mgmtModeFullSecured(4)
+                      }
+        MAX-ACCESS    read-write
+        STATUS        current
+        DESCRIPTION   "Converter management security mode."
+        ::= { bduGeneral 43 }
+
+converterMgmtModeCommit OBJECT-TYPE
+        SYNTAX        INTEGER {
+                        na(1),
+                        commit(2)
+                      }
+        MAX-ACCESS    read-write
+        STATUS        current
+        DESCRIPTION   "Use 'commit' to change actual security model configuration."
+        ::= { bduGeneral 44 }
+
+outOfBandLink OBJECT-TYPE
+        SYNTAX        INTEGER {
+                        na(1),
+                        up(2), 
+                        down(3)
+                      }
+        MAX-ACCESS    read-only
+        STATUS        current
+        DESCRIPTION   "Link status for out of band management port."
+        ::= { bduGeneral 45 }
+
+outOfBandText OBJECT-TYPE
+		SYNTAX        DisplayString 
+        MAX-ACCESS    read-only
+        STATUS        current
+        DESCRIPTION   "Port status for out of band management port."
+        ::= { bduGeneral 46 }
+
+outOfBandAccess OBJECT-TYPE
+        SYNTAX        INTEGER {
+                        na(1),
+                        disable(2), 
+                        localOnly(3),
+                        localAndFiber(4),
+                        localAndCopper(5),
+                        allPorts(6)                        
+                      }
+        MAX-ACCESS    read-write
+        STATUS        current
+        DESCRIPTION   "Out of band management port mode."
+        ::= { bduGeneral 47 }
+
+converterMgmtVlanTagging OBJECT-TYPE
+        SYNTAX        INTEGER {
+                        na(1),
+                        untagged(2), 
+                        tagged(3)
+                      }
+        MAX-ACCESS    read-write
+        STATUS        current
+        DESCRIPTION   "Untagged/tagged setting for management frames."
+        ::= { bduGeneral 48 }
+
+converterMgmtVid OBJECT-TYPE
+		SYNTAX        INTEGER 
+        MAX-ACCESS    read-write
+        STATUS        current
+        DESCRIPTION   "VLAN ID for management traffic."
+        ::= { bduGeneral 49 }
+
+bduMibCompliance OBJECT-TYPE
+        SYNTAX        INTEGER
+        MAX-ACCESS    read-only
+        STATUS        current
+        DESCRIPTION   "Bitmap encoding of MIB compliance."
+        ::= { bduGeneral 50 }
+
+secureNMSpath OBJECT-TYPE
+		SYNTAX        INTEGER {
+                        na(1),                        
+                      	userPortsOnly(2),       		
+                        backbonePortsOnly(3),
+                        allAccess(4),
+                        disabled(5),
+                        convLocalFiber(6),
+                        convLocalCopper(7),
+                        convLocalFiberCopper(8),
+                        convLocalOOB(9),                        
+                        convLocalOOBFiber(10),
+                        convLocalOOBCopper(11),
+                        convLocalOOBFiberCopper(12)
+                      } 
+        MAX-ACCESS    read-write
+        STATUS        current
+        DESCRIPTION   "Control management CPU access from user ports only,
+                       Backbone ports only, or both."
+        ::= { bduGeneral 60 }
+
+factDefPortsStatus OBJECT-TYPE
+		SYNTAX        INTEGER {
+                        na(1),                        
+                      	portsOn(2),       		
+                        portsOff(3)
+                      } 
+        MAX-ACCESS    read-write
+        STATUS        current
+        DESCRIPTION   "Controls ports (excluding uplink) status after restoring 
+                      factory defaults."
+        ::= { bduGeneral 61 }
+
+factDefVlanEnable OBJECT-TYPE
+		SYNTAX        INTEGER {
+                        na(1),                        
+                      	vlanEn(2),       		
+                        vlanDis(3)
+                      } 
+        MAX-ACCESS    read-write
+        STATUS        current
+        DESCRIPTION   "Controls management vlan activation after restoring 
+                      factory defaults."
+        ::= { bduGeneral 62 }
+
+factDefVlanVid OBJECT-TYPE
+		SYNTAX        INTEGER 
+		MAX-ACCESS    read-write
+        STATUS        current
+        DESCRIPTION   "Controls management vlan VID after restoring 
+                      factory defaults."
+        ::= { bduGeneral 63 }
+
+mgmtInterfaces OBJECT-TYPE
+		SYNTAX        INTEGER {
+                        snmpOnly(1),                        
+                      	snmpPlusWeb(3),       		
+                        telnetOnly(4),
+                        telnetPlusSnmp(5),
+                        telnetPlusSnmpPlusWeb(7)
+                      } 
+        MAX-ACCESS    read-write
+        STATUS        current
+        DESCRIPTION   "Controls management interface activation."
+        ::= { bduGeneral 66 }
+
+psuType OBJECT-TYPE
+		SYNTAX        INTEGER {
+                        na(1),
+                        ac110Input(2),
+                        ac2200Input(3),
+                        acWideInput(4),
+                      	dc5Input(11),
+                      	dc12Input(12),
+                      	dc24Input(13),
+                      	dc48Input(14),
+                      	dc9to36Input(15),
+                      	dc36to72Input(16)
+                      } 
+        MAX-ACCESS    read-only
+        STATUS        current
+        DESCRIPTION   "Type of power supply."
+        ::= { bduGeneral 70 }
+
+psuModel OBJECT-TYPE
+		SYNTAX        DisplayString
+		MAX-ACCESS    read-only
+        STATUS        current
+        DESCRIPTION   "Specific power supply model."
+        ::= { bduGeneral 71 }
+
+psuNominalPower OBJECT-TYPE
+		SYNTAX        INTEGER 
+        MAX-ACCESS    read-only
+        STATUS        current
+        DESCRIPTION   "Power rating of power supply [Watt]."
+        ::= { bduGeneral 72 }
+
+discreteInputs OBJECT-TYPE
+		SYNTAX INTEGER 
+        MAX-ACCESS    read-only
+        STATUS        current
+        DESCRIPTION   "External auxilary indication inputs.
+        Lower bit (LSB) indicates first discrete input"
+        ::= { bduGeneral 80 }
+
+discreteOutput OBJECT-TYPE
+		SYNTAX        INTEGER {
+                        na(1),
+                      	on(2),
+                      	off(3),
+                      	pulse(4)
+                      } 
+        MAX-ACCESS    read-write
+        STATUS        current
+        DESCRIPTION   "External auxilary control output."
+        ::= { bduGeneral 81 }
+
+discreteDestAddress OBJECT-TYPE
+		SYNTAX        IpAddress
+		MAX-ACCESS    read-write
+        STATUS        current
+        DESCRIPTION   "Trap destination for auxilary inputs."
+        ::= { bduGeneral 82 }
+
+
+------------------------------------------------------------
+-- the bduPorts group
+
+portTable OBJECT-TYPE 
+        SYNTAX SEQUENCE OF PortEntry
+        MAX-ACCESS    not-accessible
+        STATUS        current
+        DESCRIPTION   "A list of ethernet port entries."
+        ::= { bduPorts 1 }
+
+portEntry OBJECT-TYPE
+        SYNTAX        PortEntry
+        MAX-ACCESS    not-accessible
+        STATUS        current
+        DESCRIPTION   "Entry containing information about one ethernet port."
+        INDEX         { portIndex }
+        ::= { portTable 1 }
+
+PortEntry ::=
+        SEQUENCE {
+                portIndex            INTEGER,
+				portPhyType          INTEGER,   
+                portFiberType        INTEGER,
+                portConnectorType    INTEGER,        
+                portWavelength       INTEGER,                        
+                portDescr            DisplayString,  
+                portName             DisplayString,
+                portAdminMode        INTEGER,
+               	portOperMode         INTEGER,
+                portAdminSpeed       INTEGER,
+                portOperSpeed        INTEGER,
+                portAdminDuplex      INTEGER,
+                portOperDuplex       INTEGER,
+                portAdminStatus      INTEGER,        
+                portOperStatus       INTEGER,
+               	portAdminFEF         INTEGER,
+               	portOperFEF          INTEGER,		
+               	portCntReset         INTEGER,		
+               	portTxCnt            Counter32,
+                portLinkStatus       INTEGER,
+                portActivityStatus   INTEGER,
+                portCollision        INTEGER,                      			        
+                portAdminMD          INTEGER,
+                portOperMD           INTEGER,
+               	portTxBroadcastCnt   Counter32,
+               	portTxMulticastCnt   Counter32,
+               	portAdminFC		 	 INTEGER,
+               	portOperFC		 	 INTEGER,
+               	portMonitorMode	 	 INTEGER,
+               	portMonitorDest	 	 INTEGER,  
+               	portMcastEnable      INTEGER,
+               	portComboPrefMedia   INTEGER,
+                portComboLinkMedia   INTEGER,               	
+               	portPhysCompliance 	 INTEGER,
+               	portAppCompliance 	 INTEGER
+        }
+
+portIndex OBJECT-TYPE
+        SYNTAX        INTEGER 
+        MAX-ACCESS    read-only
+        STATUS        current
+        DESCRIPTION   "An index value that uniquely identifies this port."
+        ::= { portEntry 1 }
+
+portPhyType OBJECT-TYPE
+        SYNTAX        INTEGER {
+                      	other(1),       		-- none of the following
+                        copper(2),
+                        normalFormFiber(3),
+                        smallFormFiber(4)
+                      } 
+        MAX-ACCESS    read-only
+        STATUS        current
+        DESCRIPTION   "Phy type of the port."
+        ::= { portEntry 2 }
+
+portFiberType OBJECT-TYPE
+        SYNTAX        INTEGER {
+                      	other(1),       		-- none of the following
+                        multiMode(2),
+                        singleModeS(3),
+                        singleModeS1(4),
+                        singleModeS2(5),
+                        singleModeS3(6)
+                      } 
+        MAX-ACCESS    read-only
+        STATUS        current
+        DESCRIPTION   "Fiber type of the port."
+        ::= { portEntry 3 }
+
+portConnectorType OBJECT-TYPE
+        SYNTAX        INTEGER {
+                      	other(1),       		-- none of the following
+                        rj45(2),
+                        duplexSC(3),
+                        duplexST(4),
+                        duplexVF45(5),
+                        duplexMTRJ(6),
+                        duplexLC(7),
+                        duplexF3000(8),
+                        simplexSC(9),
+                        ledForm(10),
+                        sfpEmptyCage(11),
+                        sfpOccupied(12),
+                        simplexLC(13),
+                        sffSC(14)
+                      } 
+        MAX-ACCESS    read-only
+        STATUS        current
+        DESCRIPTION   "Connector type of the port."
+        ::= { portEntry 4 }
+
+portWavelength OBJECT-TYPE
+        SYNTAX        INTEGER {
+                      	other(1),       		-- none of the following
+                        dualFiber850nm(2),
+                        dualFiber1310nm(3),
+                        dualFiber1550nm(4),
+                        singleFiberA1310or1550nm(5),
+                        singleFiberB1550or1310nm(6),   
+                        cwdm1270nm(7),
+                        cwdm1290nm(8),
+                        cwdm1310nm(9),
+                        cwdm1330nm(10),
+                        cwdm1350nm(11),
+                        cwdm1370nm(12),
+                        cwdm1390nm(13),
+                        cwdm1410nm(14),
+                        cwdm1430nm(15),
+                        cwdm1450nm(16),
+                        cwdm1470nm(17),
+                        cwdm1490nm(18),
+                        cwdm1510nm(19),
+                        cwdm1530nm(20),
+                        cwdm1550nm(21),
+                        cwdm1570nm(22),
+                        cwdm1590nm(23),
+                        cwdm1610nm(24),
+                        cwdmMultiple(25)
+                      } 
+        MAX-ACCESS    read-only
+        STATUS        current
+        DESCRIPTION   "Wavelength of optical tranceiver."
+        ::= { portEntry 5 }
+
+portDescr OBJECT-TYPE
+        SYNTAX        DisplayString 
+        MAX-ACCESS    read-only
+        STATUS        current
+        DESCRIPTION   "The manufacturer's port Description for the module."
+        ::= { portEntry 6 }
+       
+portName OBJECT-TYPE
+        SYNTAX        DisplayString 
+        MAX-ACCESS    read-write
+        STATUS        current
+        DESCRIPTION   "A descriptive string used by the network
+                      administrator to name the port."
+        ::= { portEntry 7 }                
+
+portAdminMode OBJECT-TYPE
+        SYNTAX        INTEGER { 
+	                  	na(1),
+                        manual(2),
+                        autonegotiate(3)
+                      }
+        MAX-ACCESS    read-write
+        STATUS        current
+        DESCRIPTION   "The configured operation mode of the port."
+        ::= { portEntry 8 }
+
+portOperMode OBJECT-TYPE
+        SYNTAX        INTEGER { 
+	                  	na(1),
+                        manual(2),
+                        autonegotiate(3)
+                      }
+        MAX-ACCESS    read-only
+        STATUS        current
+        DESCRIPTION   "The current operational mode of the port."
+        ::= { portEntry 9 }
+
+portAdminSpeed OBJECT-TYPE
+        SYNTAX        INTEGER {
+                      	na(1),
+                        auto(2),
+                        s10M(5),
+                        s100M(6),
+                        s1000M(7)
+                      }
+        MAX-ACCESS    read-write
+        STATUS        current
+        DESCRIPTION   "The configured speed of the port."
+        ::= { portEntry 10 }
+
+portOperSpeed OBJECT-TYPE
+        SYNTAX        INTEGER {
+                      	na(1),
+                        notEstablished(2),
+                        s10M(5),
+                        s100M(6),
+                        s1000M(7)
+                      }
+        MAX-ACCESS    read-only
+        STATUS        current
+        DESCRIPTION   "The current operational speed of the port.
+        			   Not Established - due to No Link Lock on the port."
+        ::= { portEntry 11 }
+
+portAdminDuplex OBJECT-TYPE
+        SYNTAX        INTEGER {
+                        na(1),
+                        auto(2), 
+                        half(3), 
+                        full(4)
+                      }
+        MAX-ACCESS    read-write
+        STATUS        current
+        DESCRIPTION   "The configured duplex state of the port."
+        ::= { portEntry 12 }
+        
+portOperDuplex OBJECT-TYPE
+        SYNTAX        INTEGER { 
+	                  	na(1),
+                        notEstablished(2),
+                        half(3), 
+                        full(4)
+                      }
+        MAX-ACCESS    read-only
+        STATUS        current
+        DESCRIPTION   "The current operational Duplex state of the port.
+        			   Not Established - due to No Link Lock on the port."
+        ::= { portEntry 13 }
+
+portAdminStatus OBJECT-TYPE
+        SYNTAX        INTEGER { 
+	                  	na(1),  
+	                  	on(2), 
+	                  	off(3),                                   
+                        loopback(4)
+                      }
+        MAX-ACCESS    read-write
+        STATUS        current
+        DESCRIPTION   "The configured operation status of the port."
+        ::= { portEntry 14 }
+
+portOperStatus OBJECT-TYPE
+        SYNTAX        INTEGER { 
+	                  	na(1),
+                        on(2),
+                        off(3), 
+                        loopback(4)
+                      }
+        MAX-ACCESS    read-only
+        STATUS        current
+        DESCRIPTION   "The current operational status of the port."
+        ::= { portEntry 15 }
+		
+portAdminFEF OBJECT-TYPE
+        SYNTAX        INTEGER { 
+	                  	na(1),  
+                      	yes(2),
+                      	no(3)
+                      }
+        MAX-ACCESS    read-write
+        STATUS        current
+        DESCRIPTION   "The configured FEF support of the port."
+        ::= { portEntry 16 }
+
+portOperFEF OBJECT-TYPE
+        SYNTAX        INTEGER { 
+	                  	na(1),
+                      	yes(2),
+                      	no(3)
+                      }
+        MAX-ACCESS    read-only
+        STATUS        current
+        DESCRIPTION   "The current operational FEF support of the port."
+        ::= { portEntry 17 }
+
+portCntReset OBJECT-TYPE
+        SYNTAX        INTEGER {
+                      	ready(1), 
+                        reset(2)
+					  }        
+		MAX-ACCESS	  read-write
+		STATUS		  current
+		DESCRIPTION	  "Reset RMON counters for port."
+		::= { portEntry 18 }
+
+portTxCnt OBJECT-TYPE
+		SYNTAX		  Counter32
+		MAX-ACCESS	  read-only
+		STATUS		  current
+		DESCRIPTION	  "Tx packets (total) counter of port."
+		::= { portEntry 19 }
+		
+portLinkStatus OBJECT-TYPE
+        SYNTAX        INTEGER {
+                        na(1),
+                        up(2), 
+                        down(3)
+                      }
+        MAX-ACCESS    read-only
+        STATUS        current
+        DESCRIPTION   "The current link status of the port."
+        ::= { portEntry 20 }   
+        
+portActivityStatus OBJECT-TYPE
+        SYNTAX        INTEGER { 
+                        na(1),
+                        rxAndOrTx(2), 
+                        rxAndTx(3),
+                        rx(4),
+                        tx(5),
+                        noTraffic(6)
+                      }
+        MAX-ACCESS    read-only
+        STATUS        current
+        DESCRIPTION   "The current activity status of the port."
+        ::= { portEntry 21 }    
+        
+portCollision OBJECT-TYPE
+        SYNTAX        INTEGER { 
+                        na(1),
+                        yes(2), 
+                        no(3)
+                      }
+        MAX-ACCESS    read-only
+        STATUS        current
+        DESCRIPTION   "The current Collision Status of the port."
+        ::= { portEntry 22 }
+                                       
+portAdminMD OBJECT-TYPE
+        SYNTAX        INTEGER { 
+	                  	na(1),
+                        auto(2),
+                        mdi(3),
+                        mdix(4)
+                      }
+        MAX-ACCESS    read-write
+        STATUS        current
+        DESCRIPTION   "The configured MD mode of the port."
+        ::= { portEntry 23 }
+
+portOperMD OBJECT-TYPE
+        SYNTAX        INTEGER { 
+	                  	na(1),
+                        auto(2),
+                        mdi(3),
+                        mdix(4)
+                      }
+        MAX-ACCESS    read-only
+        STATUS        current
+        DESCRIPTION   "The current operational MD mode of the port."
+        ::= { portEntry 24 }
+
+portTxBroadcastCnt OBJECT-TYPE
+		SYNTAX		  Counter32
+		MAX-ACCESS	  read-only
+		STATUS		  current
+		DESCRIPTION	  "Tx packets (broadcast) counter of port."
+		::= { portEntry 25 }
+
+portTxMulticastCnt OBJECT-TYPE
+		SYNTAX		  Counter32
+		MAX-ACCESS	  read-only
+		STATUS		  current
+		DESCRIPTION	  "Tx packets (multicast) counter of port."
+		::= { portEntry 26 }
+
+portAdminFC OBJECT-TYPE
+		SYNTAX        INTEGER {
+                        na(1),                        
+                      	enable(2),       		
+                        disable(3)
+                      } 
+        MAX-ACCESS    read-write
+        STATUS        current
+        DESCRIPTION   "Flow control of port."
+		::= { portEntry 27 }
+
+portOperFC OBJECT-TYPE
+		SYNTAX        INTEGER {
+                        na(1),                        
+                      	enable(2),       		
+                        disable(3)
+                      } 
+        MAX-ACCESS    read-write
+        STATUS        current
+        DESCRIPTION   "Flow control of port."
+		::= { portEntry 28 }
+
+portMonitorMode OBJECT-TYPE
+		SYNTAX        INTEGER {
+                        na(1),                        
+                      	no(2),       		
+                        egOnly(3),
+                        egPlusIng(4),                        
+                        egOnlyNV(5),
+                        egPlusIngNV(6)
+                      } 
+        MAX-ACCESS    read-write
+        STATUS        current
+        DESCRIPTION   "Port monitoring mode."
+		::= { portEntry 30 }
+
+portMonitorDest OBJECT-TYPE
+		SYNTAX        INTEGER 
+		MAX-ACCESS    read-write
+        STATUS        current
+        DESCRIPTION   "Destination port for port monitoring."
+		::= { portEntry 31 }  
+
+portMcastEnable OBJECT-TYPE
+		SYNTAX        INTEGER {
+                        na(1),                        
+                        mcastEnable(2),
+                        mcastDisable(3)
+                      } 
+        MAX-ACCESS    read-write
+        STATUS        current
+        DESCRIPTION   "Multicast flooding enable/disable."
+		::= { portEntry 32 }
+
+portComboPrefMedia OBJECT-TYPE
+		SYNTAX        INTEGER {
+                        na(1),                        
+                        preferFirst(2),
+                        preferFiber(3),
+                        preferCopper(4)
+                      } 
+        MAX-ACCESS    read-write
+        STATUS        current
+        DESCRIPTION   "Preferred media for combo port."
+		::= { portEntry 33 }
+
+portComboLinkMedia OBJECT-TYPE
+		SYNTAX        INTEGER {
+                        na(1),                        
+                        linkOnFiber(2),
+                        linkOnCopper(3)
+                      } 
+        MAX-ACCESS    read-write
+        STATUS        current
+        DESCRIPTION   "Link details for combo port."
+		::= { portEntry 34 }
+
+portPhysCompliance OBJECT-TYPE
+		SYNTAX        INTEGER 
+		MAX-ACCESS    read-only
+        STATUS        current
+        DESCRIPTION   "Physical compliance of port."
+		::= { portEntry 40 }  
+
+portAppCompliance OBJECT-TYPE
+		SYNTAX        INTEGER 
+		MAX-ACCESS    read-only
+        STATUS        current
+        DESCRIPTION   "Applicative compliance of port."
+		::= { portEntry 41 }  
+
+                                       
+------------------------------------------------------------
+-- the bduVLAN group
+                                       
+-- Port level table ----------------------------------------
+portVLANTable OBJECT-TYPE 
+        SYNTAX        SEQUENCE OF PortVLANEntry
+        MAX-ACCESS    not-accessible
+        STATUS        current
+        DESCRIPTION   "A list of 802.1Q VLAN port entries."
+        ::= { bduVLAN 2 }
+
+portVLANEntry OBJECT-TYPE
+        SYNTAX        PortVLANEntry
+        MAX-ACCESS    not-accessible
+        STATUS        current
+        DESCRIPTION   "Entry containing information about one port 802.1Q VLAN entry."
+        INDEX         { portIndex }
+        ::= { portVLANTable 1 }
+
+PortVLANEntry ::=
+        SEQUENCE {
+                pIndex              INTEGER,
+               	defaultTag      	INTEGER,
+                ingTagRemove       	INTEGER,
+                egTagInsert        	INTEGER,    
+                en8021q	        	INTEGER,
+                egTagRemove       	INTEGER,                    
+                egDoubleTagEn      	INTEGER,                    
+                ingDoubleTagEn     	INTEGER,
+                pbVlanMembership   	INTEGER
+               	}
+
+pIndex OBJECT-TYPE
+        SYNTAX        INTEGER (1..32)
+        MAX-ACCESS    read-only
+        STATUS        current
+        DESCRIPTION   "An index value that uniquely identifies this port
+					  within the module."
+        ::= { portVLANEntry 1 }
+
+defaultTag OBJECT-TYPE
+        SYNTAX        INTEGER (0..4095)
+        MAX-ACCESS    read-write
+        STATUS        current
+        DESCRIPTION   "Default VLAN tag ID of a specific port."
+        ::= { portVLANEntry 2 }
+ 
+ingTagRemove OBJECT-TYPE
+        SYNTAX        INTEGER {
+                      	yes(1),
+                      	no(2)
+                      } 
+        MAX-ACCESS    read-write
+        STATUS        current
+        DESCRIPTION   "Enable/Disable VLAN tag removal on the ingress port."
+        ::= { portVLANEntry 3 }
+
+egTagInsert OBJECT-TYPE
+        SYNTAX        INTEGER {
+                      	yes(1),
+                      	no(2)
+                      } 
+        MAX-ACCESS    read-write
+        STATUS        current
+        DESCRIPTION   "Enable/Disable VLAN tag insertion on the egress port."
+        ::= { portVLANEntry 4 }
+                                
+en8021q OBJECT-TYPE
+        SYNTAX        INTEGER {
+                      	enable(1),
+                      	disable(2)
+                      } 
+        MAX-ACCESS    read-write
+        STATUS        current
+        DESCRIPTION   "Enable/Disable 802.1Q tag based VLAN on current port."
+        ::= { portVLANEntry 5 }
+
+egTagRemove OBJECT-TYPE
+        SYNTAX        INTEGER {
+                      	yes(1),
+                      	no(2)
+                      } 
+        MAX-ACCESS    read-write
+        STATUS        current
+        DESCRIPTION   "Enable/Disable VLAN tag removal on the egress port."
+        ::= { portVLANEntry 6 }
+
+egDoubleTagEn OBJECT-TYPE
+        SYNTAX        INTEGER {
+                      	yes(1),
+                      	no(2)
+                      } 
+        MAX-ACCESS    read-write
+        STATUS        current
+        DESCRIPTION   "Enable/Disable double VLAN tagging on eggress port."
+        ::= { portVLANEntry 7 }
+
+ingDoubleTagEn OBJECT-TYPE
+        SYNTAX        INTEGER {
+                      	yes(1),
+                      	no(2)
+                      } 
+        MAX-ACCESS    read-write
+        STATUS        current
+        DESCRIPTION   "Enable/Disable double VLAN tagging on ingress port."
+        ::= { portVLANEntry 8 }   
+        
+pbVlanMembership OBJECT-TYPE
+        SYNTAX        INTEGER 
+        MAX-ACCESS    read-write
+        STATUS        current
+        DESCRIPTION   "Port membership when activating port based VLAN."
+        ::= { portVLANEntry 9 }          
+
+-- 802.1Q table ----------------------------------------
+vlan8021qConfigurationTable OBJECT-TYPE 
+        SYNTAX        SEQUENCE OF Vlan8021qConfigurationEntry
+        MAX-ACCESS    not-accessible
+        STATUS        current
+        DESCRIPTION   "A list of port 802.1Q VLAN configuration entries."
+        ::= { bduVLAN 4 }
+
+vlan8021qConfigurationEntry OBJECT-TYPE
+        SYNTAX        Vlan8021qConfigurationEntry
+        MAX-ACCESS    not-accessible
+        STATUS        current
+        DESCRIPTION   "Entry containing information about one 802.1Q VLAN configuration 
+        			  entry."
+        INDEX         { vlan8021qIx }
+        ::= { vlan8021qConfigurationTable 1 }
+
+Vlan8021qConfigurationEntry ::=
+        SEQUENCE {
+                vlan8021qIx                 INTEGER,
+				vlan8021qTag	            INTEGER,                        
+               	vlan8021qPortMembership 	INTEGER        
+        }
+
+vlan8021qIx OBJECT-TYPE
+        SYNTAX        INTEGER (1..16)
+        MAX-ACCESS    read-only
+        STATUS        current
+        DESCRIPTION   "An index value that uniquely identifies this vlan entry within a Module/Stack."
+        ::= { vlan8021qConfigurationEntry 1 }
+
+vlan8021qTag OBJECT-TYPE
+        SYNTAX        INTEGER (0..4095)
+        MAX-ACCESS    read-only
+        STATUS        current
+        DESCRIPTION   "VLAN tag ID of a specific entry."
+        ::= { vlan8021qConfigurationEntry 2 }
+
+vlan8021qPortMembership OBJECT-TYPE
+        SYNTAX        INTEGER (0..65535)
+        MAX-ACCESS    read-only
+        STATUS        current
+        DESCRIPTION   "Port membership settings in binary format. bit 0 (LSB) represents port 1
+        			  bit 7 - represents port 8 ...
+        			  i.e. 0x0000 means no ports are members in this VLAN. and 0x0011 means that
+        			  ports 1 and 5 are members in this VLAN."
+        ::= { vlan8021qConfigurationEntry 3 }
+ 
+vlan8021qConfigurationCommands OBJECT IDENTIFIER    ::= { bduVLAN 5 }
+
+vlan8021qCommandIx OBJECT-TYPE
+	SYNTAX INTEGER (1..16)
+	MAX-ACCESS read-write
+	STATUS current
+	DESCRIPTION 	 "Used for temporary storage of the VLAN index to add, edit
+	                 or remove from the 802.1Q VLAN configuration table."
+	::= { vlan8021qConfigurationCommands 1 }
+
+vlan8021qCommandTag OBJECT-TYPE
+	SYNTAX INTEGER (0..4095)
+	MAX-ACCESS read-write
+	STATUS current
+	DESCRIPTION 	 "Used for temporary storage of the VLAN tag to add, edit
+	                 or remove from the 802.1Q VLAN configuration table."
+	::= { vlan8021qConfigurationCommands 2 }
+
+vlan8021qCommandPortMembership OBJECT-TYPE
+	SYNTAX INTEGER (0..65535)
+	MAX-ACCESS read-write
+	STATUS current
+	DESCRIPTION 	 "Used for temporary storage of the Port membership settings to add, edit
+	                 or remove from the 802.1Q VLAN configuration table."
+	::= { vlan8021qConfigurationCommands 3 }
+
+vlan8021qCommandOpcode OBJECT-TYPE
+	SYNTAX INTEGER {
+	  addORedit(1),
+	  remove(2)
+	} 
+	MAX-ACCESS read-write
+	STATUS current
+	DESCRIPTION 	 "Activation command: setting this OID with value 1(add or edit) adds or updates
+	                 the VLAN configuration entry to the VLAN configuration table. setting this OID 
+	                 with value 2(remove) deletes the entry from the 802.1Q VLAN configuration table."
+	::= { vlan8021qConfigurationCommands 4 }
+                                       
+globalVlanMode OBJECT-TYPE
+    SYNTAX INTEGER {
+      enable8021q(1),
+      disable(2),   
+      enablePortBased(3)
+    } 
+	MAX-ACCESS read-write
+	STATUS current
+	DESCRIPTION 	 "Select VLAN mode (802.1Q or port-based) on entire switch."
+	::= { bduVLAN 6 }       
+	
+chkpntPtbl OBJECT-TYPE
+    SYNTAX Counter32 
+    MAX-ACCESS read-only
+	STATUS current
+	DESCRIPTION 	 "Checkpoint for port level parameters."
+	::= { bduVLAN 7 }
+	
+chkpntVtbl OBJECT-TYPE
+    SYNTAX OCTET STRING (SIZE (64))
+    MAX-ACCESS read-only
+	STATUS current
+	DESCRIPTION 	 "Checkpoint for module level parameters."
+	::= { bduVLAN 8 }
+
+transVIDen OBJECT-TYPE
+    SYNTAX INTEGER {
+      na(0),
+      enable(1),
+      disable(2)
+    } 
+	MAX-ACCESS read-write
+	STATUS current
+	DESCRIPTION 	 "Enable/Disable transparent VID functionality."
+	::= { bduVLAN 10 }       
+                                       
+transVIDtag OBJECT-TYPE
+        SYNTAX        INTEGER (0..4095)
+        MAX-ACCESS    read-write
+        STATUS        current
+        DESCRIPTION   "VLAN tag transparent VID."
+        ::= { bduVLAN 11 }
+
+transVIDtrunkPorts OBJECT-TYPE
+        SYNTAX        INTEGER (0..65535)
+        MAX-ACCESS    read-write
+        STATUS        current
+        DESCRIPTION   "Trunk port membership settings in binary format. bit 0 (LSB) represents port 1
+        			  bit 7 - represents port 8 ...
+        			  i.e. 0x0000 means no ports are trunk ports. and 0x0011 means that
+        			  ports 1 and 5 are trunk ports."
+        ::= { bduVLAN 12 }
+                                       
+END

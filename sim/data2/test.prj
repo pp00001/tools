@@ -1,0 +1,66 @@
+<?xml version="1.0"  encoding="UTF-8"?>
+<Networks name="Test">
+<Simulator initialState="up" port="161"
+  name="test" ipAddress="10.10.10.1">
+  <configFile name="data/config.xml"/>
+  <trapFile/>
+  <dataFile name="data/test.xml"/>
+  <device name="generic"/>
+</Simulator>
+<Simulator initialState="up" port="161"
+  name="brocade" ipAddress="10.10.10.2">
+  <configFile name="data/config.xml"/>
+  <trapFile/>
+  <dataFile name="data/brocade.xml"/>
+  <device name="generic"/>
+</Simulator>
+<Simulator initialState="up" port="161"
+  name="brocade_hp" ipAddress="10.10.10.3">
+  <configFile name="data/config.xml"/>
+  <trapFile/>
+  <dataFile name="data/brocade_hp.xml"/>
+  <device name="generic"/>
+</Simulator>
+<Simulator initialState="up" port="161"
+  name="h3c" ipAddress="10.10.10.4">
+  <configFile name="data/config.xml"/>
+  <trapFile/>
+  <dataFile name="data/h3c.xml"/>
+  <device name="generic"/>
+</Simulator>
+<Simulator initialState="up" port="161"
+  name="juniper" ipAddress="10.10.10.5">
+  <configFile name="data/config.xml"/>
+  <trapFile/>
+  <dataFile name="data/juniper.xml"/>
+  <device name="generic"/>
+</Simulator>
+<Simulator initialState="up" port="161"
+  name="juniper2" ipAddress="10.10.10.6">
+  <configFile name="data/config.xml"/>
+  <trapFile/>
+  <dataFile name="data/juniper2.xml"/>
+  <device name="generic"/>
+</Simulator>
+<Simulator initialState="up" port="161"
+  name="overture" ipAddress="10.10.10.7">
+  <configFile name="data/config.xml"/>
+  <trapFile/>
+  <dataFile name="data/overture.xml"/>
+  <device name="generic"/>
+</Simulator>
+<Simulator initialState="up" port="161"
+  name="radware" ipAddress="10.10.10.8">
+  <configFile name="data/config.xml"/>
+  <trapFile/>
+  <dataFile name="data/radware.xml"/>
+  <device name="generic"/>
+</Simulator>
+<Simulator initialState="up" port="161"
+  name="web_logic" ipAddress="10.10.10.9">
+  <configFile name="data/config.xml"/>
+  <trapFile/>
+  <dataFile name="data/web_logic.xml"/>
+  <device name="generic"/>
+</Simulator>
+</Networks>

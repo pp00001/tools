@@ -1,0 +1,219 @@
+-- ********************************************************************
+
+--  UnitransMib-MS-me.mib
+
+--  Copyright (c) 2008 ZTE CORPORATION.All rights reserved.
+
+--  Description: This file includes the definitions for ManagedElement object   
+
+--  Version     v1.0
+
+--  Modification Record:
+
+--********************************************************************
+UnitransMib-MS-me 
+DEFINITIONS ::= BEGIN
+IMPORTS
+    MODULE-IDENTITY, OBJECT-TYPE, NOTIFICATION-TYPE,
+    enterprises, Integer32, Unsigned32
+        FROM SNMPv2-SMI
+    TEXTUAL-CONVENTION, DisplayString, TimeStamp, DateAndTime
+        FROM SNMPv2-TC  
+    MODULE-COMPLIANCE, OBJECT-GROUP, NOTIFICATION-GROUP
+        FROM SNMPv2-CONF        
+        zteUnitransMS
+	FROM 
+	UnitransMib-MS-root
+	BOOL-TC,Time-TC,ObjectNVSList-T,NamingAttributes-T,CommunicationState-TC
+        FROM 
+        UnitransMib-MS-common;   
+        
+--*********************************************************************
+--
+--*********************************************************************         
+zteuME MODULE-IDENTITY
+        LAST-UPDATED   "0602130000Z"
+        ORGANIZATION   "ZTE"
+        CONTACT-INFO   "
+           ZTE Corporation
+           
+           Postal: 518057      
+           
+           via the WEB:  http://www.zte.com.cn                           
+            
+           via phone:    86-755-26773000"
+   DESCRIPTION
+      "The module describes ZTE Unitrans MIB."
+::= { zteUnitransMS 3 }
+      
+    zteuManagedElementTable      OBJECT-TYPE
+        SYNTAX          SEQUENCE OF ZTEUManagedElementEntry
+        MAX-ACCESS      not-accessible
+        STATUS          current
+        DESCRIPTION
+                "This object presents managed element table"
+        ::= { zteuME 2 }
+    
+    zteuManagedElementEntry  OBJECT-TYPE
+        SYNTAX  ZTEUManagedElementEntry
+        MAX-ACCESS  not-accessible
+        STATUS  current
+        DESCRIPTION
+                "This object presents managed element entry"
+        INDEX  {meName }
+        ::= { zteuManagedElementTable 1 }    
+     
+   ZTEUManagedElementEntry ::= SEQUENCE
+        {
+                meName                          NamingAttributes-T,
+                meUserLabel                     DisplayString, 
+          		meOwner							DisplayString,
+        		meLocation                      DisplayString,
+        		meVersion                       DisplayString,
+        		meProductName					DisplayString,
+        		meCommunicationState			CommunicationState-TC,
+        		meInSyncState					BOOL-TC,            
+          		meAddress                       DisplayString,              
+                ifGateMe                        BOOL-TC,
+                meCreatedTime					Time-TC,                
+        		meAdditionalInfo				ObjectNVSList-T
+        }    
+     
+     meName OBJECT-TYPE
+     SYNTAX NamingAttributes-T
+     MAX-ACCESS read-only
+     STATUS current
+     DESCRIPTION "
+     This variable presents the identifier of managed element 
+     For details,please refer to NamingAttributes-T's definition
+     "
+     ::= {zteuManagedElementEntry 1}
+     
+     meUserLabel OBJECT-TYPE
+     SYNTAX DisplayString
+     MAX-ACCESS read-write
+     STATUS current
+     DESCRIPTION "
+     This variable presents user label
+     "
+     ::= {zteuManagedElementEntry 2}     
+    
+     meOwner  OBJECT-TYPE
+     SYNTAX DisplayString
+     MAX-ACCESS read-only
+     STATUS current
+     DESCRIPTION "
+     This variable presents the owner of the managed element,for the mibs supported directly by devices,this field can be reserved.
+     "
+     ::= {zteuManagedElementEntry 3}
+     
+     meLocation   OBJECT-TYPE
+     SYNTAX DisplayString
+     MAX-ACCESS read-only
+     STATUS current
+     DESCRIPTION "
+     This variable presents the location of the managed element,for the mibs supported directly by devices,this field can be reserved.
+     "
+     ::= {zteuManagedElementEntry 4}
+     
+     meVersion    OBJECT-TYPE
+     SYNTAX DisplayString
+     MAX-ACCESS read-only
+     STATUS current
+     DESCRIPTION "
+     This variable presents version of managed element,which includes hardware and software version,the format should be:
+     'HardwareVersion=<HardwareVersion>/SoftwareVersion=<SoftwareVersion>'
+     "
+     ::= {zteuManagedElementEntry 5}
+     
+     meProductName    OBJECT-TYPE
+     SYNTAX DisplayString
+     MAX-ACCESS read-only
+     STATUS current
+     DESCRIPTION "
+     This variable presents the time when the managed element is created
+     "
+     ::= {zteuManagedElementEntry 6}
+     
+    meCommunicationState   OBJECT-TYPE
+     SYNTAX CommunicationState-TC
+     MAX-ACCESS read-only
+     STATUS current
+     DESCRIPTION "
+     This variable presents the communication state of the managed element
+      "
+     ::= {zteuManagedElementEntry 7}
+     
+     meInSyncState   OBJECT-TYPE
+     SYNTAX BOOL-TC
+     MAX-ACCESS read-only
+     STATUS current
+     DESCRIPTION "
+     This variable presents the sychronization status of the managed element,for the mibs supported directly by devices,this field can be reserved.
+     "
+     ::= {zteuManagedElementEntry 8}
+
+    meAddress   OBJECT-TYPE
+     SYNTAX DisplayString
+     MAX-ACCESS read-only
+     STATUS current
+     DESCRIPTION 
+     "
+     This variable presents managed element's address,the format should be:
+	 /ip=<a>.<b>.<c>.<d>/mask=<a>.<b>.<c>.<d>/gateway=<a>.<b>.<c>.<d>
+
+     "
+     ::= {zteuManagedElementEntry 9}
+     
+    ifGateMe    OBJECT-TYPE
+     SYNTAX BOOL-TC
+     MAX-ACCESS read-only
+     STATUS current
+     DESCRIPTION "
+     This variable presents whether a managed element is a 
+     gateway
+      "
+     ::= {zteuManagedElementEntry 10}
+        
+    meCreatedTime     OBJECT-TYPE
+     SYNTAX Time-TC
+     MAX-ACCESS read-only
+     STATUS current
+     DESCRIPTION " 
+     This variable presents the creation time of the managed element
+     "
+     ::= {zteuManagedElementEntry 11}
+     
+     meAdditionalInfo     OBJECT-TYPE
+     SYNTAX ObjectNVSList-T
+     MAX-ACCESS read-only
+     STATUS current
+     DESCRIPTION "
+     This variable presents the additional informantion of the managed element.
+	  "
+     ::= {zteuManagedElementEntry 12}
+     
+     zteuManagedElementEntryGroup OBJECT-GROUP
+     OBJECTS
+      {
+            meName,
+            meUserLabel, 
+           	meOwner,
+        	meLocation,
+        	meVersion,
+        	meProductName,
+        	meCommunicationState,
+        	meInSyncState,            
+            meAddress,              
+            ifGateMe,
+            meCreatedTime,                
+     	   	meAdditionalInfo
+        }
+     STATUS current
+     DESCRIPTION 
+     " A collection of ME objects"
+     ::= {zteuME 21}
+     
+    
+		
+    END

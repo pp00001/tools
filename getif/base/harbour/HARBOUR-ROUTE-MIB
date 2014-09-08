@@ -1,0 +1,335 @@
+-- =========================================================
+-- Copyright (c) 2001-2003, Harbour Networks Limited
+-- All rights reserved.
+--
+-- Name     : HARBOUR-ROUTE-MIB
+-- Intro    : The MIB definition for route management.
+-- History  : When          Who         What & Why
+--            2002.5.27     Liyan       Create
+--            2003.11.10    Chenjinsong Clean up for Hos
+--            2004.06.14    Liaoyuxia   Add harbourRouteTrapGroup
+-- =========================================================
+
+HARBOUR-ROUTE-MIB DEFINITIONS ::= BEGIN
+
+IMPORTS
+    MODULE-IDENTITY,
+    OBJECT-TYPE,
+    IpAddress          FROM SNMPv2-SMI
+    RowStatus,
+    DisplayString      FROM SNMPv2-TC
+    harbourAgent       FROM HARBOUR-BASE-MIB;
+
+
+harbourRoute  MODULE-IDENTITY
+    LAST-UPDATED  "200311100000Z"
+    ORGANIZATION  "harbourNetworks, Inc."
+    CONTACT-INFO  "www.harbournetworks.com"
+    DESCRIPTION
+            "The MIB module for route management."
+    ::= { harbourAgent 19 }
+
+
+-- The objects are arranged into the following groups:
+
+harbourRouteBase        OBJECT IDENTIFIER ::= { harbourRoute 1 }
+
+-- Harbour Static Route Table
+
+harbourStaticRouteTable  OBJECT-TYPE
+    SYNTAX      SEQUENCE OF HarbourStaticRouteEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+            "Static ip route table."
+    ::= { harbourRouteBase 1 }
+
+harbourStaticRouteEntry OBJECT-TYPE
+    SYNTAX      HarbourStaticRouteEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+            "An entry in the harbourStaticRouteTable."
+    INDEX           { staticDestIP, staticMask, staticNextHop }
+    ::= { harbourStaticRouteTable 1 }
+
+HarbourStaticRouteEntry ::= SEQUENCE {
+    staticDestIP           IpAddress,
+    staticMask             IpAddress,
+    staticNextHop          IpAddress,
+    staticDistance         INTEGER,
+    staticRowStatus        RowStatus,
+    staticStatus           INTEGER
+}
+
+staticDestIP OBJECT-TYPE
+    SYNTAX      IpAddress
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+            "Destination IP address."
+    ::= { harbourStaticRouteEntry 1 }
+
+staticMask OBJECT-TYPE
+    SYNTAX      IpAddress
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+            "Subnet mask for destination IP address."
+    ::= { harbourStaticRouteEntry 2 }
+
+staticNextHop OBJECT-TYPE
+    SYNTAX      IpAddress
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+            "Gateway IP address."
+    ::= { harbourStaticRouteEntry 3 }
+
+staticDistance OBJECT-TYPE
+    SYNTAX      INTEGER ( 1 .. 255 )
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+            "Cost for the destination."
+    ::= { harbourStaticRouteEntry 4 }
+
+staticRowStatus OBJECT-TYPE
+    SYNTAX      RowStatus
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+            "This object indicates the status of this entry."
+    ::= { harbourStaticRouteEntry 5 }
+
+staticStatus OBJECT-TYPE
+    SYNTAX      INTEGER {
+                    selected(1),
+                    unselected(0)
+                }
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "The invalidation state of this entry."
+    ::= { harbourStaticRouteEntry 6 }
+
+harbourIfStaticRouteTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF HarbourIfStaticRouteEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+            "Static ip route table."
+    ::= { harbourRouteBase 2 }
+
+harbourIfStaticRouteEntry OBJECT-TYPE
+    SYNTAX      HarbourIfStaticRouteEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+            "An entry in the harbourStaticRouteTable."
+    INDEX           { IfstaticDestIP, IfstaticMask, IfstaticNextHopIf }
+    ::= { harbourIfStaticRouteTable 1 }
+
+HarbourIfStaticRouteEntry ::= SEQUENCE {
+    IfstaticDestIP           IpAddress,
+    IfstaticMask             IpAddress,
+    IfstaticNextHopIf        IpAddress,
+    IfstaticNextHopIfName    DisplayString,
+    IfstaticDistance         INTEGER,
+    IfstaticRowStatus        RowStatus,
+    IfstaticStatus           INTEGER
+}
+
+IfstaticDestIP OBJECT-TYPE
+    SYNTAX      IpAddress
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+            "Destination IP address."
+    ::= { harbourIfStaticRouteEntry 1 }
+
+IfstaticMask OBJECT-TYPE
+    SYNTAX      IpAddress
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+            "Subnet mask for destination IP address."
+    ::= { harbourIfStaticRouteEntry 2 }
+
+IfstaticNextHopIf OBJECT-TYPE
+    SYNTAX      IpAddress
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+            "Gateway if index."
+    ::= { harbourIfStaticRouteEntry 3 }
+
+IfstaticNextHopIfName OBJECT-TYPE
+    SYNTAX      DisplayString
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "next hop if name."
+::= { harbourIfStaticRouteEntry 4 }
+
+IfstaticDistance OBJECT-TYPE
+    SYNTAX      INTEGER ( 1 .. 255 )
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+            "Cost for the destination."
+::= { harbourIfStaticRouteEntry 5 }
+
+IfstaticRowStatus OBJECT-TYPE
+    SYNTAX      RowStatus
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+            "This object indicates the status of this entry."
+    ::= { harbourIfStaticRouteEntry 6 }
+
+IfstaticStatus OBJECT-TYPE
+    SYNTAX      INTEGER {
+                    selected(1),
+                    unselected(0)
+                }
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "Cost for the destination."
+    ::= { harbourIfStaticRouteEntry 7}
+
+-- harbour Route Table2
+
+harbourRouteTable2 OBJECT-TYPE
+    SYNTAX      SEQUENCE OF HarbourRouteEntry2
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+            "Static ip route table."
+    ::= { harbourRouteBase 3 }
+
+harbourRouteEntry2 OBJECT-TYPE
+    SYNTAX      HarbourRouteEntry2
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+            "An entry in the harbourStaticRouteTable."
+    INDEX           { route2DestIP, route2Mask, route2type, route2NextHop }
+    ::= { harbourRouteTable2 1 }
+
+HarbourRouteEntry2 ::= SEQUENCE {
+    route2DestIP           IpAddress,
+    route2Mask             IpAddress,
+    route2type             INTEGER,
+    route2NextHop          DisplayString,
+    route2Distance         INTEGER,
+    route2Weigth           INTEGER,
+    route2RowStatus        RowStatus,
+    route2Status           INTEGER
+}
+
+route2DestIP OBJECT-TYPE
+    SYNTAX      IpAddress
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+            "Destination IP address."
+    ::= { harbourRouteEntry2 1 }
+
+route2Mask OBJECT-TYPE
+    SYNTAX      IpAddress
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+            "Destination IP mask."
+    ::= { harbourRouteEntry2 2 }
+
+route2type OBJECT-TYPE
+    SYNTAX      INTEGER {
+                    ipgateway(1),
+                    ethernet(2),
+                    gre(3),
+                    loopback(4),
+                    lsp(5),
+                    nullinterface(6),
+                    pos(7),
+                    trunk(8),
+                        vlan(9)
+                }
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+            "The type of a static route entry."
+    ::= { harbourRouteEntry2 3 }
+
+route2NextHop OBJECT-TYPE
+    SYNTAX      DisplayString
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+            "Next hop of a static route entry.
+            This object shoud be a string in the size of 1 to 30.
+            As a index the string should be filled in the corresponding
+            field in the oid.One char of the string take up one oid field.
+            '0' should be added to the tail of the string if it's size
+            under 30."
+    ::= { harbourRouteEntry2 4 }
+
+route2Distance OBJECT-TYPE
+    SYNTAX      INTEGER (1..255)
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "The distance of a static route entry."
+    ::= { harbourRouteEntry2 5 }
+
+route2Weigth  OBJECT-TYPE
+    SYNTAX      INTEGER (1..8)
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "The weight of a static route entry."
+    ::= { harbourRouteEntry2 6 }
+
+route2RowStatus OBJECT-TYPE
+    SYNTAX      RowStatus
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+            "This object indicates the status of this entry."
+    ::= { harbourRouteEntry2 7 }
+
+route2Status OBJECT-TYPE
+    SYNTAX      INTEGER {
+                    selected(1),
+                    unselected(0)
+                }
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "To show a static route entry selected or not ."
+    ::= { harbourRouteEntry2 8 }
+
+
+-- Harbour Route Trap Group
+
+harbourRouteTrapGroup  OBJECT IDENTIFIER ::= {harbourRouteBase 4}
+
+harbourSubnetRouteTableThreshold OBJECT-TYPE
+    SYNTAX      INTEGER
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "Subnet route table threshold ."
+    ::= { harbourRouteTrapGroup 1 }
+
+harbourHostRouteTableThreshold OBJECT-TYPE
+    SYNTAX      INTEGER
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "Host route table threshold ."
+    ::= { harbourRouteTrapGroup 2 }
+
+END

@@ -1,0 +1,314 @@
+-- These MIBs were created on 05/14/2001
+-- This module defines NetScreen private MIBs for VPN tunnel monitoring
+-- 
+-- Copyright (c) 1999 - 2000 by NetScreen Technologies, Inc.
+-- All rights reserved.
+-- 
+
+-- MODULE-IDENTITY
+--  OrgName
+--    NetScreen Technologies, Inc.
+--  ContactInfo
+--     Customer Support
+--     
+--     350 Oakmead Parkway
+--     Sunnyvale, CA  94085
+--     USA
+--    
+--     Tel: 1.877.NETSCREEN
+--     E-mail: support@netscreen.com
+--     Http://www.netscreen.com
+
+--  Descr
+--    This module defines the object that are used to monitor
+--    service configuration in NetScreen device.
+--
+--  Last modified date: 09/28/2001
+--    
+
+NETSCREEN-SERVICE-MIB DEFINITIONS ::= BEGIN
+IMPORTS
+
+    IpAddress FROM RFC1155-SMI
+    DisplayString 	FROM RFC1213-MIB 
+    netscreenService 	FROM NETSCREEN-SMI;
+    
+	nsServiceTable OBJECT-TYPE
+		SYNTAX  SEQUENCE OF NsServiceEntry
+		ACCESS  not-accessible
+		STATUS  mandatory
+		DESCRIPTION 
+		        "Services are types of IP traffic for which protocol standards exist.
+		        This table collects all the service configurations existig in NetScreen
+		        device."
+		::= { netscreenService 1 }
+
+    nsServiceEntry OBJECT-TYPE
+        SYNTAX  NsServiceEntry
+        ACCESS  not-accessible
+        STATUS  mandatory
+        DESCRIPTION
+               "Each enry in the nsServiceTable holds a set of configuration parameters 
+               associated with an instance of service."
+        INDEX   { nsServiceIndex }
+        ::= { nsServiceTable 1 }
+
+	NsServiceEntry ::=
+		SEQUENCE {
+          nsServiceIndex
+              INTEGER,
+		  nsServiceName
+		      DisplayString,
+		  nsServiceCategory 
+		      INTEGER,
+		  nsServiceTransProto
+		      INTEGER,
+		  nsServiceSrcPortLow
+		      INTEGER,  
+		  nsServiceSrcPortHigh
+		      INTEGER,  
+		  nsServiceDstPortLow
+		      INTEGER,  
+		  nsServiceDstPortHigh
+		      INTEGER,  
+ 		  nsServiceFlag 
+		      INTEGER,
+		  nsServiceVsys
+		      INTEGER
+        }
+
+	nsServiceIndex OBJECT-TYPE
+    	SYNTAX  INTEGER
+        ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION
+             "A unique value for each address.  Its value
+              ranges between 0 and 65535 and may not be contingous." 
+        ::= { nsServiceEntry 1 }
+
+	nsServiceName OBJECT-TYPE
+        SYNTAX  DisplayString (SIZE (0..32))
+    	ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION
+             "Service name."
+        ::= { nsServiceEntry 2 }
+
+    nsServiceCategory OBJECT-TYPE
+        SYNTAX  INTEGER {
+        	remote(1),
+        	email(2),
+        	infoseek(3),
+        	security(4),
+        	other(5)
+        }
+        ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION
+            "Category this service belongs to."
+        ::= { nsServiceEntry 3 }
+
+    nsServiceTransProto OBJECT-TYPE
+        SYNTAX  INTEGER {
+             tcp(6),
+             udp(17)
+           }
+        ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION
+            "Service trans protocol.
+             6 means tcp
+             17 means udp
+             "
+        ::= { nsServiceEntry 4 }
+
+    nsServiceSrcPortLow OBJECT-TYPE
+        SYNTAX  INTEGER
+        ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION
+            "The low source port number associateing with service."
+        ::= { nsServiceEntry 5 }
+
+    nsServiceSrcPortHigh OBJECT-TYPE
+        SYNTAX  INTEGER
+        ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION
+            "The high source port number associateing with service."
+        ::= { nsServiceEntry   6 }
+
+    nsServiceDstPortLow OBJECT-TYPE
+        SYNTAX  INTEGER
+        ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION
+            "The low destination port number associateing with service."
+        ::= { nsServiceEntry 7 }
+
+    nsServiceDstPortHigh OBJECT-TYPE
+        SYNTAX  INTEGER
+        ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION
+            "The high source port number associateing with service."
+        ::= { nsServiceEntry 8 }
+
+    nsServiceFlag OBJECT-TYPE
+        SYNTAX  INTEGER {
+        	pre-define(0),
+        	usr-define(1)
+        }
+        ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION
+            "Service flag used to indicate if the service is a pre-defined one
+            or a custom one."
+        ::= { nsServiceEntry 9 }
+
+	nsServiceVsys OBJECT-TYPE
+        SYNTAX  INTEGER
+    	ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION
+             "Virtual system this configuration belongs to."
+        ::= { nsServiceEntry 10 }
+
+	nsServiceGroupTable OBJECT-TYPE
+		SYNTAX  SEQUENCE OF NsServiceGroupEntry
+		ACCESS  not-accessible
+		STATUS  mandatory
+		DESCRIPTION 
+		        "Services can be organized into service group for convinience.
+		        This table collects all service group entries in NetScreen device."
+		::= { netscreenService 2 }
+
+    nsServiceGroupEntry OBJECT-TYPE
+        SYNTAX  NsServiceGroupEntry
+        ACCESS  not-accessible
+        STATUS  mandatory
+        DESCRIPTION
+               "Each entry in the nsServiceGroupTable holds a set of information
+               about service group."
+        INDEX   { nsServiceGroupIndex }
+        ::= { nsServiceGroupTable 1 }
+
+	NsServiceGroupEntry ::=
+		SEQUENCE {
+          nsServiceGroupIndex
+              INTEGER,
+		  nsServiceGroupName
+		      DisplayString,
+		  nsServiceGroupMember
+		      INTEGER,
+		  nsServiceGroupComment
+		      DisplayString,
+		  nsServiceGroupVsys
+		      DisplayString    
+		}
+
+	nsServiceGroupIndex OBJECT-TYPE
+    	SYNTAX  INTEGER
+        ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION
+             "A unique value for each group.  Its value
+              ranges between 0 and 65535 and may not be contingous." 
+        ::= { nsServiceGroupEntry 1 }
+
+	nsServiceGroupName OBJECT-TYPE
+        SYNTAX  DisplayString (SIZE (0..32))
+    	ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION
+             "Service group name."
+        ::= { nsServiceGroupEntry 2 }
+
+	nsServiceGroupMember OBJECT-TYPE
+        SYNTAX  INTEGER
+    	ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION
+             "Service member number in service group."
+        ::= { nsServiceGroupEntry 3 }
+
+	nsServiceGroupComment OBJECT-TYPE
+        SYNTAX  DisplayString (SIZE (0..32))
+    	ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION
+             "Comments for service group."
+        ::= { nsServiceGroupEntry 4 }
+
+	nsServiceGroupVsys OBJECT-TYPE
+        SYNTAX  DisplayString (SIZE (0..32))
+    	ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION
+             "Virtual system this group belongs to."
+        ::= { nsServiceGroupEntry 5 }
+
+	nsServiceGrpMemberTable OBJECT-TYPE
+		SYNTAX SEQUENCE OF NsServiceGrpMemberEntry
+		ACCESS not-accessible
+		STATUS mandatory
+		DESCRIPTION
+				"Service group membership info table will show detail information of
+				a service group."
+		::= { netscreenService 3}
+
+    nsServiceGrpMemberEntry OBJECT-TYPE
+        SYNTAX  NsServiceGrpMemberEntry
+        ACCESS  not-accessible
+        STATUS  mandatory
+        DESCRIPTION
+               "An entry containing attributes service group's member info "
+        INDEX   { nsServiceGroupIndex }
+        ::= { nsServiceGrpMemberTable 1 }
+
+	NsServiceGrpMemberEntry ::=
+		SEQUENCE {
+          nsServiceGrpMemberIndex
+              INTEGER,
+		  nsServiceGrpName
+		      DisplayString,
+		  nsServiceGroupMemberName
+		      DisplayString,
+		  nsServiceGroupMemberVsys
+		      DisplayString
+		}
+
+	nsServiceGrpMemberIndex OBJECT-TYPE
+    	SYNTAX  INTEGER
+        ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION
+             "A unique value for each group.  Its value
+              ranges between 0 and 65535 and may not be contingous." 
+        ::= { nsServiceGrpMemberEntry 1 }
+
+	nsServiceGrpName OBJECT-TYPE
+        SYNTAX  DisplayString (SIZE (0..32))
+    	ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION
+             "Specific service group name"
+        ::= { nsServiceGrpMemberEntry 2 }
+
+	nsServiceGroupMemberName OBJECT-TYPE
+        SYNTAX  DisplayString (SIZE (0..32))
+    	ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION
+             "Specific service name in the service group."
+        ::= { nsServiceGrpMemberEntry 3 }
+
+	nsServiceGroupMemberVsys OBJECT-TYPE
+        SYNTAX  DisplayString (SIZE (0..32))
+    	ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION
+             "Virtual sustem this configuration belongs to"
+        ::= { nsServiceGrpMemberEntry 4 }
+
+END

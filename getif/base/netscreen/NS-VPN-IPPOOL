@@ -1,0 +1,228 @@
+-- These MIBs were created on 08/027/2000
+-- This module defines NetScreen private MIBs for VPN IP pool
+-- 
+-- Copyright (c) 1999 - 2000 by NetScreen Technologies, Inc.
+-- All rights reserved.
+-- 
+
+-- MODULE-IDENTITY
+--  OrgName
+--    Netscreen Technologies, Inc.
+--  ContactInfo
+--     Customer Support
+--     
+--     2860 San TOmas Expwy
+--     Santa Clara, CA  95051
+--     USA
+--    
+--     Tel: 1.877.NETSCREEN
+--     E-mail: support@netscreen.com
+--     Http://www.netscreen.com
+
+--  Descr
+--    This module defines the object that are used to monitor
+--    all the entries in the Address Book 
+--
+--  Last modified date: 09/28/2001
+--    
+
+NETSCREEN-IPPOOL-MIB DEFINITIONS ::= BEGIN
+IMPORTS
+    IpAddress FROM RFC1155-SMI
+    DisplayString 	FROM RFC1213-MIB 
+    netscreenVpn    FROM NETSCREEN-SMI;
+    nsVpnIpPool 	OBJECT IDENTIFIER ::= {netscreenVpn 9}
+    
+	nsVpnIpPoolTable OBJECT-TYPE
+		SYNTAX  SEQUENCE OF NsVpnIpPoolEntry
+		ACCESS  not-accessible
+		STATUS  mandatory
+		DESCRIPTION 
+		        "This table collects all ip pool configuration in NetScreen device. "
+		::= { nsVpnIpPool 1 }
+
+    nsVpnIpPoolEntry OBJECT-TYPE
+        SYNTAX  NsVpnIpPoolEntry
+        ACCESS  not-accessible
+        STATUS  mandatory
+        DESCRIPTION
+               "Each entry in the nsVpnIpPoolEntry holds a set of configuration parameters
+               asociated with an instance IP pool."
+        INDEX   { nsVpnIpPoolIndex }
+        ::= { nsVpnIpPoolTable 1 }
+
+	NsVpnIpPoolEntry ::=
+		SEQUENCE {
+          nsVpnIpPoolIndex
+              INTEGER,
+		  nsVpnIpPoolName
+		      DisplayString,
+		  nsVpnIpPoolStartIp
+		      IpAddress,
+		  nsVpnIpPoolEndIp
+		      IpAddress
+       }
+
+	nsVpnIpPoolIndex OBJECT-TYPE
+    	SYNTAX  INTEGER
+        ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION
+             "A unique value for ip pool.  Its value
+              ranges between 0 and 65535 and may not be contigous." 
+        ::= { nsVpnIpPoolEntry 1 }
+
+	nsVpnIpPoolName OBJECT-TYPE
+        SYNTAX  DisplayString (SIZE (0..32))
+    	ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION
+             "ip pool name"
+        ::= { nsVpnIpPoolEntry 2 }
+
+	nsVpnIpPoolStartIp OBJECT-TYPE
+        SYNTAX  IpAddress
+    	ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION
+             "IP pool start ip address."
+        ::= { nsVpnIpPoolEntry 3 }
+
+	nsVpnIpPoolEndIp OBJECT-TYPE
+        SYNTAX  IpAddress
+    	ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION
+             "IP pool end ip address."
+        ::= { nsVpnIpPoolEntry 4 }
+
+        
+END
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

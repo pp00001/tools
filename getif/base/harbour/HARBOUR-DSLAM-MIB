@@ -1,0 +1,1440 @@
+-- =========================================================
+-- Copyright (c) 2001-2004, Harbour Networks Limited
+-- All rights reserved.
+--
+-- Name     : HARBOUR-DSLAM-MIB
+-- Intro    : MIB definition of Dslam serires products.
+-- History  : When          Who         What & Why
+--            2004.03.04    Suran       Create
+--            2004.04.01    Suran       Add hbDslamDhcpServer etc.
+-- =========================================================
+
+HARBOUR-DSLAM-MIB    DEFINITIONS ::= BEGIN
+
+IMPORTS
+    MODULE-IDENTITY,
+    OBJECT-TYPE,
+    IpAddress           FROM SNMPv2-SMI
+    DisplayString,
+    MacAddress,
+    RowStatus           FROM SNMPv2-TC
+    VlanId,
+    PortList            FROM Q-BRIDGE-MIB
+    DSLAMSeries         FROM HARBOUR-BASE-MIB;
+
+
+harbourDslam  MODULE-IDENTITY
+    LAST-UPDATED    "200403040000Z"
+    ORGANIZATION    "Harbour Networks Limited"
+    CONTACT-INFO    "www.harbournetworks.com"
+    DESCRIPTION     "Dslam character objects."
+    ::= { DSLAMSeries 7 }
+
+
+-- Dslam Vlan Group
+
+hbDslamVlan         OBJECT IDENTIFIER  ::= { harbourDslam 1 }
+
+hbDslamVlanVidMode  OBJECT-TYPE
+    SYNTAX      INTEGER { normal(1), l2VidMode(2) }
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "This object is used to set the l2 VID mode of the vlan.
+            In l2 VID mode, only normal vlan can be used in the system
+            and the range of the VID is between 1 to 4095, excluding 2046,
+            2047,2944 and 2945.
+            If normal VID mode is set, the range of VID is 1-2045 and
+            3200-4095."
+    ::= { hbDslamVlan 1 }
+
+hbDslamVlanL2PortSeperateTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF HbDslamVlanL2PortSeperateEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+            "Vlan L2 port seperate table"
+    ::= { hbDslamVlan 2 }
+
+hbDslamVlanL2PortSeperateEntry OBJECT-TYPE
+    SYNTAX      HbDslamVlanL2PortSeperateEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+            "An entry in the harbour vlan l2 port seperate Table."
+    INDEX       { vlanL2PortSeperateID  }
+    ::= { hbDslamVlanL2PortSeperateTable 1 }
+
+HbDslamVlanL2PortSeperateEntry ::= SEQUENCE {
+    vlanL2PortSeperateID                       VlanId,
+    vlanL2PortSeperateStatus                   INTEGER
+}
+
+vlanL2PortSeperateID OBJECT-TYPE
+    SYNTAX      VlanId
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "The vlan Id used as index."
+    ::= { hbDslamVlanL2PortSeperateEntry 1 }
+
+vlanL2PortSeperateStatus OBJECT-TYPE
+    SYNTAX      INTEGER { disable(1), enable(2) }
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "This object is to enable or disable the l2 port seperation
+            function of the vlan."
+    ::= { hbDslamVlanL2PortSeperateEntry 2 }
+
+-- Dslam Vlan Broadcast Restrain Group
+
+hbDslamVlanBroadcastRestrainGroup  OBJECT IDENTIFIER  ::= { hbDslamVlan 3}
+
+hbDslamVlanBroadcastRestrain OBJECT-TYPE
+    SYNTAX      INTEGER { disable(1), enable(2) }
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "This object is used to set the broadcasting restraining function."
+    ::= { hbDslamVlanBroadcastRestrainGroup 1 }
+
+hbDslamVlanBroadcastRestrainTimeWindow OBJECT-TYPE
+    SYNTAX      INTEGER (1..16)
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "This object is used to set the broadcasting restraining
+            time window."
+    ::= { hbDslamVlanBroadcastRestrainGroup 2 }
+
+hbDslamVlanBroadcastRestrainCounter OBJECT-TYPE
+    SYNTAX      Counter32
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "This object is used to set the broadcasting restraining counter."
+    ::= { hbDslamVlanBroadcastRestrainGroup 3 }
+
+hbDslamVlanBroadcastRestrainCounterUnit OBJECT-TYPE
+    SYNTAX      INTEGER { packets(1), bytes(2) }
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "This object is used to set the broadcasting restraining
+            counter's unit."
+    ::= { hbDslamVlanBroadcastRestrainGroup 4 }
+
+-- Dslam Vlan Batch Group
+
+hbDslamVlanBatchGroup    OBJECT IDENTIFIER  ::= { hbDslamVlan  4 }
+
+hbDslamVlanBatchOperateStartVID  OBJECT-TYPE
+    SYNTAX      INTEGER
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "Before batch creating or deleting Vlans of the system,
+            you should set the start VID of these vlans."
+    ::= { hbDslamVlanBatchGroup  1 }
+
+hbDslamVlanBatchOperateEndVID  OBJECT-TYPE
+    SYNTAX      INTEGER
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "Before batch creating or deleting Vlans of the system,
+            you should make clear how many vlans you want to
+            create or delete."
+    ::= { hbDslamVlanBatchGroup 2 }
+
+hbDslamVlanBatchOperateUserPort OBJECT-TYPE
+    SYNTAX      DisplayString
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "Before batch creating Vlans of the system,
+            you should make clear from which port you want to create vlan."
+    ::= { hbDslamVlanBatchGroup 3 }
+
+hbDslamVlanBatchOperateUplinkPort OBJECT-TYPE
+    SYNTAX      DisplayString
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "Before batch creating Vlans of the system,
+            you should make clear which port you want to
+            join to the creating vlan with a tag as the uplink port."
+    ::= { hbDslamVlanBatchGroup  4 }
+
+hbDslamVlanBatchOperateControl OBJECT-TYPE
+    SYNTAX      INTEGER {
+                    createVlan(1),
+                    deleteVlan(2),
+                    addUserPorts(3),
+                    addUplinkPorts(4),
+                    deleteUserPorts(5),
+                    deleteUplinkPorts(6),
+                    noOperate(7)
+                }
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "To create or delete vlans by a group.
+            If the vlans are already created as a group,
+            you can add or delete ports for these vlans.
+            After creating or deleting, please notice
+            the harbourVlanBatchOperateErrorMsg."
+    ::= { hbDslamVlanBatchGroup 5 }
+
+
+-- Dslam PPPoE Group
+
+hbDslamPPPoE           OBJECT IDENTIFIER  ::= { harbourDslam 2 }
+l2PPPoEForwordGroup    OBJECT IDENTIFIER  ::= { hbDslamPPPoE 1 }
+
+l2PPPoEForwordConfigMode      OBJECT-TYPE
+    SYNTAX      INTEGER {
+                    best(1),
+                    better(2),
+                    normal(3),
+                    none(4),
+                    ext1(5),
+                    ext2(6),
+                    ext3(7),
+                    ext4(8)
+                }
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "The config mode of the system."
+    ::= { l2PPPoEForwordGroup 1 }
+
+l2PPPoEForwordUserBindCtrl OBJECT-TYPE
+    SYNTAX      INTEGER { disable(1), enable(2) }
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "This leaf is used in mode better and normal.
+            Enable or disable the level 2 PPPoE forwording userbind
+            function."
+    ::= { l2PPPoEForwordGroup 2}
+
+l2PPPoEForwordBRASMacAddress OBJECT-TYPE
+    SYNTAX      MacAddress
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "This leaf is used in mode better and normal.
+            The MAC address of the l2 PPPoE forwording."
+    ::= { l2PPPoEForwordGroup 3}
+
+-- L2PPPoE Forward Config Vlan Table
+
+l2PPPoEForwardConfigVlanTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF L2PPPoEForwardConfigVlanEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+            "layer2 PPPoE Forward Config table"
+    ::= { l2PPPoEForwordGroup 4 }
+
+l2PPPoEForwardConfigVlanEntry OBJECT-TYPE
+    SYNTAX      L2PPPoEForwardConfigVlanEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+            "An entry in the harbour Forward VlanConfigTable."
+    INDEX       { l2PPPoEForwardvlanID  }
+    ::= { l2PPPoEForwardConfigVlanTable 1 }
+
+L2PPPoEForwardConfigVlanEntry ::= SEQUENCE {
+    l2PPPoEForwardvlanID                       INTEGER,
+    l2PPPoEFilterNonePPPoEPacketsStatus        INTEGER,
+    l2PPPoEForwordVlanUserBindCtrlStatus       INTEGER
+}
+
+l2PPPoEForwardvlanID OBJECT-TYPE
+    SYNTAX      INTEGER
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "The vlan Id used as index."
+    ::= { l2PPPoEForwardConfigVlanEntry 1 }
+
+
+l2PPPoEFilterNonePPPoEPacketsStatus OBJECT-TYPE
+    SYNTAX      INTEGER { disable(1), enable(2) }
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "This leaf is only used in best mode.
+            Appointed a vlan to filter the none PPPoE packets."
+    ::= { l2PPPoEForwardConfigVlanEntry 2}
+
+l2PPPoEForwordVlanUserBindCtrlStatus OBJECT-TYPE
+    SYNTAX      INTEGER { disable(1), enable(2) }
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "This leaf is only used in best mode, please config the vlan
+            name before enable the l2 PPPoE forwording fuction."
+    ::= { l2PPPoEForwardConfigVlanEntry 3}
+
+
+-- Dslam Radius Group
+
+hbDslamRadius   OBJECT IDENTIFIER  ::= { harbourDslam 3 }
+
+hbDslamTelnetRadiusAuthCtrl OBJECT-TYPE
+    SYNTAX      INTEGER { disable(1), enable(2) }
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "This object is to enable or disable telnet radius authentication."
+    ::= { hbDslamRadius 2 }
+
+
+-- Dslam IPGroup
+
+hbDslamIpGroup   OBJECT IDENTIFIER  ::= { harbourDslam 4 }
+
+hbDslamIpGroupCtrl OBJECT-TYPE
+    SYNTAX      INTEGER { disable(1), enable(2) }
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "This object is to enable or disable ip group."
+    ::= { hbDslamIpGroup 1 }
+
+hbDslamIPGroupDefaultCtrl OBJECT-TYPE
+    SYNTAX      INTEGER {
+                    drop(1),
+                    route(2)
+                }
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "This object is to config IP group default control."
+    ::= { hbDslamIpGroup 2 }
+
+-- Dslam Ip Group Table
+
+hbDslamIpGroupTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF HbDslamIpGroupEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+            "Ip Group Table"
+    ::= { hbDslamIpGroup 3 }
+
+hbDslamIpGroupEntry OBJECT-TYPE
+    SYNTAX      HbDslamIpGroupEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+            "An entry in the harbour Ip Group Table."
+    INDEX       { hbDslamIpGroupId  }
+    ::= { hbDslamIpGroupTable 1 }
+
+HbDslamIpGroupEntry ::= SEQUENCE {
+    hbDslamIpGroupId         INTEGER,
+    hbDslamIPGroupRowstatus  INTEGER
+}
+
+hbDslamIpGroupId OBJECT-TYPE
+    SYNTAX      INTEGER ( 0..63 )
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+            "This object is to set ip group index. The index is among 0-63."
+    ::= { hbDslamIpGroupEntry 1 }
+
+hbDslamIPGroupRowstatus  OBJECT-TYPE
+    SYNTAX      RowStatus
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+            "The ip group row status."
+    ::= { hbDslamIpGroupEntry  2 }
+
+-- Dslam Ip Group Config Table
+
+hbDslamIpGroupConfigTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF HbDslamIpGroupConfigEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+            "IP Group Config Table"
+    ::= { hbDslamIpGroup 4 }
+
+hbDslamIpGroupConfigEntry OBJECT-TYPE
+    SYNTAX      HbDslamIpGroupConfigEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+            "An entry in the harbour ip group Config Table."
+    INDEX       { ipGroupId, ipGroupIPAddress, ipGroupMask }
+    ::= { hbDslamIpGroupConfigTable 1 }
+
+HbDslamIpGroupConfigEntry  ::= SEQUENCE {
+    ipGroupId                INTEGER,
+    ipGroupIPAddress         IpAddress,
+    ipGroupMask              IpAddress,
+    ipGroupCommand           INTEGER,
+    ipGroupRowStatus         RowStatus
+}
+
+ipGroupId OBJECT-TYPE
+    SYNTAX      INTEGER
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+            "This object is to set ip group index. The index is among 0-63."
+    ::= { hbDslamIpGroupConfigEntry 1 }
+
+ipGroupIPAddress  OBJECT-TYPE
+    SYNTAX      IpAddress
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "ip group ip address."
+    ::= { hbDslamIpGroupConfigEntry  2 }
+
+ipGroupMask  OBJECT-TYPE
+    SYNTAX      IpAddress
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "ip group ip mask."
+    ::= { hbDslamIpGroupConfigEntry  3 }
+
+ipGroupCommand  OBJECT-TYPE
+    SYNTAX      INTEGER {
+                    drop(1),
+                    route(2)
+                }
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "This object is to read IP group command."
+    ::= { hbDslamIpGroupConfigEntry 4 }
+
+ipGroupRowStatus  OBJECT-TYPE
+    SYNTAX      RowStatus
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+            "The ip group row status."
+    ::= { hbDslamIpGroupConfigEntry 5 }
+
+-- Dslam Ip Group User Ip List Table
+
+hbDslamIpGroupUserIpListTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF HbDslamIpGroupUserIpListEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+            "IP Group User IP List Table"
+    ::= { hbDslamIpGroup 5 }
+
+hbDslamIpGroupUserIpListEntry OBJECT-TYPE
+    SYNTAX      HbDslamIpGroupUserIpListEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+            "An entry in the harbour ip group user ip Table."
+    INDEX       { ipGroupIPIndex  }
+    ::= { hbDslamIpGroupUserIpListTable 1 }
+
+HbDslamIpGroupUserIpListEntry  ::= SEQUENCE {
+    ipGroupIPIndex           INTEGER,
+    ipGroupUserIp            IpAddress,
+    ipGroupUserMask          IpAddress
+}
+
+ipGroupIPIndex OBJECT-TYPE
+    SYNTAX      INTEGER
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "This object is index."
+    ::= { hbDslamIpGroupUserIpListEntry 1 }
+
+ipGroupUserIp OBJECT-TYPE
+    SYNTAX      IpAddress
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "This object is user ip."
+    ::= { hbDslamIpGroupUserIpListEntry  2 }
+
+ipGroupUserMask OBJECT-TYPE
+    SYNTAX      IpAddress
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "This object is user ip mask."
+    ::= { hbDslamIpGroupUserIpListEntry  3 }
+
+
+-- Dslam Port Group
+
+hbDslamPort   OBJECT IDENTIFIER  ::= { harbourDslam 5 }
+
+hbDslamLoadSharingGroup     OBJECT IDENTIFIER  ::= { hbDslamPort 1 }
+
+-- Dslam Load Sharing Table
+
+hbDslamLoadSharingTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF HbDslamLoadSharingEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+            "Load sharing table"
+    ::= { hbDslamLoadSharingGroup 1 }
+
+hbDslamLoadSharingEntry OBJECT-TYPE
+    SYNTAX      HbDslamLoadSharingEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+            "An entry in the harbour load sharing Table."
+    INDEX       { loadSharingMasterport  }
+    ::= { hbDslamLoadSharingTable 1 }
+
+HbDslamLoadSharingEntry  ::= SEQUENCE {
+     loadSharingMasterport INTEGER,
+     loadSharingSlaveport  DisplayString,
+     loadSharingRowStatus  RowStatus
+}
+
+loadSharingMasterport OBJECT-TYPE
+    SYNTAX      INTEGER
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+            "master port only once."
+    ::= { hbDslamLoadSharingEntry  1 }
+
+loadSharingSlaveport OBJECT-TYPE
+    SYNTAX      DisplayString
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+            "the slave ports."
+    ::= { hbDslamLoadSharingEntry  2 }
+
+loadSharingRowStatus OBJECT-TYPE
+    SYNTAX      RowStatus
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+            "the load sharing row status."
+    ::= { hbDslamLoadSharingEntry  3 }
+
+
+-- Dslam FDB
+
+hbDslamFDB    OBJECT IDENTIFIER  ::= { harbourDslam 6 }
+
+-- Mac Black Hole
+
+hbDslamMacBlackholeGroup         OBJECT IDENTIFIER ::= { hbDslamFDB 1 }
+
+hbDslamMacBlackholeStatus OBJECT-TYPE
+    SYNTAX      INTEGER { disable(1), enable(2) }
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "to enable or disable mac black hole function."
+    ::= { hbDslamMacBlackholeGroup 1 }
+
+-- Dslam Mac Black Hole Table
+
+hbDslamMacBlackholeTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF HbDslamMacBlackholeEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+            "This table lists harbour mac blackhole ."
+    ::= { hbDslamMacBlackholeGroup  2 }
+
+hbDslamMacBlackholeEntry OBJECT-TYPE
+    SYNTAX      HbDslamMacBlackholeEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+            "An entry in harbourMacBlackholeTable."
+    INDEX       { hbDslamMacBlackholeIndex }
+    ::= { hbDslamMacBlackholeTable 1 }
+
+HbDslamMacBlackholeEntry ::= SEQUENCE {
+   hbDslamMacBlackholeIndex        INTEGER,
+   hbDslamMacBlackholeMac          MacAddress,
+   hbDslamMacBlackholeRowStatus    RowStatus
+}
+
+hbDslamMacBlackholeIndex OBJECT-TYPE
+    SYNTAX      INTEGER
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "The value of this object uniquely identifies this
+            harbourMacBlackholeEntry entry."
+    ::= { hbDslamMacBlackholeEntry 1 }
+
+hbDslamMacBlackholeMac OBJECT-TYPE
+    SYNTAX         MacAddress
+    MAX-ACCESS     read-create
+    STATUS         current
+    DESCRIPTION
+            "To filter date packet from the mac address."
+    ::= { hbDslamMacBlackholeEntry 2 }
+
+hbDslamMacBlackholeRowStatus OBJECT-TYPE
+    SYNTAX        RowStatus
+    MAX-ACCESS    read-create
+    STATUS        current
+    DESCRIPTION
+            "To create or delete mac blackhole ."
+    ::= { hbDslamMacBlackholeEntry 3 }
+
+-- Dslam FDB Table
+
+hbDslamFDBTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF HbDslamFDBEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+            "This table lists harbour fdb."
+    ::= { hbDslamFDB  2 }
+
+hbDslamFDBEntry OBJECT-TYPE
+    SYNTAX      HbDslamFDBEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+            "An entry in harbourAdvancedFDBTable."
+    INDEX       { hbDslamFDBVlanId, hbDslamFDBMac }
+    ::= { hbDslamFDBTable 1 }
+
+HbDslamFDBEntry ::= SEQUENCE {
+    hbDslamFDBVlanId                    VlanId,
+    hbDslamFDBMac                       MacAddress,
+    hbDslamFDBPortList                  DisplayString,
+    hbDslamFDBFlag                      INTEGER
+}
+
+hbDslamFDBVlanId  OBJECT-TYPE
+    SYNTAX      VlanId
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "Vlan ID."
+    ::= { hbDslamFDBEntry 1 }
+
+hbDslamFDBMac OBJECT-TYPE
+    SYNTAX      MacAddress
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "MAC address."
+    ::= { hbDslamFDBEntry 2 }
+
+hbDslamFDBPortList OBJECT-TYPE
+    SYNTAX      DisplayString
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "The list of ports to which the packet will forwarding."
+    ::= { hbDslamFDBEntry 3 }
+
+hbDslamFDBFlag OBJECT-TYPE
+    SYNTAX      INTEGER
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "FDB flag information."
+    ::= { hbDslamFDBEntry 4 }
+
+
+-- Dslam Dhcp Server
+
+hbDslamDhcpServer          OBJECT IDENTIFIER  ::= { harbourDslam 7 }
+
+hbDslamDhcpsServiceStatus       OBJECT-TYPE
+    SYNTAX      INTEGER { disable(1), enable(2) }
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "Set dhcp server service."
+    ::= { hbDslamDhcpServer 1 }
+
+hbDslamDhcpsGcInterval      OBJECT-TYPE
+    SYNTAX      INTEGER (60..3600)
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "Set dhcp server gc interval."
+    ::= { hbDslamDhcpServer 2 }
+
+hbDslamDhcpsListenVlanTable     OBJECT-TYPE
+    SYNTAX      SEQUENCE OF HbDslamDhcpsListenVlanEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+            "Dhcp server listen vlan table"
+    ::= { hbDslamDhcpServer 3 }
+
+hbDslamDhcpsListenVlanEntry     OBJECT-TYPE
+    SYNTAX      HbDslamDhcpsListenVlanEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+            "An entry in the harbour dhcp server vlan listen Table."
+    INDEX       { hbDslamDhcpsListenVlan  }
+    ::= { hbDslamDhcpsListenVlanTable 1 }
+
+HbDslamDhcpsListenVlanEntry   ::= SEQUENCE {
+    hbDslamDhcpsListenVlan                       VlanId,
+    hbDslamDhcpsListenVlanStatus                 INTEGER
+}
+
+hbDslamDhcpsListenVlan    OBJECT-TYPE
+    SYNTAX      VlanId
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "The vlan Id used as index."
+    ::= { hbDslamDhcpsListenVlanEntry 1 }
+
+hbDslamDhcpsListenVlanStatus OBJECT-TYPE
+    SYNTAX      INTEGER { disable(1), enable(2) }
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "Dhcp server listen vlan Status."
+    ::= { hbDslamDhcpsListenVlanEntry 2 }
+
+hbDslamDhcpsPoolTable     OBJECT-TYPE
+    SYNTAX      SEQUENCE OF HbDslamDhcpsPoolEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+            "Dhcp server pool table"
+    ::= { hbDslamDhcpServer 4 }
+
+hbDslamDhcpsPoolEntry     OBJECT-TYPE
+    SYNTAX      HbDslamDhcpsPoolEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+            "An entry in the dhcp pool Table."
+    INDEX       { hbDslamDhcpsPoolName  }
+    ::= { hbDslamDhcpsPoolTable  1 }
+
+HbDslamDhcpsPoolEntry   ::= SEQUENCE {
+    hbDslamDhcpsPoolName                            DisplayString,
+    hbDslamDhcpsPoolStatus                          INTEGER,
+    hbDslamDhcpsPoolStartIp                         IpAddress,
+    hbDslamDhcpsPoolEndIp                           IpAddress,
+    hbDslamDhcpsPoolMask                            IpAddress,
+    hbDslamDhcpsPoolParamValue                      INTEGER,
+    hbDslamDhcpsPoolGateway                         IpAddress,
+    hbDslamDhcpsPoolLease                           INTEGER,
+    hbDslamDhcpsPoolOptionsDomainName               DisplayString,
+    hbDslamDhcpsPoolRowStatus                       RowStatus
+}
+
+
+hbDslamDhcpsPoolName    OBJECT-TYPE
+    SYNTAX      DisplayString( SIZE ( 0 .. 8  ) )
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "Dhcp server pool name."
+    ::= { hbDslamDhcpsPoolEntry 1 }
+
+hbDslamDhcpsPoolStatus   OBJECT-TYPE
+    SYNTAX      INTEGER { inactive(1), active(2) }
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "Set dhcp server pool status."
+    ::= { hbDslamDhcpsPoolEntry  2 }
+
+hbDslamDhcpsPoolStartIp    OBJECT-TYPE
+    SYNTAX      IpAddress
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "Set dhcp server start IP."
+    ::= { hbDslamDhcpsPoolEntry  3 }
+
+hbDslamDhcpsPoolEndIp    OBJECT-TYPE
+    SYNTAX      IpAddress
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "Set dhcp server pool end ip."
+    ::= { hbDslamDhcpsPoolEntry  4 }
+
+hbDslamDhcpsPoolMask    OBJECT-TYPE
+    SYNTAX      IpAddress
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "Set dhcp server pool ip mask ."
+    ::= { hbDslamDhcpsPoolEntry 5 }
+
+hbDslamDhcpsPoolParamValue   OBJECT-TYPE
+    SYNTAX      INTEGER (1..565200)
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "Set dhcp server pool param value. vlaue is 1..565200.
+            If set 0xffffffff, means infinite."
+    ::= { hbDslamDhcpsPoolEntry 6 }
+
+hbDslamDhcpsPoolGateway     OBJECT-TYPE
+    SYNTAX      IpAddress
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "Set dhcp server pool gateway."
+    ::= { hbDslamDhcpsPoolEntry 7 }
+
+hbDslamDhcpsPoolLease      OBJECT-TYPE
+    SYNTAX      INTEGER (1..525600)
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "Set dhcp server pool lease. vlaue is 1..525600.
+            If set 0xffffffff, means infinite."
+    ::= { hbDslamDhcpsPoolEntry 8 }
+
+hbDslamDhcpsPoolOptionsDomainName   OBJECT-TYPE
+    SYNTAX      DisplayString
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "Set dhcp server options domain name."
+    ::= { hbDslamDhcpsPoolEntry  9 }
+
+hbDslamDhcpsPoolRowStatus   OBJECT-TYPE
+    SYNTAX      RowStatus
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+            "The dhcp server pool row status."
+    ::= { hbDslamDhcpsPoolEntry  10 }
+
+
+-- Dslam DNS
+
+hbDslamDhcpsPoolOptionsDnsTable     OBJECT-TYPE
+    SYNTAX      SEQUENCE OF HbDslamDhcpsPoolOptionsDnsEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+            "Dhcp server pool options dns table."
+    ::= { hbDslamDhcpServer 5 }
+
+hbDslamDhcpsPoolOptionsDnsEntry     OBJECT-TYPE
+    SYNTAX      HbDslamDhcpsPoolOptionsDnsEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+            "An entry in the dhcp server dns Table."
+    INDEX       { hbDslamDhcpsPoolDnsName , hbDslamDhcpsPoolDnsIp  }
+    ::= { hbDslamDhcpsPoolOptionsDnsTable  1 }
+
+HbDslamDhcpsPoolOptionsDnsEntry   ::= SEQUENCE {
+    hbDslamDhcpsPoolDnsName             DisplayString,
+    hbDslamDhcpsPoolDnsIp               IpAddress,
+    hbDslamDhcpsPoolDnsRowStatus        RowStatus
+}
+
+hbDslamDhcpsPoolDnsName    OBJECT-TYPE
+    SYNTAX      DisplayString  ( SIZE ( 0 .. 8  ) )
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "Dhcp server pool name."
+    ::= { hbDslamDhcpsPoolOptionsDnsEntry 1 }
+
+hbDslamDhcpsPoolDnsIp     OBJECT-TYPE
+    SYNTAX      IpAddress
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "Set dhcp server pool dns Ipaddress."
+    ::= { hbDslamDhcpsPoolOptionsDnsEntry 2 }
+
+hbDslamDhcpsPoolDnsRowStatus   OBJECT-TYPE
+    SYNTAX      RowStatus
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+            "The dhcp server pool dns rowstatus."
+    ::= { hbDslamDhcpsPoolOptionsDnsEntry   3 }
+
+
+-- Dslam WINS
+
+hbDslamDhcpsPoolOptionsWinsTable     OBJECT-TYPE
+    SYNTAX      SEQUENCE OF HbDslamDhcpsPoolOptionsWinsEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+            "Dhcp server pool options wins table."
+    ::= { hbDslamDhcpServer 6 }
+
+hbDslamDhcpsPoolOptionsWinsEntry     OBJECT-TYPE
+    SYNTAX      HbDslamDhcpsPoolOptionsWinsEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+            "An entry in the harbour dhcp pool wins Table."
+    INDEX       { hbDslamDhcpsPoolOptionsWinsName, hbDslamDhcpsPoolWinsIp  }
+    ::= { hbDslamDhcpsPoolOptionsWinsTable  1 }
+
+HbDslamDhcpsPoolOptionsWinsEntry   ::= SEQUENCE {
+    hbDslamDhcpsPoolOptionsWinsName         DisplayString,
+    hbDslamDhcpsPoolWinsIp                  IpAddress,
+    hbDslamDhcpsPoolWinsRowStatus           RowStatus
+}
+
+hbDslamDhcpsPoolOptionsWinsName    OBJECT-TYPE
+    SYNTAX      DisplayString  ( SIZE ( 0 .. 8  ) )
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "Dhcp server pool name."
+    ::= { hbDslamDhcpsPoolOptionsWinsEntry 1 }
+
+hbDslamDhcpsPoolWinsIp     OBJECT-TYPE
+    SYNTAX      IpAddress
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "Set dhcp server pool wins Ipaddress."
+    ::= { hbDslamDhcpsPoolOptionsWinsEntry 2 }
+
+hbDslamDhcpsPoolWinsRowStatus   OBJECT-TYPE
+    SYNTAX      RowStatus
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+            "The dhcp server pool wins row status."
+    ::= { hbDslamDhcpsPoolOptionsWinsEntry   3 }
+
+
+-- Dslam Include Ip
+
+hbDslamDhcpsPoolIncludeIpTable     OBJECT-TYPE
+    SYNTAX      SEQUENCE OF HbDslamDhcpsPoolIncludeIpEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+            "Dhcp server pool include ip table."
+    ::= { hbDslamDhcpServer 7 }
+
+hbDslamDhcpsPoolIncludeIpEntry     OBJECT-TYPE
+    SYNTAX      HbDslamDhcpsPoolIncludeIpEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+            "An entry in the harbour dhcp server include ip Table."
+    INDEX       {
+                  hbDslamDhcpsPoolIncludeIpName,
+                  hbDslamDhcpsPoolIncludeStartIp,
+                  hbDslamDhcpsPoolIncludeEndIp
+                }
+    ::= { hbDslamDhcpsPoolIncludeIpTable  1 }
+
+HbDslamDhcpsPoolIncludeIpEntry   ::= SEQUENCE {
+    hbDslamDhcpsPoolIncludeIpName                        DisplayString,
+    hbDslamDhcpsPoolIncludeStartIp                       IpAddress,
+    hbDslamDhcpsPoolIncludeEndIp                         IpAddress,
+    hbDslamDhcpsPoolIncludeIpRowStatus                   RowStatus
+}
+
+hbDslamDhcpsPoolIncludeIpName    OBJECT-TYPE
+    SYNTAX      DisplayString  ( SIZE ( 0 .. 8  ) )
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "Dhcp server pool name."
+    ::= { hbDslamDhcpsPoolIncludeIpEntry 1 }
+
+hbDslamDhcpsPoolIncludeStartIp     OBJECT-TYPE
+    SYNTAX      IpAddress
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "Set dhcp server pool include start Ipaddress."
+    ::= { hbDslamDhcpsPoolIncludeIpEntry 2 }
+
+hbDslamDhcpsPoolIncludeEndIp     OBJECT-TYPE
+    SYNTAX      IpAddress
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "Set dhcp server pool include end Ipaddress."
+    ::= { hbDslamDhcpsPoolIncludeIpEntry 3 }
+
+hbDslamDhcpsPoolIncludeIpRowStatus   OBJECT-TYPE
+    SYNTAX      RowStatus
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+            "The dhcp server pool include table row status."
+    ::= { hbDslamDhcpsPoolIncludeIpEntry  4 }
+
+hbDslamDhcpsPoolExcludeIpTable     OBJECT-TYPE
+    SYNTAX      SEQUENCE OF HbDslamDhcpsPoolExcludeIpEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+            "Dhcp server pool exclude ip table."
+    ::= { hbDslamDhcpServer 8 }
+
+hbDslamDhcpsPoolExcludeIpEntry     OBJECT-TYPE
+    SYNTAX      HbDslamDhcpsPoolExcludeIpEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+            "An entry in the harbour dhcps exclude ip Table."
+    INDEX       { hbDslamDhcpsPoolExcludeIpName ,hbDslamDhcpsPoolExcludeStartIp,hbDslamDhcpsPoolExcludeEndIp }
+    ::= { hbDslamDhcpsPoolExcludeIpTable  1 }
+
+HbDslamDhcpsPoolExcludeIpEntry   ::= SEQUENCE {
+    hbDslamDhcpsPoolExcludeIpName                        DisplayString,
+    hbDslamDhcpsPoolExcludeStartIp                       IpAddress,
+    hbDslamDhcpsPoolExcludeEndIp                         IpAddress,
+    hbDslamDhcpsPoolExcludeIpRowStatus                   RowStatus
+}
+
+hbDslamDhcpsPoolExcludeIpName    OBJECT-TYPE
+    SYNTAX      DisplayString  ( SIZE ( 0 .. 8  ) )
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "Dhcp server pool name."
+    ::= { hbDslamDhcpsPoolExcludeIpEntry 1 }
+
+hbDslamDhcpsPoolExcludeStartIp     OBJECT-TYPE
+    SYNTAX      IpAddress
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "Set dhcp server pool exclude Ipaddress."
+    ::= { hbDslamDhcpsPoolExcludeIpEntry 2 }
+
+hbDslamDhcpsPoolExcludeEndIp     OBJECT-TYPE
+    SYNTAX      IpAddress
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "Set dhcp server pool exclude Ipaddress."
+    ::= { hbDslamDhcpsPoolExcludeIpEntry 3 }
+
+hbDslamDhcpsPoolExcludeIpRowStatus   OBJECT-TYPE
+    SYNTAX      RowStatus
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+            "The dhcp server pool exclude ip row status."
+    ::= { hbDslamDhcpsPoolExcludeIpEntry  4 }
+
+
+-- Dslam Reserved
+
+hbDslamDhcpsPoolReservedTable     OBJECT-TYPE
+    SYNTAX      SEQUENCE OF HbDslamDhcpsPoolReservedEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+            "Dhcp server pool reserved table."
+    ::= { hbDslamDhcpServer 9 }
+
+hbDslamDhcpsPoolReservedEntry     OBJECT-TYPE
+    SYNTAX      HbDslamDhcpsPoolReservedEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+            "An entry in the harbour dhcps reserved Table."
+    INDEX       { hbDslamDhcpspoolReservedName, hbDslamDhcpsPoolReservedIp  }
+    ::= { hbDslamDhcpsPoolReservedTable  1 }
+
+HbDslamDhcpsPoolReservedEntry   ::= SEQUENCE {
+    hbDslamDhcpspoolReservedName                    DisplayString,
+    hbDslamDhcpsPoolReservedMac                     MacAddress,
+    hbDslamDhcpsPoolReservedIp                      IpAddress,
+    hbDslamDhcpsPoolReservedRowStatus               RowStatus
+}
+
+hbDslamDhcpspoolReservedName    OBJECT-TYPE
+    SYNTAX      DisplayString  ( SIZE ( 0 .. 8  ) )
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "Dhcp server pool name."
+    ::= { hbDslamDhcpsPoolReservedEntry 1 }
+
+hbDslamDhcpsPoolReservedMac    OBJECT-TYPE
+    SYNTAX      MacAddress
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+            "Set dhcp server reserved add mac."
+    ::= { hbDslamDhcpsPoolReservedEntry  2 }
+
+hbDslamDhcpsPoolReservedIp    OBJECT-TYPE
+    SYNTAX      IpAddress
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "After set dhcp server pool reserved add mac.
+            Set dhcp server pool reserved add ipaddress."
+    ::= { hbDslamDhcpsPoolReservedEntry  3 }
+
+hbDslamDhcpsPoolReservedRowStatus   OBJECT-TYPE
+    SYNTAX      RowStatus
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+            "The dhcp server pool row status."
+    ::= { hbDslamDhcpsPoolReservedEntry  4 }
+
+
+hbDslamDhcpsOptionsAllPoolGroup      OBJECT IDENTIFIER  ::= { hbDslamDhcpServer 10} 
+     
+hbDslamDhcpsOptionsAllPoolDomainName     OBJECT-TYPE
+    SYNTAX      DisplayString
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "Set dhcp server service."
+    ::= { hbDslamDhcpsOptionsAllPoolGroup 1 }
+    
+ hbDslamDhcpsOptionsAllPoolDnsTable     OBJECT-TYPE
+    SYNTAX      SEQUENCE OF HbDslamDhcpsOptionsAllPoolDnsEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+            "Dhcp server pool options dns table."
+    ::= { hbDslamDhcpsOptionsAllPoolGroup 2 }
+
+hbDslamDhcpsOptionsAllPoolDnsEntry     OBJECT-TYPE
+    SYNTAX      HbDslamDhcpsOptionsAllPoolDnsEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+            "An entry in the dhcp server dns Table."
+    INDEX       { hbDslamDhcpsOptionsAllPoolDnsIp  }
+    ::= { hbDslamDhcpsOptionsAllPoolDnsTable  1 }
+
+HbDslamDhcpsOptionsAllPoolDnsEntry   ::= SEQUENCE {
+    hbDslamDhcpsOptionsAllPoolDnsIp               IpAddress,
+    hbDslamDhcpsOptionsAllPoolDnsRowStatus        RowStatus
+}
+
+
+hbDslamDhcpsOptionsAllPoolDnsIp     OBJECT-TYPE
+    SYNTAX      IpAddress
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "Set dhcp server pool dns Ipaddress."
+    ::= { hbDslamDhcpsOptionsAllPoolDnsEntry  1 }
+
+hbDslamDhcpsOptionsAllPoolDnsRowStatus   OBJECT-TYPE
+    SYNTAX      RowStatus
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+            "The dhcp server pool dns rowstatus."
+    ::= { hbDslamDhcpsOptionsAllPoolDnsEntry  2 }
+
+
+-- Dslam WINS
+
+hbDslamDhcpsOptionsAllPoolWinsTable     OBJECT-TYPE
+    SYNTAX      SEQUENCE OF HbDslamDhcpsOptionsAllPoolWinsEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+            "Dhcp server pool options wins table."
+    ::= { hbDslamDhcpsOptionsAllPoolGroup 3 }
+
+hbDslamDhcpsOptionsAllPoolWinsEntry     OBJECT-TYPE
+    SYNTAX      HbDslamDhcpsOptionsAllPoolWinsEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+            "An entry in the harbour dhcp pool wins Table."
+    INDEX       { hbDslamDhcpsOptionsAllPoolWinsIp  }
+    ::= { hbDslamDhcpsOptionsAllPoolWinsTable  1 }
+
+HbDslamDhcpsOptionsAllPoolWinsEntry   ::= SEQUENCE {
+    hbDslamDhcpsOptionsAllPoolWinsIp                  IpAddress,
+    hbDslamDhcpsOptionsAllPoolWinsRowStatus           RowStatus
+}
+
+
+hbDslamDhcpsOptionsAllPoolWinsIp     OBJECT-TYPE
+    SYNTAX      IpAddress
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "Set dhcp server pool wins Ipaddress."
+    ::= { hbDslamDhcpsOptionsAllPoolWinsEntry 1 }
+
+hbDslamDhcpsOptionsAllPoolWinsRowStatus   OBJECT-TYPE
+    SYNTAX      RowStatus
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+            "The dhcp server pool wins row status."
+    ::= { hbDslamDhcpsOptionsAllPoolWinsEntry   2 }
+
+-- Dslam Hipmg
+
+hbDslamHipmg    OBJECT IDENTIFIER  ::= { harbourDslam  8 }
+
+hbDslamHipmgIntervalDetect   OBJECT-TYPE
+    SYNTAX      INTEGER (3..10)
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "Set hipmg interval detect vlaue.
+            If set 0, means disable interval detect."
+    ::= { hbDslamHipmg 1 }
+
+hbDslamHipmgListenUplinkVlan  OBJECT-TYPE
+    SYNTAX      VlanId
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "Set hipmg listen add uplink vlan.
+            If set 0, means delete uplink vlan listen hipmg."
+    ::= { hbDslamHipmg 2 }
+
+hbDslamHipmgListenSuperVlan   OBJECT-TYPE
+    SYNTAX      VlanId
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "Set hipmg listen add super vlan.
+            If set 0, means delete super vlan listen hipmg."
+    ::= { hbDslamHipmg 3 }
+
+
+hbDslamHipmgInStatus    OBJECT-TYPE
+    SYNTAX      INTEGER { disable(1), enable(2) }
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "Set hipmg in status."
+    ::= { hbDslamHipmg 4 }
+
+hbDslamHipmgOutStatus    OBJECT-TYPE
+    SYNTAX      INTEGER { disable(1), enable(2) }
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "Set hipmg out status."
+    ::= { hbDslamHipmg 5 }
+
+
+hbDslamCpuService   OBJECT IDENTIFIER  ::= { harbourDslam  9 }
+
+hbDslamCpuServiceFilter     OBJECT-TYPE
+    SYNTAX      INTEGER { disable(1), enable(2) }
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "Set cpuservice filter ."
+    ::= { hbDslamCpuService 1 }
+    
+hbDslamSysAttackPktNum      OBJECT-TYPE
+    SYNTAX      INTEGER(20..1500)
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "Set cpu threshold every three .default value is 200"
+    ::= { hbDslamCpuService 2 }
+
+hbdslamCpuServiceTelnet        OBJECT-TYPE
+    SYNTAX      INTEGER { disable(1), enable(2) }
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "Set cpuservice filte telnet packets ."
+    ::= { hbDslamCpuService 3 }   
+
+
+hbdslamCpuServiceIcmp        OBJECT-TYPE
+    SYNTAX      INTEGER { disable(1), enable(2) }
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "Set cpuservice filte icmp packets ."
+    ::= { hbDslamCpuService 4 }   
+    
+hbdslamCpuServiceDhcp        OBJECT-TYPE
+    SYNTAX      INTEGER { disable(1), enable(2) }
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "Set cpuservice filte  dhcp  packets."
+    ::= { hbDslamCpuService 5 }   
+    
+hbdslamCpuServiceOspf        OBJECT-TYPE
+    SYNTAX      INTEGER { disable(1), enable(2) }
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "Set cpuservice filte ospf packets ."
+    ::= { hbDslamCpuService 6 }   
+    
+hbDslamCpuServiceTable      OBJECT-TYPE
+    SYNTAX      SEQUENCE OF HbDslamCpuServiceEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+            "Cpu service filte packets table."
+    ::= { hbDslamCpuService 7 }  
+
+hbDslamCpuServiceEntry     OBJECT-TYPE
+    SYNTAX      HbDslamCpuServiceEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+            "An entry in the cpuservice Table."
+    INDEX       { hbDslamCpuServiceIndex  }
+    ::= { hbDslamCpuServiceTable 1 }
+
+HbDslamCpuServiceEntry   ::= SEQUENCE {
+    hbDslamCpuServiceIndex           INTEGER,
+    hbDslamCpuServiceProtoType       INTEGER,
+    hbdslamCpuServiceProtoPort       INTEGER,
+    hbDslamCpuServiceBandwidth       INTEGER,         --(kbps)
+    hbDslamCpuServiceFlag            INTEGER,
+    hbDslamCpuserviceRowStatus       RowStatus
+}
+
+hbDslamCpuServiceIndex   OBJECT-TYPE
+    SYNTAX      INTEGER 
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "The index of cpu service table."
+    ::= { hbDslamCpuServiceEntry 1 }
+    
+hbDslamCpuServiceProtoType   OBJECT-TYPE
+    SYNTAX      INTEGER 
+                {tcp(1),udp(2)}
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+            "Cpu service filte  protocol type of packets."
+    ::= { hbDslamCpuServiceEntry 2 }
+
+hbdslamCpuServiceProtoPort   OBJECT-TYPE
+    SYNTAX      INTEGER (1..65535)
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+            "Cpu service filte protocol port of packets."
+    ::= { hbDslamCpuServiceEntry 3 }
+    
+hbDslamCpuServiceBandwidth   OBJECT-TYPE
+    SYNTAX      INTEGER 
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+            "Band width for the packet ."
+    ::= { hbDslamCpuServiceEntry 4 }
+    
+hbDslamCpuServiceFlag   OBJECT-TYPE
+    SYNTAX      INTEGER { static(1), dynamic(2) }
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "Cpu service filte  flag."
+    ::= { hbDslamCpuServiceEntry 5 }
+    
+hbDslamCpuserviceRowStatus   OBJECT-TYPE
+    SYNTAX      RowStatus 
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+            "The cpu service table row status ."
+    ::= { hbDslamCpuServiceEntry 6 }
+    
+
+hbDslamPreConfig   OBJECT IDENTIFIER  ::= { harbourDslam  10 }
+
+hbDslamPreConfigTable      OBJECT-TYPE
+    SYNTAX      SEQUENCE OF HbDslamPreConfigEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+            "Preconfig table."
+    ::= { hbDslamPreConfig 1 }  
+
+hbDslamPreConfigEntry     OBJECT-TYPE
+    SYNTAX      HbDslamPreConfigEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+            "An entry in the preConfig Table."
+    INDEX       { hbDslamSlotIndex  }
+    ::= { hbDslamPreConfigTable 1 }
+
+HbDslamPreConfigEntry   ::= SEQUENCE {
+    hbDslamSlotIndex           INTEGER,
+    hbDslamSlotType            INTEGER,
+    hbDslamPreConfigFlag       INTEGER,                        
+    hbDslamPreConfigOperate    INTEGER
+}
+
+hbDslamSlotIndex   OBJECT-TYPE
+    SYNTAX      INTEGER 
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "The index of slot."
+    ::= { hbDslamPreConfigEntry 1 }
+    
+hbDslamSlotType   OBJECT-TYPE
+    SYNTAX      INTEGER 
+                {adu(1),vdu(2),null(3)}
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "Board type of you preconfig."
+    ::= { hbDslamPreConfigEntry 2 }
+    
+hbDslamPreConfigflag   OBJECT-TYPE
+    SYNTAX      INTEGER   
+                {yes(1),no(2),null(3)}             
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "The flag of the board if it is a virtualboard."
+    ::= { hbDslamPreConfigEntry 3 }
+    
+hbDslamPreConfigOperate   OBJECT-TYPE
+    SYNTAX      INTEGER   
+                {create(1),delete(2)}             
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "To create or delete preconfig."
+    ::= { hbDslamPreConfigEntry 4 }  
+END

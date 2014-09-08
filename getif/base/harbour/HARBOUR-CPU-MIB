@@ -1,0 +1,183 @@
+-- =======================================================================
+-- Version info
+--
+-- Version 0.1 Created 2001.12.13 by jinfusheng
+-- This version of MIB is created just for the use of Network Management Systems
+-- display the HammerSeries Switch 's memory and cpu.
+--
+-- Copyright (c) Harbour Networks Limited All Rights Reserved
+-- =======================================================================
+
+-- ===========================================================================
+
+--
+-- HARBOUR CPU objects
+--
+
+HARBOUR-CPU-MIB DEFINITIONS ::= BEGIN
+
+	IMPORTS
+                MODULE-IDENTITY
+                	FROM SNMPv2-SMI
+		OBJECT-TYPE
+			FROM SNMPv2-SMI
+                Unsigned32
+                	FROM SNMPv2-SMI
+		DisplayString
+			FROM RFC-1213
+		harbourAgent
+			FROM HARBOUR-BASE-MIB
+                 harbourSystem
+                        FROM HARBOUR-SYSTEM-MIB;
+
+
+
+	harbourcpu MODULE-IDENTITY
+                LAST-UPDATED 	"20011213"
+                ORGANIZATION 	"Harbour Networks Limited All Rights Reserved"
+                CONTACT-INFO 	"www.harbournetworks.com"
+                DESCRIPTION
+                		"Harbour System objects: objects common to all platforms."
+        	::= { harbourSystem 4 }
+       harbourCpuandmemoryTable OBJECT-TYPE
+		SYNTAX  SEQUENCE OF HarbourCpuandmemoryEntry
+		MAX-ACCESS  not-accessible
+		STATUS current
+                DESCRIPTION
+                  "Table of CPU and memory ,it describles the cpu's and memory's characteristic
+                   of the hammer series  ."
+	::= { harbourcpu 1 }
+
+        harbourCpuandmemoryEntry OBJECT-TYPE
+		SYNTAX  HarbourCpuandmemoryEntry
+		MAX-ACCESS  not-accessible
+		STATUS current
+		DESCRIPTION
+                  "An entry in cpuandmemorytable  describles a cpu's and corresponding memory
+                   characteristic."
+		INDEX { harbourCpuId }
+	::= { harbourCpuandmemoryTable 1 }
+
+	HarbourCpuandmemoryEntry ::=
+		SEQUENCE {
+
+			harbourCpuId
+				Unsigned32,
+			harbourcpuslotnum
+				INTEGER,
+			harbourCpumainfreq
+				Unsigned32,
+
+			harbourCpuUtilization
+				Unsigned32,
+			harbourCpuMaxUtilization
+				Unsigned32,
+                        harbourCpuMINUtilization
+				Unsigned32,
+                        harbourtotalmemory
+                                INTEGER,
+                        harbouravailablememory
+                                INTEGER,
+                        harbourcpuutilizationthresh
+                        	INTEGER,
+			harbourtopology
+				DisplayString
+		}
+
+
+
+       harbourCpuId  OBJECT-TYPE
+                SYNTAX Unsigned32
+        	MAX-ACCESS read-only
+                STATUS current
+                DESCRIPTION
+                  "cpu identifier assigned manually ."
+	::= { harbourCpuandmemoryEntry 1 }
+
+        harbourcpuslotnum OBJECT-TYPE
+                SYNTAX INTEGER
+        	MAX-ACCESS read-only
+                STATUS current
+                DESCRIPTION
+                  "the slotnumber associated with the reported cpu id."
+	::= { harbourCpuandmemoryEntry 2 }
+
+        harbourCpumainfreq OBJECT-TYPE
+                SYNTAX Unsigned32
+                UNITS        "MHZ"
+        	MAX-ACCESS read-only
+                STATUS current
+                DESCRIPTION
+                  "The value of the cpu frequency corresponding to this slot.
+		   It indicates the capability  of the cpu, it determined the
+                   performance of the whole system ."
+	::= { harbourCpuandmemoryEntry 3 }
+
+
+
+       harbourCpuUtilization OBJECT-TYPE
+                SYNTAX Unsigned32
+                UNITS        "percent"
+        	MAX-ACCESS read-only
+                STATUS current
+                DESCRIPTION
+                  "The current CPU utilization by this system. This
+		   is the utilization when the system is running."
+	::= { harbourCpuandmemoryEntry 4 }
+
+        harbourCpuMaxUtilization OBJECT-TYPE
+                SYNTAX Unsigned32
+                UNITS        "percent"
+        	MAX-ACCESS read-only
+                STATUS current
+                DESCRIPTION
+                  "The maximum CPU utilization by this system since
+		   the time the start started executing. This value
+		   may be cleared."
+	::= { harbourCpuandmemoryEntry 5 }
+         harbourCpuMINUtilization OBJECT-TYPE
+                SYNTAX Unsigned32
+                UNITS        "percent"
+        	MAX-ACCESS read-only
+                STATUS current
+                DESCRIPTION
+                  "The minium CPU utilization by this system since
+		   the time the start started executing. This value
+		   may be cleared."
+	::= { harbourCpuandmemoryEntry 6 }
+         harbourtotalmemory OBJECT-TYPE
+                SYNTAX INTEGER
+                UNITS        "0.1M"
+        	MAX-ACCESS read-only
+                STATUS current
+                DESCRIPTION
+                  "The  total memory of the system as reported by the
+	  	   operating system."
+	::= { harbourCpuandmemoryEntry 7 }
+        harbouravailablememory OBJECT-TYPE
+                SYNTAX INTEGER
+                UNITS        "0.1M"
+        	MAX-ACCESS read-only
+                STATUS current
+                DESCRIPTION
+                  "The available total memory of the system as reported by the
+	  	   operating system."
+	::= { harbourCpuandmemoryEntry 8 }
+	harbourcpuutilizationthresh OBJECT-TYPE
+                SYNTAX INTEGER
+                MAX-ACCESS read-write
+                STATUS current
+                DESCRIPTION
+                  "The cpu utilization thresh,the number must in 1-100."
+	::= { harbourCpuandmemoryEntry 9 }
+	harbourtopology OBJECT-TYPE
+                SYNTAX DisplayString
+        	MAX-ACCESS read-only
+                STATUS current
+                DESCRIPTION
+                  "This node get the topology of this dslam."
+	::= { harbourCpuandmemoryEntry 10 }
+END
+
+
+

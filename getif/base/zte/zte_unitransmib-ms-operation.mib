@@ -1,0 +1,502 @@
+-- ********************************************************************
+
+--  UnitransMib-MS-ackorclearalarm.mib
+
+--  Copyright (c) 2008 ZTE CORPORATION.All rights reserved.
+
+--  Description: ZTE Unitrans alamrs definition
+
+--  Version     v1.0
+
+--  Modification Record: 
+
+--********************************************************************
+UnitransMib-MS-operation
+DEFINITIONS ::= BEGIN
+IMPORTS
+    MODULE-IDENTITY, OBJECT-TYPE, NOTIFICATION-TYPE,
+    enterprises, Integer32, Unsigned32, IpAddress
+        FROM SNMPv2-SMI
+    TEXTUAL-CONVENTION, DisplayString, TimeStamp, DateAndTime
+        FROM SNMPv2-TC  
+    MODULE-COMPLIANCE, OBJECT-GROUP, NOTIFICATION-GROUP
+        FROM SNMPv2-CONF
+    zteUnitransMS
+    		FROM UnitransMib-MS-root   
+    BOOL-TC,Time-TC,Unit-TC,       
+    ObjectNVSList-T,NamingAttributes-T,LayerRate-TC,LayerRate-TC
+        FROM UnitransMib-MS-common      
+    ProbableCause-TC,AlarmID-TC
+        FROM UnitransMib-MS-alarm
+        ;
+
+ zteuOperation MODULE-IDENTITY
+        LAST-UPDATED   "0602130000Z"
+        ORGANIZATION   "ZTE"
+        CONTACT-INFO   "
+           ZTE Corporation
+           
+           Postal:   518057    
+           
+           via the WEB:  http://www.zte.com.cn                           
+            
+           via phone:    86-755-26773000"
+   DESCRIPTION
+      "The module describing ZTE Unitrans MIB."
+::= { zteUnitransMS 18 }       
+-- ********************************************************************
+-- the MIB module for the ZTE unitrans objects
+-- ********************************************************************
+--      zteuSetAlarm           OBJECT IDENTIFIER  ::=  { zteUnitrans 18 } 
+-- ********************************************************************
+      
+-- ********************************************************************
+-- Table And Object  Definition
+-- ********************************************************************
+
+-- ********************************************************************
+-- TEXTUAL-CONVENTION Definition
+-- ********************************************************************
+AlarmSyncStatus-TC ::= TEXTUAL-CONVENTION
+	   STATUS current
+	   DESCRIPTION "
+		   This textual convention presents Alarm Sync Status
+		   ass-SUCCESSFUL(1)               sync state
+		   ass-INVALID-INPUT-ERROR(2)      input invalid
+		   ass-ALREADY-RUNNING(3)		   already running
+		   ass-NOT-RUNNING_YET(4)          not running yet
+		   ass-INTERNAL-ERROR(5)           internal error
+		  " 
+	   SYNTAX INTEGER 
+	   {
+		   ass-SUCCESSFUL(1),
+		   ass-INVALID-INPUT-ERROR(2),
+		   ass-ALREADY-RUNNING(3),
+		   ass-NOT-RUNNING-YET(4),
+		   ass-INTERNAL-ERROR(5)
+	   }
+
+-- ********************************************************************
+-- Alarm Definition 
+-- ********************************************************************
+zteuAckAlmTable  OBJECT-TYPE
+        SYNTAX          SEQUENCE OF ZTEUAckAlmEntry
+        MAX-ACCESS      not-accessible
+        STATUS          current
+        DESCRIPTION
+                "Acknowledge Alarm Table"
+        ::= { zteuOperation 1 }
+        
+zteuUnAckAlmTable  OBJECT-TYPE
+        SYNTAX          SEQUENCE OF ZTEUUnAckAlmEntry
+        MAX-ACCESS      not-accessible
+        STATUS          current
+        DESCRIPTION
+                "UnAcknowledge Alarm Table"
+        ::= { zteuOperation 2 }
+        
+zteuClrAlmTable  OBJECT-TYPE
+        SYNTAX          SEQUENCE OF ZTEUClrAlmEntry
+        MAX-ACCESS      not-accessible
+        STATUS          current
+        DESCRIPTION
+                "Clear Alarm Table"
+        ::= { zteuOperation 3 }
+        
+zteuMskAlmTable  OBJECT-TYPE
+        SYNTAX          SEQUENCE OF ZTEUMskAlmEntry
+        MAX-ACCESS      not-accessible
+        STATUS          current
+        DESCRIPTION
+                "Mask Alarm Table"
+        ::= { zteuOperation 4 }
+		
+zteuStartSyncAlmTable  OBJECT-TYPE
+        SYNTAX          SEQUENCE OF ZTEUStartSyncAlmEntry
+        MAX-ACCESS      not-accessible
+        STATUS          current
+        DESCRIPTION
+                "Sync Alarm Table"
+        ::= { zteuOperation 5 }
+
+zteuTerminateSyncAlmTable  OBJECT-TYPE
+        SYNTAX          SEQUENCE OF ZTEUTerminateSyncAlmEntry
+        MAX-ACCESS      not-accessible
+        STATUS          current
+        DESCRIPTION
+                "Terminate Sync Alarm Table"
+        ::= { zteuOperation 6 }
+
+zteuAckAlmEntry  OBJECT-TYPE
+        SYNTAX          ZTEUAckAlmEntry
+        MAX-ACCESS      not-accessible
+        STATUS          current
+        DESCRIPTION
+                "Set Alarm Entry"
+        INDEX {ackIndex}
+        ::= { zteuAckAlmTable 1 }
+        
+zteuUnAckAlmEntry  OBJECT-TYPE
+        SYNTAX          ZTEUUnAckAlmEntry
+        MAX-ACCESS      not-accessible
+        STATUS          current
+        DESCRIPTION
+                "Set Alarm Entry"
+        INDEX {unAckIndex}
+        ::= { zteuUnAckAlmTable 1 }
+        
+zteuClrAlmEntry  OBJECT-TYPE
+        SYNTAX          ZTEUClrAlmEntry
+        MAX-ACCESS      not-accessible
+        STATUS          current
+        DESCRIPTION
+                "Set Alarm Entry"
+        INDEX {clrIndex}
+        ::= { zteuClrAlmTable 1 }
+        
+zteuMskAlmEntry  OBJECT-TYPE
+        SYNTAX          ZTEUMskAlmEntry
+        MAX-ACCESS      not-accessible
+        STATUS          current
+        DESCRIPTION
+                "Set Alarm Entry"
+        INDEX {mskIndex}
+        ::= { zteuMskAlmTable 1 }
+		
+zteuStartSyncAlmEntry  OBJECT-TYPE
+        SYNTAX          ZTEUStartSyncAlmEntry
+        MAX-ACCESS      not-accessible
+        STATUS          current
+        DESCRIPTION
+                "Sync Alarm Entry"
+        INDEX {startSyncIndex}
+        ::= { zteuStartSyncAlmTable 1 }
+		
+zteuTerminateSyncAlmEntry  OBJECT-TYPE
+        SYNTAX          ZTEUTerminateSyncAlmEntry
+        MAX-ACCESS      not-accessible
+        STATUS          current
+        DESCRIPTION
+                "Terminate Sync Alarm Entry"
+        INDEX {terminateSyncIndex}
+        ::= { zteuTerminateSyncAlmTable 1 }
+
+ZTEUAckAlmEntry ::=  SEQUENCE
+        {   
+        				ackIndex           INTEGER,
+        				ackAlarmId           AlarmID-TC,
+                ackStatus            INTEGER
+        }
+        
+ackIndex OBJECT-TYPE
+        SYNTAX      INTEGER(1..65535)
+        MAX-ACCESS  read-write
+        STATUS      current
+        DESCRIPTION
+                "Operation Index"
+        ::= { zteuAckAlmEntry 1 } 
+        
+ackAlarmId OBJECT-TYPE
+        SYNTAX      AlarmID-TC
+        MAX-ACCESS  read-write
+        STATUS      current
+        DESCRIPTION
+                "Acknowledge AlarmID"
+        ::= { zteuAckAlmEntry 2 } 
+        
+ackStatus OBJECT-TYPE
+        SYNTAX      INTEGER
+	     {
+				  fail(0),
+				  success(1)       
+		   }
+        MAX-ACCESS  read-write
+        STATUS      current
+        DESCRIPTION
+                "Operation status"
+        ::= { zteuAckAlmEntry 3 } 
+      
+ZTEUUnAckAlmEntry ::=  SEQUENCE
+        {   
+        				unAckIndex           INTEGER,
+        				unAckAlarmId           AlarmID-TC,
+                unAckStatus            INTEGER
+        }
+
+unAckIndex OBJECT-TYPE
+        SYNTAX      INTEGER(1..65535)
+        MAX-ACCESS  read-write
+        STATUS      current
+        DESCRIPTION
+                "Operation Index"
+        ::= { zteuUnAckAlmEntry 1 } 
+        
+unAckAlarmId OBJECT-TYPE
+        SYNTAX      AlarmID-TC
+        MAX-ACCESS  read-write
+        STATUS      current
+        DESCRIPTION
+                "UnAcknowledge AlarmID"
+        ::= { zteuUnAckAlmEntry 2 } 
+        
+unAckStatus OBJECT-TYPE
+        SYNTAX      INTEGER
+	     {
+				  fail(0),
+				  success(1)       
+		   }
+        MAX-ACCESS  read-write
+        STATUS      current
+        DESCRIPTION
+                "Operation status"
+        ::= { zteuUnAckAlmEntry 3 } 
+
+ZTEUClrAlmEntry ::=  SEQUENCE
+        {   
+        				clrIndex           INTEGER,
+        				clrAlarmId           AlarmID-TC,
+                clrStatus            INTEGER
+        }
+
+clrIndex OBJECT-TYPE
+        SYNTAX      INTEGER(1..65535)
+        MAX-ACCESS  read-write
+        STATUS      current
+        DESCRIPTION
+                "Operation Index"
+        ::= { zteuClrAlmEntry 1 } 
+        
+clrAlarmId OBJECT-TYPE
+        SYNTAX      AlarmID-TC
+        MAX-ACCESS  read-write
+        STATUS      current
+        DESCRIPTION
+                "UnAcknowledge AlarmID"
+        ::= { zteuClrAlmEntry 2 } 
+        
+clrStatus OBJECT-TYPE
+        SYNTAX      INTEGER
+	     {
+				  fail(0),
+				  success(1)       
+		   }
+        MAX-ACCESS  read-write
+        STATUS      current
+        DESCRIPTION
+                "Operation status"
+        ::= { zteuClrAlmEntry 3 } 
+        
+ZTEUMskAlmEntry ::=  SEQUENCE
+        {   
+        				mskIndex           INTEGER,
+        				mskObject            NamingAttributes-T,
+								layerRate         LayerRate-TC,
+                mskStatus            INTEGER
+        }
+
+mskIndex OBJECT-TYPE
+        SYNTAX      INTEGER(1..65535)
+        MAX-ACCESS  read-write
+        STATUS      current
+        DESCRIPTION
+                "Operation Index"
+        ::= { zteuMskAlmEntry 1 } 
+        
+mskObject OBJECT-TYPE
+        SYNTAX      NamingAttributes-T
+        MAX-ACCESS  read-write
+        STATUS      current
+        DESCRIPTION
+                "UnAcknowledge AlarmID"
+        ::= { zteuMskAlmEntry 2 } 
+        
+layerRate OBJECT-TYPE
+        SYNTAX      LayerRate-TC
+        MAX-ACCESS  read-write
+        STATUS      current
+        DESCRIPTION
+                "Operation status"
+        ::= { zteuMskAlmEntry 3 } 
+        
+mskStatus OBJECT-TYPE
+        SYNTAX      INTEGER
+	     {
+				  fail(0),
+				  success(1)       
+		   }
+        MAX-ACCESS  read-write
+        STATUS      current
+        DESCRIPTION
+                "Operation status"
+        ::= { zteuMskAlmEntry 4 } 
+
+ZTEUStartSyncAlmEntry ::=  SEQUENCE
+        {   
+				startSyncIndex           INTEGER,
+				startSyncIp              DisplayString,
+				startSyncPort            DisplayString,
+                startSyncBeginTime       Time-TC,
+				startSyncEndTime         Time-TC,
+				startSyncStatus          AlarmSyncStatus-TC
+        }
+		
+startSyncIndex OBJECT-TYPE
+        SYNTAX      INTEGER(1..65535)
+        MAX-ACCESS  read-write
+        STATUS      current
+        DESCRIPTION
+                "Operation Index"
+        ::= { zteuStartSyncAlmEntry 1 } 		
+		
+startSyncIp OBJECT-TYPE
+        SYNTAX      DisplayString
+        MAX-ACCESS  read-write
+        STATUS      current
+        DESCRIPTION
+                "The Ip of the oss receving the sync alarm"
+        ::= { zteuStartSyncAlmEntry 2 } 
+
+startSyncPort OBJECT-TYPE
+        SYNTAX      DisplayString
+        MAX-ACCESS  read-write
+        STATUS      current
+        DESCRIPTION
+               "The port of the oss receving the sync alarm"
+        ::= { zteuStartSyncAlmEntry 3 } 
+		
+startSyncBeginTime OBJECT-TYPE
+        SYNTAX      Time-TC
+        MAX-ACCESS  read-write
+        STATUS      current
+        DESCRIPTION
+                "Present the time when the alarm raise."
+        ::= { zteuStartSyncAlmEntry 4 } 		
+	
+startSyncEndTime OBJECT-TYPE
+        SYNTAX      Time-TC
+        MAX-ACCESS  read-write
+        STATUS      current
+        DESCRIPTION
+                "Present the time when the alarm end."
+        ::= { zteuStartSyncAlmEntry 5 } 
+
+startSyncStatus OBJECT-TYPE
+        SYNTAX      AlarmSyncStatus-TC
+        MAX-ACCESS  read-write
+        STATUS      current
+        DESCRIPTION
+                "Present the status of startSync."
+        ::= { zteuStartSyncAlmEntry 6 }		
+		
+ZTEUTerminateSyncAlmEntry ::=  SEQUENCE
+        {   
+				terminateSyncIndex           INTEGER,
+				terminateSyncIp              DisplayString,
+				terminateSyncPort            DisplayString,
+				terminateSyncStatus          AlarmSyncStatus-TC
+        }
+		
+terminateSyncIndex OBJECT-TYPE
+        SYNTAX      INTEGER(1..65535)
+        MAX-ACCESS  read-write
+        STATUS      current
+        DESCRIPTION
+                "Operation Index"
+        ::= { zteuTerminateSyncAlmEntry 1 } 		
+		
+terminateSyncIp OBJECT-TYPE
+        SYNTAX      DisplayString
+        MAX-ACCESS  read-write
+        STATUS      current
+        DESCRIPTION
+                "The Ip of the oss receving the sync alarm"
+        ::= { zteuTerminateSyncAlmEntry 2 } 
+
+terminateSyncPort OBJECT-TYPE
+        SYNTAX      DisplayString
+        MAX-ACCESS  read-write
+        STATUS      current
+        DESCRIPTION
+               "The port of the oss receving the sync alarm"
+        ::= { zteuTerminateSyncAlmEntry 3 } 
+		
+terminateSyncStatus OBJECT-TYPE
+        SYNTAX      AlarmSyncStatus-TC
+        MAX-ACCESS  read-write
+        STATUS      current
+        DESCRIPTION
+               "Present the status of terminateSync."
+        ::= { zteuTerminateSyncAlmEntry 4 }
+        
+zteuAckAlmEntryGroup    OBJECT-GROUP
+             OBJECTS {
+      				ackIndex ,
+      				ackAlarmId ,
+              ackStatus		
+                }
+             STATUS     current
+             DESCRIPTION
+                 "A collection of objects of setAlmEntry."
+    ::= { zteuOperation 20 }   
+    
+zteuUnAckAlmEntryGroup    OBJECT-GROUP
+             OBJECTS {
+      				unAckIndex ,
+      				unAckAlarmId ,
+              unAckStatus		
+                }
+             STATUS     current
+             DESCRIPTION
+                 "A collection of objects of setAlmEntry."
+    ::= { zteuOperation 21 }   
+    
+zteuClrAlmEntryGroup    OBJECT-GROUP
+             OBJECTS {
+      				clrIndex ,
+      				clrAlarmId ,
+              clrStatus	
+                }
+             STATUS     current
+             DESCRIPTION
+                 "A collection of objects of setAlmEntry."
+    ::= { zteuOperation 22 }   
+    
+zteuMskAlmEntryGroup    OBJECT-GROUP
+             OBJECTS {
+      				mskIndex ,
+      				mskObject ,
+							layerRate ,
+              mskStatus
+                }
+             STATUS     current
+             DESCRIPTION
+                 "A collection of objects of setAlmEntry."
+    ::= { zteuOperation 23 }   
+
+zteuStartSyncAlmEntryGroup    OBJECT-GROUP
+             OBJECTS {
+      			startSyncIndex,
+				startSyncIp,
+				startSyncPort,
+                startSyncBeginTime,
+				startSyncEndTime,
+				startSyncStatus
+                }
+             STATUS     current
+             DESCRIPTION
+                 "A collection of objects of SyncAlmEntry."
+    ::= { zteuOperation 24 } 
+	
+zteuTerminateSyncAlmEntryGroup    OBJECT-GROUP
+             OBJECTS {
+      			terminateSyncIndex,
+				terminateSyncIp,
+				terminateSyncPort,
+				terminateSyncStatus
+                }
+             STATUS     current
+             DESCRIPTION
+                 "A collection of objects of Terminate SyncAlmEntry."
+    ::= { zteuOperation 25 } 
+	
+END

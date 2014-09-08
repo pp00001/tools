@@ -1,0 +1,898 @@
+-- =========================================================
+-- Copyright (c) 2001-2003, Harbour Networks Limited
+-- All rights reserved.
+--
+-- Name     : HARBOUR-SYSTEM-MIB
+-- Intro    : The MIB definition for system management.
+-- History  : When          Who         What & Why
+--            2001.08.10    Chenbin     Create
+--            2003.11.14    Lida        Clean up for Hos
+--            2003.11.18    Lida        Change the SYNTAX of harbourPowerAlarm
+-- =========================================================
+
+HARBOUR-SYSTEM-MIB DEFINITIONS ::= BEGIN
+
+IMPORTS
+    MODULE-IDENTITY,
+    OBJECT-TYPE FROM SNMPv2-SMI
+    DisplayString   FROM SNMPv2-TC
+    harbourAgent    FROM HARBOUR-BASE-MIB;
+
+
+harbourSystem MODULE-IDENTITY
+    LAST-UPDATED    "200311140000Z"
+    ORGANIZATION    "Harbour Networks Limited"
+    CONTACT-INFO    "www.harbournetworks.com"
+    DESCRIPTION
+            "System Management Module."
+    ::= { harbourAgent 1 }
+
+
+-- System Common Group
+-- Common features of most products
+
+harbourSystemCommon OBJECT IDENTIFIER  ::= { harbourSystem 1 }
+
+harbourFansAlarm OBJECT-TYPE
+    SYNTAX      INTEGER {
+                    noSingal(1),
+                    signalRed(2),
+                    signalOrange(3),
+                    signalGreen(4)
+                }
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "Alarm state of the fans.
+            NoSignal means no fan is working here.
+            SignalRed means this fan is working abnormal.
+            SignalOrange is not use up to now.
+            SignalGreen means this fan is working with good condition."
+    ::= { harbourSystemCommon 1 }
+
+harbourPowerAlarm OBJECT-TYPE
+    SYNTAX      INTEGER {
+                    noSingal(1),
+                    signalRed(2),
+                    signalOrange(3),
+                    signalGreen(4)
+                }
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "Alarm state of the power supply to a device."
+    ::= { harbourSystemCommon 2 }
+
+harbourFanModuleStat OBJECT-TYPE
+    SYNTAX      INTEGER {
+                    online(1),
+                    offline(2)
+                }
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "The state of fan module."
+    ::= { harbourSystemCommon 3 }
+
+harbourFanTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF HarbourFanEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+            "A table containing information about each fan in the device."
+    ::= { harbourSystemCommon 4 }
+
+harbourFanEntry OBJECT-TYPE
+    SYNTAX      HarbourFanEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+            "A table entry containing information about a fan in the device."
+    INDEX       { harbourFanIndex }
+    ::= { harbourFanTable 1 }
+
+HarbourFanEntry ::= SEQUENCE {
+    harbourFanIndex         INTEGER,
+    harbourFanSpeedMode     INTEGER,
+    harbourFanOperStat      INTEGER,
+    harbourFanTemp          INTEGER
+}
+
+harbourFanIndex  OBJECT-TYPE
+    SYNTAX      INTEGER
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "An unique integer identifying the particular fan."
+    ::= { harbourFanEntry 1 }
+
+harbourFanSpeedMode  OBJECT-TYPE
+    SYNTAX      INTEGER {
+                    auto(1),
+                    high(2),
+                    low(3)
+                }
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "The current running speed mode of the fan."
+    ::= { harbourFanEntry 2 }
+
+harbourFanOperStat  OBJECT-TYPE
+    SYNTAX      INTEGER {
+                    normal(1),
+                    abnormal(2)
+                }
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "The current operational state of the fan."
+    ::= { harbourFanEntry 3 }
+
+harbourFanTemp  OBJECT-TYPE
+    SYNTAX      INTEGER
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "The current temperature near the fan."
+    ::= { harbourFanEntry 4 }
+
+
+-- Chassis Group
+-- Features of chassis products, such as Big series
+
+harbourChassisGroup OBJECT IDENTIFIER ::=   { harbourSystem 2}
+
+harbourChassisDesc OBJECT-TYPE
+    SYNTAX      DisplayString (SIZE (0..255))
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "The description of the chassis of the product."
+    ::= { harbourChassisGroup 1 }
+
+-- Power Table
+
+harbourPowerTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF HarbourPowerEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+            "A table containing information about each power slot in the
+            chassis."
+    ::= { harbourChassisGroup 2 }
+
+harbourPowerEntry OBJECT-TYPE
+    SYNTAX      HarbourPowerEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+            "A table entry containing information about the module in
+            each slot of the chassis."
+    INDEX       { harbourPowerNumber }
+    ::= { harbourPowerTable 1 }
+
+HarbourPowerEntry ::= SEQUENCE {
+    harbourPowerNumber          INTEGER,
+    harbourPowerAlarmStatus     INTEGER
+}
+
+harbourPowerNumber OBJECT-TYPE
+    SYNTAX      INTEGER
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "A unique integer identifying the particular power slot
+            in the chassis."
+    ::= { harbourPowerEntry 1 }
+
+harbourPowerAlarmStatus OBJECT-TYPE
+    SYNTAX      INTEGER{
+                    noSingal(1),
+                    signalRed(2),
+                    signalOrange(3),
+                    signalGreen(4)
+                }
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "Alarm status of the power supply to a device.
+            NoSignal means no power is working here.
+            SignalRed means this power is working abnormal.
+            SignalOrange is not use up to now.
+            SignalGreen means this power is working with good condition."
+    ::= { harbourPowerEntry 2 }
+
+harbourMasterMSMSlot OBJECT-TYPE
+    SYNTAX      INTEGER
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "The harbourSlotNumber of the master MSM module,
+            There must have one master MSM."
+    ::= { harbourChassisGroup 3  }
+
+harbourSlaveMSMSlot OBJECT-TYPE
+    SYNTAX      INTEGER
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "The harbourSlotNumber of the slave MSM module,
+            If there's no slave MSM, it's return value
+            should be  -1."
+    ::= { harbourChassisGroup 4  }
+
+-- Slot Table
+
+harbourSlotTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF HarbourSlotModuleEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+            "A table containing information about each slot in the
+            chassis."
+    ::= { harbourChassisGroup 5 }
+
+harbourSlotModuleEntry OBJECT-TYPE
+    SYNTAX      HarbourSlotModuleEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+            "A table entry containing information about the module in
+            each slot of the chassis."
+    INDEX       { harbourSlotNumber }
+    ::= { harbourSlotTable 1 }
+
+HarbourSlotModuleEntry ::= SEQUENCE {
+    harbourSlotNumber                   INTEGER,
+    harbourSlotName                     DisplayString,
+    harbourSlotModuleConfiguredType     INTEGER,
+    harbourSlotModuleInsertedType       INTEGER,
+    harbourSlotModuleState              INTEGER,
+    harbourSlotModuleFirstPortNumber    INTEGER,
+    harbourSlotModuleNumberOfPorts      INTEGER,
+    harbourSlotModuleSerialNumber       DisplayString
+}
+
+harbourSlotNumber OBJECT-TYPE
+    SYNTAX      INTEGER
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "A unique integer identifying the particular slot
+            in the chassis."
+    ::= { harbourSlotModuleEntry 1 }
+
+harbourSlotName   OBJECT-TYPE
+    SYNTAX      DisplayString (SIZE (0..100))
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "A name identifying the particular slot in the chassis,
+            Descriptive, such as FirstSlot,SecondSlot and so on."
+    ::= { harbourSlotModuleEntry 2 }
+
+harbourSlotModuleConfiguredType OBJECT-TYPE
+    SYNTAX      INTEGER {
+                    none(-1),
+                    BH-4GLX(0),
+                    BH-4GSX(1),
+                    BH-4GLX-B(2),
+                    BH-4GSX-B(3),
+                    BH-20FMM(4),
+                    BH-20FSM(5),
+                    BH-32FTX(6),
+                    BH11MCU(7),
+                    BH-8GSX-B(8),
+                    BH-8GLX-B(9),
+                    BH-4GBIC(10),
+                    BH-2GBIC(11),
+                    VDU(101),
+                    ADU(102),
+                    SMU(103),
+                    IVD(104),
+                    AMU(105),
+
+                    BH-2GBIC6GTX48FE(201),
+                    BH-2GBIC10GTX(202),
+                    BH-2GTX10GBIC(203),
+                    BH-2GBIC34GTX(204),
+                    BH6-MCU(205),
+                    BH-24GE-SFP(206),
+                    BH-24GE-TX(207),
+                    BH-4GBIC24FMM(208),
+                    BH-ESP-BU(209),
+                    BH-24FE-SFP(210),
+                    BH-48FE-TX(211),
+                    BH-4GE24FE-SFP(212),
+                    BH-2x10GE(213),
+                    ESP2-BU(214),
+                    ESP2-POS-1OC48-SFP(215),
+                    ESP-2GE-SFP(216),
+                    ESP-GE-2SFP(217),
+                    ESP-ATM-8OC3-SFP(218),
+                    ESP-POS-1OC48-SFP(219),
+                    ESP-POS-8OC3-SFP(220),
+                    BH-ESP-8FE-TX(221),
+                    NRP-1(222),
+                    
+
+                    CPC(301),
+                    SFC(302),
+                    LIC-4-OC-48C-POS(303),
+                    LIC-2-OC-48C-POS(304),
+                    LIC-16-GE(305),
+                    LIC-12-GE(306),
+                    LIC-8-GE(307),
+                    LIC-1-10G-LAN(308),
+                    LIC-1-10G-WAN(309),
+                    LIC-1-OC-192C-P0S(310),
+                    LIC-2-OC-48C-RPR(311),
+
+
+                    NH-PA-MCU(600),
+                    NH-PA-4E1(603),
+                    NH-PA-2FE(611),
+                    NH-PA-1GE(612),
+                    NH-PA-POS(613),
+                    NH-PA-8S(614),
+                    NH-PA-8E1(615),
+                    NH-PA-16E1(616),
+                                    
+                    NH-PA-8CE1(617),
+                    NH-PA-16CE1(618),
+                    NH-PA-4CE1(619),
+                    NH-PA-CPOSOC3SML(620),
+                    NH-PA-CPOSOC3SMI(621),
+                    NH-PA-CPOSOC3MM(622),
+                    NH-PA-CPOSSFP(623),
+                    NH-PA-ATMOC3SML(624),
+                    NH-PA-ATMOC3SMI(625),
+                    NH-PA-ATMOC3MM(626),
+                    NH-PA-ATMSFP(627),
+                    NH-PA-CE3(628),
+                    NH-PA-2FESFP(629),           
+                                    
+                    NH-PA-POS-OC3SML(701),
+                    NH-PA-POS-OC3SMI(702),
+                    NH-PA-POS-OC3MM(703) 
+                }
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "The configured module type for the given slot.
+            At startup, the module-type is none(1). It is
+            possible to configure the module-type even if there
+            is no module in the slot. If the current module in the
+            slot is different than the requested configured module-type,
+            then the current configuration for the module is erased and
+            the card will be restarted. The new configured module-type
+            will be recorded. Since the configured module type is different
+            than the actual module type, a moduleMismatch trap will be sent,
+            and the harbourSlotModuleState for that module will show a
+            mismatch(3). Setting this variable to none(1) will clear the
+            previously assigned module-type of this slot, and all
+            configuration information related to the slot will be erased."
+    ::= { harbourSlotModuleEntry 3 }
+
+harbourSlotModuleInsertedType OBJECT-TYPE
+    SYNTAX      INTEGER {
+                    none(-1),
+                    BH-4GLX(0),
+                    BH-4GSX(1),
+                    BH-4GLX-B(2),
+                    BH-4GSX-B(3),
+                    BH-20FMM(4),
+                    BH-20FSM(5),
+                    BH-32FTX(6),
+                    BH11MCU(7),
+                    BH-8GSX-B(8),
+                    BH-8GLX-B(9),
+                    BH-4GBIC(10),
+                    BH-2GBIC(11),
+                    VDU(101),
+                    ADU(102),
+                    SMU(103),
+                    IVD(104),
+                    AMU(105),
+
+                    BH-2GBIC6GTX48FE(201),
+                    BH-2GBIC10GTX(202),
+                    BH-2GTX10GBIC(203),
+                    BH-2GBIC34GTX(204),
+                    BH6-MCU(205),
+                    BH-24GE-SFP(206),
+                    BH-24GE-TX(207),
+                    BH-4GBIC24FMM(208),
+                    BH-ESP-BU(209),
+                    BH-24FE-SFP(210),
+                    BH-48FE-TX(211),
+                    BH-4GE24FE-SFP(212),
+                    BH-2x10GE(213),
+                    ESP2-BU(214),
+                    ESP2-POS-1OC48-SFP(215),
+                    ESP-2GE-SFP(216),
+                    ESP-GE-2SFP(217),
+                    ESP-ATM-8OC3-SFP(218),
+                    ESP-POS-1OC48-SFP(219),
+                    ESP-POS-8OC3-SFP(220),
+                    BH-ESP-8FE-TX(221),
+                    NRP-1(222),
+
+                    CPC(301),
+                    SFC(302),
+                    LIC-4-OC-48C-POS(303),
+                    LIC-2-OC-48C-POS(304),
+                    LIC-16-GE(305),
+                    LIC-12-GE(306),
+                    LIC-8-GE(307),
+                    LIC-1-10G-LAN(308),
+                    LIC-1-10G-WAN(309),
+                    LIC-1-OC-192C-P0S(310),
+                    LIC-2-OC-48C-RPR(311),
+
+                    NH-PA-MCU(600),
+                    NH-PA-4E1(603),
+                    NH-PA-2FE(611),
+                    NH-PA-1GE(612),
+                    NH-PA-POS(613),
+                    NH-PA-8S(614),
+                    NH-PA-8E1(615),
+                    NH-PA-16E1(616),
+                                    
+                    NH-PA-8CE1(617),
+                    NH-PA-16CE1(618),
+                    NH-PA-4CE1(619),
+                    NH-PA-CPOSOC3SML(620),
+                    NH-PA-CPOSOC3SMI(621),
+                    NH-PA-CPOSOC3MM(622),
+                    NH-PA-CPOSSFP(623),
+                    NH-PA-ATMOC3SML(624),
+                    NH-PA-ATMOC3SMI(625),
+                    NH-PA-ATMOC3MM(626),
+                    NH-PA-ATMSFP(627),
+                    NH-PA-CE3(628),
+                    NH-PA-2FESFP(629),      
+                                    
+                    NH-PA-POS-OC3SML(701),
+                    NH-PA-POS-OC3SMI(702),
+                    NH-PA-POS-OC3MM(703) 
+                }
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "The module type inserted into the slot. It is possible
+            to have a slot inserted into the slot even though
+            harbourSlotConfiguredType is none(1) in later
+            release version."
+    ::= { harbourSlotModuleEntry 4 }
+
+harbourSlotModuleState OBJECT-TYPE
+    SYNTAX      INTEGER {
+                    notPresent(1),
+                    testing(2),
+                    mismatch(3),
+                    failed(4),          -- not work
+                    operational(5),     -- work well
+                    removing(6),        -- remove key down
+                    powerdown(7),       -- ready to plug out
+                    unknow(8)
+                }
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "The state of the module inserted in this slot."
+    ::= { harbourSlotModuleEntry 5 }
+
+harbourSlotModuleFirstPortNumber OBJECT-TYPE
+    SYNTAX      INTEGER
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "The portIndex of the first port on the module."
+    ::= { harbourSlotModuleEntry 6 }
+
+harbourSlotModuleNumberOfPorts OBJECT-TYPE
+    SYNTAX      INTEGER
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "The number of ports on the  module."
+    ::= { harbourSlotModuleEntry 7 }
+
+harbourSlotModuleSerialNumber OBJECT-TYPE
+    SYNTAX      DisplayString (SIZE (0..255))
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "The serial number of the module inserted in this slot."
+    ::= { harbourSlotModuleEntry 8 }
+
+harbourDeviceVersion OBJECT-TYPE
+    SYNTAX      INTEGER {
+                    v1(1),
+                    v2(2)
+                }
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "To show the version of device if diffrent versions belong to
+            the same type product."
+    ::= { harbourChassisGroup 6  }
+
+
+-- Standalone Group
+-- Features of standalone products, such as Flex series and Micro series
+
+harbourStandAloneGroup OBJECT IDENTIFIER ::=    { harbourSystem 3}
+
+-- Standalone Slot Table
+
+harbourSASlotTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF HarbourSASlotModuleEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+            "A table containing information about each slot in the
+            standalone product's slot."
+    ::= { harbourStandAloneGroup 5 }
+
+harbourSASlotModuleEntry OBJECT-TYPE
+    SYNTAX      HarbourSASlotModuleEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+            "A table entry containing information about the module in
+            each slot of the stand alone product."
+    INDEX       { harbourSASlotNumber }
+    ::= { harbourSASlotTable 1 }
+
+HarbourSASlotModuleEntry ::= SEQUENCE {
+    harbourSASlotNumber                     INTEGER,
+    harbourSASlotName                       DisplayString,
+    harbourSASlotModuleConfiguredType       INTEGER,
+    harbourSASlotModuleInsertedType         INTEGER,
+    harbourSASlotModuleState                INTEGER,
+    harbourSASlotModuleFirstPortNumber      INTEGER,
+    harbourSASlotModuleNumberOfPorts        INTEGER,
+    harbourSASlotModuleSerialNumber         DisplayString
+}
+
+harbourSASlotNumber OBJECT-TYPE
+    SYNTAX      INTEGER
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "A unique integer identifying the particular slot
+            in the chassis."
+    ::= { harbourSASlotModuleEntry 1 }
+
+harbourSASlotName   OBJECT-TYPE
+    SYNTAX      DisplayString (SIZE (0..100))
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "A name identifying the particular slot in the chassis,
+            Descriptive, such as FirstSlot,SecondSlot and so on."
+    ::= { harbourSASlotModuleEntry 2 }
+
+harbourSASlotModuleConfiguredType OBJECT-TYPE
+    SYNTAX      INTEGER {
+                    none(1),
+                    FH-6FTX(2),
+                    FH-6FTX(3),
+                    FH-4FMM(4),
+                    FH-4FSM(5),
+                    FH-1GLX(6),
+                    FH-1GSX(7),
+                    FH-RTU(8),
+                    FH-1GLX-L3(9),
+                    FH-1GSX-L3(10),
+                    FH-MOD-GBIC-NORMAL-1000MT(11),
+                    FH-MOD-GBIC-NORMAL-1000MLX(12),
+                    FH-MOD-GBIC-NORMAL-1000MSX(13),
+                    FH-MOD-GBIC-NORMAL-None(14),
+                    FH-1G-L3(15),
+
+                    UH24-1TX(51),
+                    UH24-2TX(52),
+                    UH24-1FMM(53),
+                    UH24-2FMM(54),
+                    UH24-1FSM(55),
+                    UH24-2FSM(56),
+                    UH24-1GLX(57),
+                    UH24-2GLX(58),
+                    UH24-1GSX(59),
+                    UH24-2GSX(60),
+                    UH24-1GTX(61),
+                    UH24-2GTX(62),
+                    UH24-2GTX-LX(63),
+                    UH24-2GTX-SX(64),
+                    UH24-1ST(65),
+
+                    FH5K-1TX(201),
+                    FH5K-2TX(202),
+                    FH5K-1FMM(203),
+                    FH5K-2FMM(204),
+                    FH5K-1FSM(205),
+                    FH5K-2FSM(206),
+                    FH5K-1GLX(207),
+                    FH5K-2GLX(208),
+                    FH5K-1GSX(209),
+                    FH5K-2GSX(210),
+                    FH5K-1GTX(211),
+                    FH5K-2GTX(212),
+                    FH5K-2GTX-LX(213),
+                    FH5K-2GTX-SX(214),
+                    FH5K-1GTX-GBIC(215),
+
+                    UH35-1TX(301),
+                    UH35-2TX(302),
+                    UH35-1FMM(303),
+                    UH35-2FMM(304),
+                    UH35-1FSM(305),
+                    UH35-2FSM(306),
+                    UH35-1GLX(307),
+                    UH35-2GLX(308),
+                    UH35-1GSX(309),
+                    UH35-2GSX(310),
+                    UH35-1GTX(311),
+                    UH35-2GTX(312),
+                    UH35-2GTX-LX(313),
+                    UH35-2GTX-SX(314),
+                    UH35-1GTX-GBIC(315),
+                               
+                    HC-1TX(401),
+		    HC-1GTX(402),
+		    HC-1SFP(403),
+		    HC-1FSM(404),
+		    HC-1FMM(405),
+		    HC-1ST(406),
+
+                    NETH-1FE(601),
+                    NETH-SAB(602),
+                    NETH-4E1(603),
+                    NETH-2E1(604),
+                    NETH-1E1(605),
+                    NETH-AUX(606),
+                    NETH-CON(607),
+                    NETH-4BS(608),
+                    NETH-8AS(609),
+                    NETH-4SA(610),
+                    NETH-16AS(611),
+                    NETH-8LSA(613),
+                    NETH-4T1(614),
+                    NETH-2T1(615),
+                    NETH-1T1(616),
+                    NETH-8AM(618),
+                    NETH-VPN(619),
+                    NETH-EVCARD(620),
+                    NETH-ADSL(621),
+                    NETH-2FE(622),
+
+                    WIC-1FE(701),
+                    WIC-2FE(702),
+                    WIC-FEC(703),
+                    WIC-1SA(704),
+                    WIC-2SA(705),
+                    WIC-1E1(706),
+                    WIC-1BS(707),
+                    WIC-8AS(708),
+                    WIC-1AM(712),
+                    WIC-2AM(713),
+                    WIC-AUDIOCARD(714),
+                    WIC-SWI(715),
+                    WIC-VPN(716),
+                    WIC-ADSL(717),
+                    NETH-4FXS(801), 		
+		    NETH-4FXO(802),		
+		    NETH-4EM(803) ,
+		    NETH-2S2O(804) ,
+
+                    NETH-1SFX(821),
+		    NETH-1MFX(822),
+				    
+		    WIC-2FXS(901),
+		    WIC-2FXO(902),
+		    WIC-2EM(903),				   
+                                    
+		    NH-HNM-20FE1GTX(950),
+		    NH-HNM-POS-OC3SFP(951),
+		    NH-HNM-ATM-OC3SFP(952),
+		    NH-HNM-4cE1(953),
+		    NH-HNM-4FE(954)
+            }
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "The configured module type for the given slot.
+            At startup, the module-type is none(1). It is
+            possible to configure the module-type even if there
+            is no module in the slot. If the current module in the
+            slot is different than the requested configured module-type,
+            then the current configuration for the module is erased and
+            the card will be restarted. The new configured module-type
+            will be recorded. Since the configured module type is different
+            than the actual module type, a moduleMismatch trap will be sent,
+            and the harbourSASlotModuleState for that module will show a
+            mismatch(3). Setting this variable to none(1) will clear the
+            previously assigned module-type of this slot, and all
+            configuration information related to the slot will be erased."
+    ::= { harbourSASlotModuleEntry 3 }
+
+harbourSASlotModuleInsertedType OBJECT-TYPE
+    SYNTAX      INTEGER {
+                    none(1),
+                    FH-6FTX(2),
+                    FH-6FTX(3),
+                    FH-4FMM(4),
+                    FH-4FSM(5),
+                    FH-1GLX(6),
+                    FH-1GSX(7),
+                    FH-RTU(8),
+                    FH-1GLX-L3(9),
+                    FH-1GSX-L3(10),
+                    FH-MOD-GBIC-NORMAL-1000MT(11),
+                    FH-MOD-GBIC-NORMAL-1000MLX(12),
+                    FH-MOD-GBIC-NORMAL-1000MSX(13),
+                    FH-MOD-GBIC-NORMAL-None(14),
+                    FH-1G-L3(15),
+
+                    UH24-1TX(51),
+                    UH24-2TX(52),
+                    UH24-1FMM(53),
+                    UH24-2FMM(54),
+                    UH24-1FSM(55),
+                    UH24-2FSM(56),
+                    UH24-1GLX(57),
+                    UH24-2GLX(58),
+                    UH24-1GSX(59),
+                    UH24-2GSX(60),
+                    UH24-1GTX(61),
+                    UH24-2GTX(62),
+                    UH24-2GTX-LX(63),
+                    UH24-2GTX-SX(64),
+                    UH24-1ST(65),
+
+                    FH5K-1TX(201),
+                    FH5K-2TX(202),
+                    FH5K-1FMM(203),
+                    FH5K-2FMM(204),
+                    FH5K-1FSM(205),
+                    FH5K-2FSM(206),
+                    FH5K-1GLX(207),
+                    FH5K-2GLX(208),
+                    FH5K-1GSX(209),
+                    FH5K-2GSX(210),
+                    FH5K-1GTX(211),
+                    FH5K-2GTX(212),
+                    FH5K-2GTX-LX(213),
+                    FH5K-2GTX-SX(214),
+                    FH5K-1GTX-GBIC(215),
+
+                    UH35-1TX(301),
+                    UH35-2TX(302),
+                    UH35-1FMM(303),
+                    UH35-2FMM(304),
+                    UH35-1FSM(305),
+                    UH35-2FSM(306),
+                    UH35-1GLX(307),
+                    UH35-2GLX(308),
+                    UH35-1GSX(309),
+                    UH35-2GSX(310),
+                    UH35-1GTX(311),
+                    UH35-2GTX(312),
+                    UH35-2GTX-LX(313),
+                    UH35-2GTX-SX(314),
+                    UH35-1GTX-GBIC(315),
+                    
+                    HC-1TX(401),
+		    HC-1GTX(402),
+		    HC-1SFP(403),
+		    HC-1FSM(404),
+		    HC-1FMM(405),
+		    HC-1ST(406),
+                                     
+                    NETH-1FE(601),
+                    NETH-SAB(602),
+                    NETH-4E1(603),
+                    NETH-2E1(604),
+                    NETH-1E1(605),
+                    NETH-AUX(606),
+                    NETH-CON(607),
+                    NETH-4BS(608),
+                    NETH-8AS(609),
+                    NETH-4SA(610),
+                    NETH-16AS(611),
+                    NETH-8LSA(613),
+                    NETH-4T1(614),
+                    NETH-2T1(615),
+                    NETH-1T1(616),
+                    NETH-8AM(618),
+                    NETH-VPN(619),
+                    NETH-EVCARD(620),
+                    NETH-ADSL(621),
+                    NETH-2FE(622),
+
+                    WIC-1FE(701),
+                    WIC-2FE(702),
+                    WIC-FEC(703),
+                    WIC-1SA(704),
+                    WIC-2SA(705),
+                    WIC-1E1(706),
+                    WIC-1BS(707),
+                    WIC-8AS(708),
+                    WIC-1AM(712),
+                    WIC-2AM(713),
+                    WIC-AUDIOCARD(714),
+                    WIC-SWI(715),
+                    WIC-VPN(716),
+                    WIC-ADSL(717),
+                    NETH-4FXS(801), 		
+		    NETH-4FXO(802),		
+		    NETH-4EM(803) ,
+		    NETH-2S2O(804) ,
+
+                    NETH-1SFX(821),
+		    NETH-1MFX(822),
+				    
+		    WIC-2FXS(901),
+		    WIC-2FXO(902),
+		    WIC-2EM(903),				   
+                                    
+		    NH-HNM-20FE1GTX(950),
+		    NH-HNM-POS-OC3SFP(951),
+		    NH-HNM-ATM-OC3SFP(952),
+		    NH-HNM-4cE1(953),
+		    NH-HNM-4FE(954)
+            }
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "The module type inserted into the slot. It is possible
+            to have a slot inserted into the slot even though
+            harbourSlotConfiguredType is none(1) in later
+            release version."
+    ::= { harbourSASlotModuleEntry 4 }
+
+harbourSASlotModuleState OBJECT-TYPE
+    SYNTAX      INTEGER {
+                    notPresent(1),
+                    testing(2),
+                    mismatch(3),
+                    failed(4),      -- not work
+                    operational(5), -- work well
+                    unknow(6)
+            }
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "The state of the module inserted in this slot."
+    ::= { harbourSASlotModuleEntry 5 }
+
+harbourSASlotModuleFirstPortNumber OBJECT-TYPE
+    SYNTAX      INTEGER
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "The portIndex of the first port on the module."
+    ::= { harbourSASlotModuleEntry 6 }
+
+harbourSASlotModuleNumberOfPorts OBJECT-TYPE
+    SYNTAX      INTEGER
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "The number of ports on the  module."
+    ::= { harbourSASlotModuleEntry 7 }
+
+harbourSASlotModuleSerialNumber OBJECT-TYPE
+    SYNTAX      DisplayString (SIZE (0..255))
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "The serial number of the module inserted in this slot."
+    ::= { harbourSASlotModuleEntry 8 }
+
+
+END

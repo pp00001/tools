@@ -1,0 +1,361 @@
+    WINDOWS-NT-PERFORMANCE-EXCHANGE DEFINITIONS ::= BEGIN
+    IMPORTS
+        enterprises
+            FROM RFC1155-SMI
+        OBJECT-TYPE
+            FROM RFC1212-MIB
+        DisplayString
+            FROM RFC1213-MIB;
+
+    microsoft   OBJECT IDENTIFIER ::= { enterprises 311 }
+    software    OBJECT IDENTIFIER ::= { microsoft 1 }
+    systems     OBJECT IDENTIFIER ::= { software 1 }
+    os          OBJECT IDENTIFIER ::= { systems 3 }
+    winnt       OBJECT IDENTIFIER ::= { os 1 }
+    performance OBJECT IDENTIFIER ::= { winnt 1 }
+
+
+
+    -- mSExchangeMTA MIB
+
+    mSExchangeMTA OBJECT IDENTIFIER ::= { performance 1 }
+
+    mtaAdjacentMTAAssociations OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Adjacent MTA Associations is the number of open associations this MTA has to other MTAs."
+        ::= { mSExchangeMTA 1 }
+
+    mtaMessagesPerSec OBJECT-TYPE
+        SYNTAX Counter
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Messages/sec is the rate that messages are processed."
+        ::= { mSExchangeMTA 2 }
+
+    mtaMessageBytesPerSec OBJECT-TYPE
+        SYNTAX Counter
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Message Bytes/sec is the rate that message bytes are processed."
+        ::= { mSExchangeMTA 3 }
+
+    mtaFreeElements OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Free Elements is the number of free buffer elements in the MTA pool."
+        ::= { mSExchangeMTA 4 }
+
+    mtaFreeHeaders OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Free Headers is the number of free buffer headers in the MTA pool."
+        ::= { mSExchangeMTA 5 }
+
+    mtaAdminConnections OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Admin Connections is the number of Microsoft Exchange Administrator programs connected to this MTA."
+        ::= { mSExchangeMTA 6 }
+
+    mtaThreadsInUse OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Threads in Use is the number of threads in use by the MTA (does not include RPC threads). This number can be used to determine whether additional processors could be of benefit."
+        ::= { mSExchangeMTA 7 }
+
+    mtaWorkQueueLength OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Work Queue Length is the number of outstanding messages in the Work Queue, which indicates the number of messages not yet processed to completion by the MTA."
+        ::= { mSExchangeMTA 8 }
+
+    mtaXAPIGateways OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "XAPI Gateways is the number of gateways connected to the MTA using the XAPI MT/OM interface. A single gateway may have multiple XAPI gateway sessions."
+        ::= { mSExchangeMTA 9 }
+
+    mtaXAPIClients OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "XAPI Clients is the number of XAPI clients connected to the MTA using the XAPI MA/OM interface. A single client may have multiple XAPI client sessions."
+        ::= { mSExchangeMTA 10 }
+
+    mtaDiskFileDeletesPerSec OBJECT-TYPE
+        SYNTAX Counter
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Disk File Deletes/sec is the rate of disk file delete operations."
+        ::= { mSExchangeMTA 11 }
+
+    mtaDiskFileSyncsPerSec OBJECT-TYPE
+        SYNTAX Counter
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Disk File Syncs/sec is the rate of disk file sync operations."
+        ::= { mSExchangeMTA 12 }
+
+    mtaDiskFileOpensPerSec OBJECT-TYPE
+        SYNTAX Counter
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Disk File Opens/sec is the rate of disk file open operations."
+        ::= { mSExchangeMTA 13 }
+
+    mtaDiskFileReadsPerSec OBJECT-TYPE
+        SYNTAX Counter
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Disk File Reads/sec is the rate of disk file read operations."
+        ::= { mSExchangeMTA 14 }
+
+    mtaDiskFileWritesPerSec OBJECT-TYPE
+        SYNTAX Counter
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Disk File Writes/sec is the rate of disk file write operations."
+        ::= { mSExchangeMTA 15 }
+
+    mtaExDSReadCallsPerSec OBJECT-TYPE
+        SYNTAX Counter
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "ExDS Read Calls/sec is the rate of read calls to the directory service."
+        ::= { mSExchangeMTA 16 }
+
+    mtaXAPIReceiveBytesPerSec OBJECT-TYPE
+        SYNTAX Counter
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "XAPI Receive Bytes/sec is the rate that bytes are received over a XAPI connection."
+        ::= { mSExchangeMTA 17 }
+
+    mtaXAPITransmitBytesPerSec OBJECT-TYPE
+        SYNTAX Counter
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "XAPI Transmit Bytes/sec is the rate that bytes are transmitted over a XAPI connection."
+        ::= { mSExchangeMTA 18 }
+
+    mtaAdminInterfaceReceiveBytesPerSec OBJECT-TYPE
+        SYNTAX Counter
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Admin Interface Receive Bytes/sec is the rate that bytes are received over an Admin connection."
+        ::= { mSExchangeMTA 19 }
+
+    mtaAdminInterfaceTransmitBytesPerSec OBJECT-TYPE
+        SYNTAX Counter
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Admin Interface Transmit Bytes/sec is the rate that bytes are transmitted over an Admin connection."
+        ::= { mSExchangeMTA 20 }
+
+    mtaLANReceiveBytesPerSec OBJECT-TYPE
+        SYNTAX Counter
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "LAN Receive Bytes/sec is the rate that bytes are received over a LAN from MTAs."
+        ::= { mSExchangeMTA 21 }
+
+    mtaLANTransmitBytesPerSec OBJECT-TYPE
+        SYNTAX Counter
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "LAN Transmit Bytes/sec is the rate that bytes are transmitted over a LAN to MTAs."
+        ::= { mSExchangeMTA 22 }
+
+    mtaRASReceiveBytesPerSec OBJECT-TYPE
+        SYNTAX Counter
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "RAS Receive Bytes/sec is the rate that bytes are received over a RAS connection."
+        ::= { mSExchangeMTA 23 }
+
+    mtaRASTransmitBytesPerSec OBJECT-TYPE
+        SYNTAX Counter
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "RAS Transmit Bytes/sec is the rate that bytes are transmitted over a RAS connection."
+        ::= { mSExchangeMTA 24 }
+
+    mtaTCPPerIPReceiveBytesPerSec OBJECT-TYPE
+        SYNTAX Counter
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "TCP/IP Receive Bytes/sec is the rate that bytes are received over a TCP/IP connection."
+        ::= { mSExchangeMTA 25 }
+
+    mtaTCPPerIPTransmitBytesPerSec OBJECT-TYPE
+        SYNTAX Counter
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "TCP/IP Transmit Bytes/sec is the rate that bytes are transmitted over a TCP/IP connection."
+        ::= { mSExchangeMTA 26 }
+
+    mtaTP4ReceiveBytesPerSec OBJECT-TYPE
+        SYNTAX Counter
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "TP4 Receive Bytes/sec is the rate that bytes are received over a TP4 connection."
+        ::= { mSExchangeMTA 27 }
+
+    mtaTP4TransmitBytesPerSec OBJECT-TYPE
+        SYNTAX Counter
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "TP4 Transmit Bytes/sec is the rate that bytes are transmitted over a TP4 connection."
+        ::= { mSExchangeMTA 28 }
+
+    mtaX25ReceiveBytesPerSec OBJECT-TYPE
+        SYNTAX Counter
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "X.25 Receive Bytes/sec is the rate that bytes are received over an X.25 connection."
+        ::= { mSExchangeMTA 29 }
+
+    mtaX25TransmitBytesPerSec OBJECT-TYPE
+        SYNTAX Counter
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "X.25 Transmit Bytes/sec is the rate that bytes are transmitted over an X.25 connection."
+        ::= { mSExchangeMTA 30 }
+
+    mtaDeferredDeliveryMsgs OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Deferred Delivery Msgs is the total number of deferred delivery messages currently stored in the MTA."
+        ::= { mSExchangeMTA 31 }
+
+    mtaTotalRecipientsQueued OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Total Recipients Queued is the total number of recipients specified in all messages currently stored in the MTA."
+        ::= { mSExchangeMTA 32 }
+
+    mtaTotalSuccessfulConversions OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Total Successful Conversions is the total number of messages successfully converted from one form to another since MTA initialization."
+        ::= { mSExchangeMTA 33 }
+
+    mtaTotalFailedConversions OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Total Failed Conversions is the total number of messages which failed to be converted from one form to another since MTA initialization."
+        ::= { mSExchangeMTA 34 }
+
+    mtaTotalLoopsDetected OBJECT-TYPE
+        SYNTAX INTEGER
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Total Loops Detected is the total number  of messages detected to have looped since MTA initialization."
+        ::= { mSExchangeMTA 35 }
+
+    mtaInboundMessagesTotal OBJECT-TYPE
+        SYNTAX Counter
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Inbound Messages Total is the total number of messages received since MTA initialization."
+        ::= { mSExchangeMTA 36 }
+
+    mtaOutboundMessagesTotal OBJECT-TYPE
+        SYNTAX Counter
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Outbound Messages Total is the total number of messages transmitted since MTA initialization."
+        ::= { mSExchangeMTA 37 }
+
+    mtaInboundBytesTotal OBJECT-TYPE
+        SYNTAX Counter
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Inbound Bytes Total is the total volume of message content received since MTA initialization, measured in kilobytes."
+        ::= { mSExchangeMTA 38 }
+
+    mtaWorkQueueBytes OBJECT-TYPE
+        SYNTAX Counter
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Work Queue Bytes is the total volume of message content currently stored in the MTA, measured in kilobytes."
+        ::= { mSExchangeMTA 39 }
+
+    mtaOutboundBytesTotal OBJECT-TYPE
+        SYNTAX Counter
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Outbound Bytes Total is the total volume of message content transmitted since MTA initialization, measured in kilobytes."
+        ::= { mSExchangeMTA 40 }
+
+    mtaTotalRecipientsInbound OBJECT-TYPE
+        SYNTAX Counter
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Total Recipients Inbound is the total number of recipients specified in all messages received since MTA initialization."
+        ::= { mSExchangeMTA 41 }
+
+    mtaTotalRecipientsOutbound OBJECT-TYPE
+        SYNTAX Counter
+        ACCESS read-only
+        STATUS mandatory
+        DESCRIPTION
+            "Total Recipients Outbound is the total number of recipients specified in all messages transmitted since MTA initialization."
+        ::= { mSExchangeMTA 42 }
+
+
+
+    END

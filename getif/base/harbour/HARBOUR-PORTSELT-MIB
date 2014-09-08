@@ -1,0 +1,213 @@
+-- =======================================================================
+-- Version info
+--
+-- Version 0.1 Created 2001.07.22 by Yaoliyong
+-- This version of MIB is created just for the use of Network Management Systems
+-- display and config the HammerSeries Switch 's connection control.
+--
+-- Copyright(c) 2000-2001 by Harbour Networks, Ltd.
+-- =======================================================================
+
+HARBOUR-PORTSELT-MIB DEFINITIONS ::= BEGIN
+
+	IMPORTS
+                MODULE-IDENTITY FROM SNMPv2-SMI
+		DisplayString   FROM RFC1213-MIB
+		OBJECT-TYPE     FROM SNMPv2-SMI
+                DSLAMSeries     FROM HARBOUR-BASE-MIB
+                Unsigned32	FROM SNMPv2-SMI
+                harbourifIndex  FROM HARBOUR-PORT-MIB;
+                
+                
+           
+    	
+                harbourPortSelt MODULE-IDENTITY
+                LAST-UPDATED "20030303"
+                ORGANIZATION "harbourNetworks, Inc."
+                CONTACT-INFO "www.harbournetworks.com"
+                DESCRIPTION "harbour port selt objects"
+        ::= { DSLAMSeries 6 }
+
+--     harbourportglobal    OBJECT IDENTIFIER  ::= { harbourPortSelt 1 }
+
+ 
+ 
+
+--harbourportselt
+--seltTable
+	seltTable OBJECT-TYPE
+	SYNTAX  SEQUENCE OF seltEntry
+	ACCESS  not-accessible
+	STATUS  deprecated
+	DESCRIPTION
+	      "perform single end loop test and store part of result."
+	::= { harbourPortSelt 1 }
+
+	seltEntry  OBJECT-TYPE
+	SYNTAX         seltEntry
+	MAX-ACCESS     not-accessible
+	STATUS         current
+	DESCRIPTION     
+	    "An entry in the seltTable."
+	INDEX          { harbourifIndex }
+	::= { seltTable 1 }
+	
+	seltEntry ::=
+	SEQUENCE {
+		testOperation		INTEGER,
+		capacity		INTEGER,
+		looplength		INTEGER,
+		loopgauge		INTEGER,
+		terminationType		INTEGER,
+		attainableUpstream	INTEGER,
+		attainableDownstream	INTEGER
+	}	
+	
+--	harbourifIndex     OBJECT-TYPE
+
+
+	testOperation         OBJECT-TYPE
+	SYNTAX         	      INTEGER {
+	                 	testing(1),
+	                 	usualstatus(0)
+	                       	}    
+	MAX-ACCESS     	      read-write
+	STATUS         	      current
+	DESCRIPTION
+	    "A unique integer set the particular user line to test."
+	::= { seltEntry 1 }
+	
+	capacity              OBJECT-TYPE
+	SYNTAX         	      INTEGER    
+	MAX-ACCESS     	      read-write
+	STATUS         	      current
+	DESCRIPTION
+	    "the capacity param value."
+	::= { seltEntry 2 }	
+	
+	looplength            OBJECT-TYPE
+	SYNTAX         	      INTEGER    
+	MAX-ACCESS     	      read-only
+	STATUS         	      current
+	DESCRIPTION
+	    "the loop length."
+	::= { seltEntry 3 }
+	
+	loopgauge             OBJECT-TYPE
+	SYNTAX         	      INTEGER    
+	MAX-ACCESS     	      read-only
+	STATUS         	      current
+	DESCRIPTION
+	    "the loop gauge."
+	::= { seltEntry 4 }	
+	
+	terminationType       OBJECT-TYPE
+	SYNTAX         	      INTEGER    
+	MAX-ACCESS     	      read-only
+	STATUS         	      current
+	DESCRIPTION
+	    "the termination type of the line."
+	::= { seltEntry 5 }
+	
+	attainableUpstream    OBJECT-TYPE
+	SYNTAX         	      INTEGER    
+	MAX-ACCESS     	      read-only
+	STATUS         	      current
+	DESCRIPTION
+	    "  Indicates the maximum currently attainable upstream
+ 
+ 		along the loop. This value will be equal or greater than
+ 
+ 		the current line rate."
+	::= { seltEntry 6 }	
+	
+	attainableDownstream  OBJECT-TYPE
+	SYNTAX         	      INTEGER    
+	MAX-ACCESS     	      read-only
+	STATUS         	      current
+	DESCRIPTION
+	    "  Indicates the maximum currently attainable downstream
+ 
+ 		along the loop. This value will be equal or greater than
+ 
+ 		the current line rate."
+	::= { seltEntry 7 }	
+			
+--seltResultArrayTable	      
+	seltResultArrayTable OBJECT-TYPE
+	SYNTAX  SEQUENCE OF seltResultArrayEntry
+	ACCESS  not-accessible
+	STATUS  deprecated
+	DESCRIPTION
+	      "store the array of some parameters."
+	::= { harbourPortSelt 2 }
+	
+	seltResultArrayEntry  OBJECT-TYPE
+	SYNTAX         seltResultArrayEntry
+	MAX-ACCESS     not-accessible
+	STATUS         current
+	DESCRIPTION     
+	    "An entry in the seltResultArrayTable."
+	INDEX          { harbourifIndex,arrayIndex }
+	::= { seltResultArrayTable 1 }	
+	
+	seltResultArrayEntry ::=
+	SEQUENCE {
+		arrayIndex		INTEGER,
+		inbandNoise		INTEGER,
+		terminalResponse	INTEGER,
+		upstream		INTEGER,
+		downstream		INTEGER
+	}	
+	
+	arrayIndex OBJECT-TYPE
+	SYNTAX         INTEGER
+	MAX-ACCESS     read-only
+	STATUS         current
+	DESCRIPTION
+	    "the graphic data index."
+	::= { seltResultArrayEntry 1 }		
+	
+	inbandNoise OBJECT-TYPE
+	SYNTAX         INTEGER
+	MAX-ACCESS     read-only
+	STATUS         current
+	DESCRIPTION
+	    "the graphic data of inbandNoise there are 256 data."
+	::= { seltResultArrayEntry 2 }	
+	
+	terminalResponse OBJECT-TYPE
+	SYNTAX         INTEGER
+	MAX-ACCESS     read-only
+	STATUS         current
+	DESCRIPTION
+	    "the graphic data of terminalResponse there are 180 data."
+	::= { seltResultArrayEntry 3 }	
+	
+	upstream       OBJECT-TYPE
+	SYNTAX         INTEGER
+	MAX-ACCESS     read-only
+	STATUS         current
+	DESCRIPTION
+	    "the graphic data of upstream there are 150 data."
+	::= { seltResultArrayEntry 4 }	
+	
+	downstream     OBJECT-TYPE
+	SYNTAX         INTEGER
+	MAX-ACCESS     read-only
+	STATUS         current
+	DESCRIPTION
+	    "the graphic data of downstream there are 150 data."
+	::= { seltResultArrayEntry 5 }
+	
+	-- seltengineIpaddr
+	seltengineIpaddr     OBJECT-TYPE
+	SYNTAX         DisplayString
+	MAX-ACCESS     read-write
+	STATUS         current
+	DESCRIPTION
+	    "Config selt engine ip address."
+	::= { harbourPortSelt 3}
+	
+	
+	END				      

@@ -1,0 +1,231 @@
+-- RADWin-QOS MIB  
+-- Version:   1.01
+-- Date:      Nov 18, 2008
+-- By:        Yossi Appleboum
+
+
+-- Change History
+
+-- 1.01		  Root OID fixed.
+
+-- 1.00		  BDU version.
+
+
+
+RADWIN-QOS-MIB DEFINITIONS ::= BEGIN
+
+IMPORTS
+      OBJECT-TYPE                    FROM SNMPv2-SMI;
+	       
+      
+--  BDU sub tree  
+enterprises     OBJECT IDENTIFIER ::= { iso org(3) dod(6) internet(1) private(4) 1 }
+radwin          OBJECT IDENTIFIER ::= { enterprises 4458 }   
+bdu             OBJECT IDENTIFIER ::= { radwin 7300 }
+bduStd 	    	OBJECT IDENTIFIER ::= { bdu 1} 	 
+bduGeneral OBJECT IDENTIFIER ::= { bduStd 1 }
+bduQoS     OBJECT IDENTIFIER ::= { bduGeneral 4 }
+
+--
+------------------------------------------------------------------------------
+--   QoS group       
+------------------------------------------------------------------------------
+portQoSTable OBJECT-TYPE
+	SYNTAX SEQUENCE OF PortQoSEntry
+	MAX-ACCESS not-accessible
+	STATUS current
+	DESCRIPTION 	"A table that contains all traps"
+	::= { bduQoS 1 }
+
+portQoSEntry OBJECT-TYPE
+	SYNTAX PortQoSEntry
+	MAX-ACCESS not-accessible
+	STATUS current
+	DESCRIPTION 	" A trap entry to the trap table"
+	INDEX  { qoSPortIx  }
+
+	::= { portQoSTable 1 }
+ 
+PortQoSEntry ::=
+	SEQUENCE {
+	  qoSPortIx     		INTEGER,          
+	  portDefaultPri    	INTEGER,               
+	  egressRateLimit    	INTEGER,               
+	  ingressPri0Limit   	INTEGER,
+	  ingressPri1Rate   	INTEGER,	  
+	  ingressPri2Rate   	INTEGER,	  
+  	  ingressPri3Rate   	INTEGER,	  
+	  ingressClassif8023ac  INTEGER,	  
+	  ingressClassifTOS     INTEGER,
+	  countingCriteria		INTEGER
+	}
+
+qoSPortIx OBJECT-TYPE
+	SYNTAX INTEGER 
+	MAX-ACCESS read-only
+	STATUS current
+	DESCRIPTION 	 "Port index in table."
+	::= { portQoSEntry 1 }
+
+portDefaultPri OBJECT-TYPE
+	SYNTAX INTEGER
+	{
+	  pri0(1),
+	  pri1(2),
+  	  pri2(3),
+	  pri3(4)  	  
+	} 
+	MAX-ACCESS read-write
+	STATUS current
+	DESCRIPTION      "Default priority for packets entering from this port."
+	::= { portQoSEntry 2 }
+
+egressRateLimit OBJECT-TYPE
+	SYNTAX INTEGER
+	{
+	  notLimited(1),
+	  limit64Kbps(2),
+	  limit128Kbps(3),
+	  limit192Kbps(4),
+	  limit256Kbps(5),
+	  limit320Kbps(6),
+	  limit384Kbps(7),  
+	  limit448Kbps(8),	  
+  	  limit512Kbps(9),
+	  limit576Kbps(10),
+	  limit640Kbps(11),
+	  limit704Kbps(12),  
+	  limit768Kbps(13),	  
+  	  limit832Kbps(14),  
+	  limit896Kbps(15),	  
+  	  limit960Kbps(16), 
+  	  limit1024Kbps(17),
+  	  limit1280Kbps(18),
+   	  limit1536Kbps(19),
+  	  limit1792Kbps(20),
+  	  limit2Mbps(21),  	  
+  	  limit4Mbps(22),  	  
+   	  limit6Mbps(23),  	  
+  	  limit8Mbps(24),  	  
+  	  limit10Mbps(25), 
+  	  limit20Mbps(26), 
+  	  limit40Mbps(27), 
+  	  limit60Mbps(28),  
+  	  limit80Mbps(29),  
+  	  limit100Mbps(30),  
+  	  limit400Mbps(31)  
+	} 
+	MAX-ACCESS read-write
+	STATUS current
+	DESCRIPTION      "Port egress rate limit."
+	::= { portQoSEntry 3 }
+
+ingressPri0Limit OBJECT-TYPE
+	SYNTAX INTEGER 
+	{
+	  notLimited(1),
+	  limit64Kbps(2),
+	  limit128Kbps(3),
+	  limit192Kbps(4),
+	  limit256Kbps(5),
+	  limit320Kbps(6),
+	  limit384Kbps(7),  
+	  limit448Kbps(8),	  
+  	  limit512Kbps(9),
+	  limit576Kbps(10),
+	  limit640Kbps(11),
+	  limit704Kbps(12),  
+	  limit768Kbps(13),	  
+  	  limit832Kbps(14),  
+	  limit896Kbps(15),	  
+  	  limit960Kbps(16), 
+  	  limit1024Kbps(17),
+  	  limit1280Kbps(18),
+   	  limit1536Kbps(19),
+  	  limit1792Kbps(20),
+  	  limit2Mbps(21),  	  
+  	  limit4Mbps(22),  	  
+   	  limit6Mbps(23),  	  
+  	  limit8Mbps(24),  	  
+  	  limit10Mbps(25), 
+  	  limit20Mbps(26), 
+  	  limit40Mbps(27), 
+  	  limit60Mbps(28),  
+  	  limit80Mbps(29),  
+  	  limit100Mbps(30),  
+  	  limit400Mbps(31)  
+	} 
+	MAX-ACCESS read-write
+	STATUS current
+	DESCRIPTION 	 "Port ingress rate limit for priority 0 packets."
+	::= { portQoSEntry 4 }
+
+ingressPri1Rate OBJECT-TYPE
+	SYNTAX INTEGER 
+	{
+	  sameAsPri0(1),
+	  twiceTheRateOfPri0(2)	  	  
+	} 
+	MAX-ACCESS read-write
+	STATUS current
+	DESCRIPTION 	 "Port ingress rate limit for priority 1 packets."
+	::= { portQoSEntry 5 }
+
+ingressPri2Rate OBJECT-TYPE
+	SYNTAX INTEGER 
+	{
+	  sameAsPri1(1),
+	  twiceTheRateOfPri1(2)	  	  
+	} 
+	MAX-ACCESS read-write
+	STATUS current
+	DESCRIPTION 	 "Port ingress rate limit for priority 2 packets."
+	::= { portQoSEntry 6 }
+
+ingressPri3Rate OBJECT-TYPE
+	SYNTAX INTEGER 
+	{
+	  sameAsPri2(1),
+	  twiceTheRateOfPri2(2)	  	  
+	} 
+	MAX-ACCESS read-write
+	STATUS current
+	DESCRIPTION 	 "Port ingress rate limit for priority 3 packets."
+	::= { portQoSEntry 7 }
+
+ingressClassif8023ac OBJECT-TYPE
+	SYNTAX INTEGER 
+	{
+	  enable(1),
+	  disable(2)	  	  
+	} 
+	MAX-ACCESS read-write
+	STATUS current
+	DESCRIPTION 	 "Classify incoming packets according to IEEE802.3ac"
+	::= { portQoSEntry 8 }
+
+ingressClassifTOS OBJECT-TYPE
+	SYNTAX INTEGER 
+	{
+	  enable(1),
+	  disable(2)	  	  
+	} 
+	MAX-ACCESS read-write
+	STATUS current
+	DESCRIPTION 	 "Classify incoming packets according TOS (IPv4) or DiffServ (IPv6)."
+	::= { portQoSEntry 9 }
+
+countingCriteria OBJECT-TYPE
+	SYNTAX INTEGER 
+	{
+	  countAll(1),
+	  countBcastMcastFUcast(2),
+	  countBcastMcast(3),	  
+	  countBcast(4)	  	  
+	} 
+	MAX-ACCESS read-write
+	STATUS current
+	DESCRIPTION 	 "Counting criteria for rate limiting."
+	::= { portQoSEntry 10 }
+
+END

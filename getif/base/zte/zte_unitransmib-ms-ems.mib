@@ -1,0 +1,165 @@
+-- ********************************************************************
+
+--  UnitransMib-MS-ems.mib
+
+--  Copyright (c) 2008 ZTE CORPORATION.All rights reserved.
+
+--  Description: This file includes EMS related difinitions 
+
+--  Version     v1.0
+
+--  Modification Record:
+
+--********************************************************************
+UnitransMib-MS-ems 
+DEFINITIONS ::= BEGIN
+IMPORTS
+    MODULE-IDENTITY, OBJECT-TYPE, NOTIFICATION-TYPE,
+    enterprises, Integer32, Unsigned32, IpAddress
+        FROM SNMPv2-SMI
+    TEXTUAL-CONVENTION, DisplayString, TimeStamp, DateAndTime
+        FROM SNMPv2-TC  
+    MODULE-COMPLIANCE, OBJECT-GROUP, NOTIFICATION-GROUP
+        FROM SNMPv2-CONF        
+        zteUnitransMS
+	FROM 
+	UnitransMib-MS-root	 
+        ObjectNVSList-T,NamingAttributes-T,CommunicationState-TC
+        FROM 
+        UnitransMib-MS-common;   
+        
+--*********************************************************************
+--
+--*********************************************************************         
+zteuEMS MODULE-IDENTITY
+        LAST-UPDATED   "0602130000Z"
+        ORGANIZATION   "ZTE"
+        CONTACT-INFO   "
+           ZTE Corporation
+           
+           Postal: 518057      
+           
+           via the WEB:  http://www.zte.com.cn                           
+            
+           via phone:    86-755-26773000"
+   DESCRIPTION
+      "This module describes ZTE Unitrans MIB."
+::= { zteUnitransMS 2 }
+
+-- ********************************************************************
+-- Table And Object  Definition
+-- ********************************************************************
+
+    zteuEMSTable OBJECT-TYPE
+        SYNTAX          SEQUENCE OF ZTEUEMSEntry
+        MAX-ACCESS      not-accessible
+        STATUS          current
+        DESCRIPTION
+                "This object presents EMS table"
+        ::= { zteuEMS 1 }
+    
+    zteuEMSEntry  OBJECT-TYPE
+        SYNTAX      ZTEUEMSEntry
+        MAX-ACCESS  not-accessible
+        STATUS  current
+        DESCRIPTION
+                "This object presents EMS Entry"        
+    INDEX{emsName}
+        ::= { zteuEMSTable 1 }    
+        
+    ZTEUEMSEntry  ::= 
+    SEQUENCE
+        {
+                emsName                 NamingAttributes-T,
+                emsUserLabel            DisplayString, 
+                emsType                 DisplayString,      
+                emsVersion              DisplayString,
+                emsAddress              DisplayString,  
+				emsCommState			CommunicationState-TC,
+                emsAdditionalInfo   	ObjectNVSList-T             
+        }     
+     emsName OBJECT-TYPE
+     SYNTAX NamingAttributes-T
+     MAX-ACCESS read-only
+     STATUS current
+     DESCRIPTION "
+     This variable presents object identifier
+     For details,please refer NamingAttributes-T's definition
+     "
+     ::= {zteuEMSEntry 1}    
+    
+     
+     emsUserLabel OBJECT-TYPE
+     SYNTAX DisplayString
+     MAX-ACCESS read-write
+     STATUS current
+     DESCRIPTION "
+     This variable presents user label
+     "
+     ::= {zteuEMSEntry 2}     
+     
+     emsType OBJECT-TYPE
+     SYNTAX DisplayString
+     MAX-ACCESS read-only
+     STATUS current
+     DESCRIPTION "
+     This variable presents EMS type,includes:
+       EMS      
+       SNMS
+       EMS/SNMS
+     "
+     ::= {zteuEMSEntry 3} 
+     
+     emsVersion OBJECT-TYPE
+     SYNTAX DisplayString
+     MAX-ACCESS read-only
+     STATUS current
+     DESCRIPTION "
+     This variable presents EMS version
+     "     
+     ::= {zteuEMSEntry 4}          
+     
+     emsAddress  OBJECT-TYPE
+     SYNTAX DisplayString
+     MAX-ACCESS read-only
+     STATUS current
+     DESCRIPTION "
+     This variable presents EMS address
+     "
+     ::= {zteuEMSEntry 5}
+
+	 emsCommState  OBJECT-TYPE
+     SYNTAX CommunicationState-TC
+     MAX-ACCESS read-only
+     STATUS current
+     DESCRIPTION "
+     This variable presents EMS address
+     "
+     ::= {zteuEMSEntry 6}
+     
+    emsAdditionalInfo  OBJECT-TYPE
+     SYNTAX ObjectNVSList-T
+     MAX-ACCESS read-write
+     STATUS current
+     DESCRIPTION "
+     This variable presents additional information
+     "
+     ::= {zteuEMSEntry 7}
+     
+     zteuEMSEntryGroup    OBJECT-GROUP
+             OBJECTS {
+					emsName 			,            
+					emsUserLabel		, 
+			    	emsType			    ,    	
+			    	emsVersion			,
+					emsAddress		    ,
+					emsCommState        ,
+			        emsAdditionalInfo    		
+                }
+             STATUS     current
+             DESCRIPTION
+                 "A collection of objects of emsEntry."
+    ::= { zteuEMS 20 }         
+    
+		
+    END

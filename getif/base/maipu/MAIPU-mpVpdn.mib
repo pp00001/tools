@@ -1,0 +1,365 @@
+-- *****************************************************************
+-- MAIPU-VPDN.mib:  Maipu enterprise device VPDN MIB file
+--
+--version 1.0.0.1, Sep 29, 2002 Huanglulu
+--
+-- Copyright (c)  by Maipu DataComm Inc.
+-- All rights reserved.
+-- 
+-- *****************************************************************
+--
+
+MAIPU-VPDN-MIB DEFINITIONS ::= BEGIN
+
+IMPORTS
+    RowStatus							FROM SNMPv2-TC
+    MODULE-IDENTITY, OBJECT-TYPE        FROM SNMPv2-SMI
+    mpMgmt                              FROM MAIPU-SMI;
+
+mpVpdnMib MODULE-IDENTITY
+    LAST-UPDATED "0102200000Z"
+    ORGANIZATION "Maipu DataComm"
+    CONTACT-INFO
+	"   Maipu DataComm
+		Customer Service
+
+		Postal: Consulate Drive
+			Chengdu, Sichuan  610041
+			China
+
+		Tel: 86-028-5161006
+
+		E-mail: office@maipu.com"
+    DESCRIPTION
+		"The assignments for Maipu router's MIB of VPDN infomation!"
+    ::= { mpMgmt 32 }
+
+
+-- ********************
+
+mpVpdnConf	OBJECT IDENTIFIER ::= { mpVpdnMib 1 }
+mpVpdnStat	OBJECT IDENTIFIER ::= { mpVpdnMib 2 }
+
+-- ********************
+
+-- ********************
+-- Configure
+-- ********************
+
+mpVpdnEnable	OBJECT-TYPE
+	SYNTAX INTEGER {
+				disable(1),
+				enable(2)
+					}
+    MAX-ACCESS read-write
+    STATUS current
+    DESCRIPTION
+		"VPDN激活."
+    ::= { mpVpdnConf 1 }
+
+-- ********************
+
+mpVpdnTable	OBJECT-TYPE
+    SYNTAX SEQUENCE OF MpVpdnEntry
+    MAX-ACCESS not-accessible
+    STATUS current
+    DESCRIPTION
+		"VPDN的配置表."
+    ::= { mpVpdnConf 2 }
+
+mpVpdnEntry	OBJECT-TYPE
+    SYNTAX MpVpdnEntry
+    MAX-ACCESS not-accessible
+    STATUS current
+    DESCRIPTION
+		"VPDN配置表条目."
+    INDEX { vpdnGroupNo }
+    ::= { mpVpdnTable 1 }
+
+MpVpdnEntry ::=	
+	SEQUENCE {
+		vpdnGroupNo	INTEGER,
+		vpdnMode	INTEGER,
+		vpdnProtType	INTEGER,
+		vpdnDomainName	OCTET STRING,
+		vpdnInitToIpAddr	IpAddress,
+		vpdnTermFromHost	OCTET STRING,
+		vpdnLocalName	OCTET STRING,
+		vpdnL2tpTunnelPwd	OCTET STRING,
+		vpdnL2tpTunnelAuth	INTEGER,
+		vpdnL2tpTunRecvWin	INTEGER,
+		vpdnVirtTemplateNo	INTEGER,
+		vpdnStatus	RowStatus
+			}
+			
+vpdnGroupNo	OBJECT-TYPE
+	SYNTAX INTEGER
+    MAX-ACCESS read-create
+    STATUS current
+    DESCRIPTION
+		"VPDN号."
+    ::= { mpVpdnEntry 1 }
+
+vpdnMode	OBJECT-TYPE
+	SYNTAX INTEGER {
+				accept-dialin(1),
+				accept-dialout(2),
+				request-dialin(3),
+				request-dialout(4)
+					}
+    MAX-ACCESS read-create
+    STATUS current
+    DESCRIPTION
+		"VPDN模式."
+    ::= { mpVpdnEntry 2 }
+
+vpdnProtType	OBJECT-TYPE
+	SYNTAX INTEGER {
+				l2tp(1),
+				pptp(2),
+				pppoe(3)
+					}
+    MAX-ACCESS read-create
+    STATUS current
+    DESCRIPTION
+		"VPDN协议类型."
+    ::= { mpVpdnEntry 3 }
+
+vpdnDomainName	OBJECT-TYPE
+	SYNTAX OCTET STRING
+    MAX-ACCESS read-create
+    STATUS current
+    DESCRIPTION
+		"VPDN域名."
+    ::= { mpVpdnEntry 4 }
+
+vpdnInitToIpAddr	OBJECT-TYPE
+	SYNTAX IpAddress
+    MAX-ACCESS read-create
+    STATUS current
+    DESCRIPTION
+		"VPDN初始化IP地址."
+    ::= { mpVpdnEntry 5 }
+
+vpdnTermFromHost	OBJECT-TYPE
+	SYNTAX OCTET STRING
+    MAX-ACCESS read-create
+    STATUS current
+    DESCRIPTION
+		"VPDN终结主机名."
+    ::= { mpVpdnEntry 6 }
+
+vpdnLocalName	OBJECT-TYPE
+	SYNTAX OCTET STRING
+    MAX-ACCESS read-create
+    STATUS current
+    DESCRIPTION
+		"VPDN本地名."
+    ::= { mpVpdnEntry 7 }
+
+vpdnL2tpTunnelPwd	OBJECT-TYPE
+	SYNTAX OCTET STRING
+    MAX-ACCESS read-create
+    STATUS current
+    DESCRIPTION
+		"VPDN的L2tp隧道密码."
+    ::= { mpVpdnEntry 8 }
+
+vpdnL2tpTunnelAuth	OBJECT-TYPE
+	SYNTAX	INTEGER {
+				disable(1),
+				enable(2)
+					}
+    MAX-ACCESS read-create
+    STATUS current
+    DESCRIPTION
+		"VPDN的L2tp是否需要认证."
+    ::= { mpVpdnEntry 9 }
+
+vpdnL2tpTunRecvWin	OBJECT-TYPE
+	SYNTAX	INTEGER (4..300)
+    MAX-ACCESS read-create
+    STATUS current
+    DESCRIPTION
+		"VPDN的L2tp的接收窗口大小."
+    ::= { mpVpdnEntry 10 }
+
+vpdnVirtTemplateNo	OBJECT-TYPE
+	SYNTAX INTEGER
+    MAX-ACCESS read-create
+    STATUS current
+    DESCRIPTION
+		"VPDN的虚拟模板号."
+    ::= { mpVpdnEntry 11 }
+
+vpdnStatus	OBJECT-TYPE
+	SYNTAX RowStatus
+    MAX-ACCESS read-create
+    STATUS current
+    DESCRIPTION
+		"VPDN配置表行状态."
+    ::= { mpVpdnEntry 12 }
+
+
+-- ********************
+-- Statistics
+-- ********************
+
+-- ********************
+-- L2tp Tunnel
+
+mpL2tpTunnelTable	OBJECT-TYPE
+    SYNTAX SEQUENCE OF MpL2tpTunnelEntry
+    MAX-ACCESS not-accessible
+    STATUS current
+    DESCRIPTION
+		"L2tp的隧道信息统计表."
+    ::= { mpVpdnStat 1 }
+
+mpL2tpTunnelEntry	OBJECT-TYPE
+    SYNTAX MpL2tpTunnelEntry
+    MAX-ACCESS not-accessible
+    STATUS current
+    DESCRIPTION
+		"L2tp的隧道信息统计表条目."
+    INDEX { l2tpTunnelLocalID }
+    ::= { mpL2tpTunnelTable 1 }
+
+MpL2tpTunnelEntry ::=	
+	SEQUENCE {
+		l2tpTunnelLocalID		INTEGER,
+		l2tpTunnelLocalName	OCTET STRING,
+		l2tpTunnelRemID		INTEGER,
+		l2tpTunnelRemName		OCTET STRING,
+		l2tpTunnelRemAddr		IpAddress,
+		l2tpTunnelPort		INTEGER,
+		l2tpTunnelSession		INTEGER,
+		l2tpTunnelState		OCTET STRING,
+			}
+			
+l2tpTunnelLocalID	OBJECT-TYPE
+	SYNTAX INTEGER
+    MAX-ACCESS read-only
+    STATUS current
+    DESCRIPTION
+		"L2tp隧道本地号."
+    ::= { mpL2tpTunnelEntry 1 }
+
+l2tpTunnelLocalName	OBJECT-TYPE
+	SYNTAX OCTET STRING
+    MAX-ACCESS read-only
+    STATUS current
+    DESCRIPTION
+		"L2tp隧道本地名."
+    ::= { mpL2tpTunnelEntry 2 }
+
+l2tpTunnelRemID	OBJECT-TYPE
+	SYNTAX INTEGER
+    MAX-ACCESS read-only
+    STATUS current
+    DESCRIPTION
+		"L2tp隧道远端号."
+    ::= { mpL2tpTunnelEntry 3 }
+
+l2tpTunnelRemName	OBJECT-TYPE
+	SYNTAX OCTET STRING
+    MAX-ACCESS read-only
+    STATUS current
+    DESCRIPTION
+		"L2tp隧道远端名."
+    ::= { mpL2tpTunnelEntry 4 }
+
+l2tpTunnelRemAddr	OBJECT-TYPE
+	SYNTAX IpAddress
+    MAX-ACCESS read-only
+    STATUS current
+    DESCRIPTION
+		"L2tp隧道远端地址."
+    ::= { mpL2tpTunnelEntry 5 }
+
+l2tpTunnelPort	OBJECT-TYPE
+	SYNTAX INTEGER
+    MAX-ACCESS read-only
+    STATUS current
+    DESCRIPTION
+		"L2tp隧道端口号."
+    ::= { mpL2tpTunnelEntry 6 }
+
+l2tpTunnelSession	OBJECT-TYPE
+	SYNTAX INTEGER
+    MAX-ACCESS read-only
+    STATUS current
+    DESCRIPTION
+		"L2tp隧道会话数."
+    ::= { mpL2tpTunnelEntry 7 }
+
+l2tpTunnelState	OBJECT-TYPE
+	SYNTAX OCTET STRING (SIZE(0..255))
+    MAX-ACCESS read-only
+    STATUS current
+    DESCRIPTION
+		"L2tp隧道状态."
+    ::= { mpL2tpTunnelEntry 8 }
+
+-- ********************
+-- L2tp Session
+
+mpL2tpSessionTable	OBJECT-TYPE
+    SYNTAX SEQUENCE OF MpL2tpSessionEntry
+    MAX-ACCESS not-accessible
+    STATUS current
+    DESCRIPTION
+		"L2tp的会话信息统计表."
+    ::= { mpVpdnStat 2 }
+
+mpL2tpSessionEntry	OBJECT-TYPE
+    SYNTAX MpL2tpSessionEntry
+    MAX-ACCESS not-accessible
+    STATUS current
+    DESCRIPTION
+		"L2tp的会话信息统计表条目."
+    INDEX { l2tpSessionLocalID }
+    ::= { mpL2tpSessionTable 1 }
+
+MpL2tpSessionEntry ::=	
+	SEQUENCE {
+		l2tpSessionLocalID	INTEGER,
+		l2tpSessionTunnelID	INTEGER,
+		l2tpSessionIfName	OCTET STRING,
+		l2tpSessionState	OCTET STRING
+			}
+			
+l2tpSessionLocalID	OBJECT-TYPE
+	SYNTAX INTEGER
+    MAX-ACCESS read-only
+    STATUS current
+    DESCRIPTION
+		"L2tp会话本地号."
+    ::= { mpL2tpSessionEntry 1 }
+
+l2tpSessionTunnelID	OBJECT-TYPE
+	SYNTAX INTEGER
+    MAX-ACCESS read-only
+    STATUS current
+    DESCRIPTION
+		"L2tp会话隧道号."
+    ::= { mpL2tpSessionEntry 2 }
+
+l2tpSessionIfName	OBJECT-TYPE
+	SYNTAX OCTET STRING
+    MAX-ACCESS read-only
+    STATUS current
+    DESCRIPTION
+		"L2tp会话接口名."
+    ::= { mpL2tpSessionEntry 3 }
+
+l2tpSessionState	OBJECT-TYPE
+	SYNTAX OCTET STRING
+    MAX-ACCESS read-only
+    STATUS current
+    DESCRIPTION
+		"L2tp会话状态."
+    ::= { mpL2tpSessionEntry 4 }
+
+END
+ 

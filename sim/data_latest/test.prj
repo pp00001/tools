@@ -1,0 +1,192 @@
+<?xml version="1.0"  encoding="UTF-8"?>
+<Networks name="Test">
+<Simulator initialState="up" port="161"
+  name="test" ipAddress="10.10.10.1">
+  <configFile name="data/config.xml"/>
+  <trapFile/>
+  <dataFile name="data/test.xml"/>
+  <device name="generic"/>
+</Simulator>
+<Simulator initialState="up" port="161"
+  name="1" ipAddress="10.10.10.2">
+  <configFile name="data/config.xml"/>
+  <trapFile/>
+  <dataFile name="data/1.xml"/>
+  <device name="generic"/>
+</Simulator>
+<Simulator initialState="up" port="161"
+  name="SunStorage" ipAddress="10.10.10.3">
+  <configFile name="data/config.xml"/>
+  <trapFile/>
+  <dataFile name="data/SunStorage.xml"/>
+  <device name="generic"/>
+</Simulator>
+<Simulator initialState="up" port="161"
+  name="c7200" ipAddress="10.10.10.4">
+  <configFile name="data/config.xml"/>
+  <trapFile/>
+  <dataFile name="data/c7200.xml"/>
+  <device name="generic"/>
+</Simulator>
+<Simulator initialState="up" port="161"
+  name="cisco7606" ipAddress="10.10.10.5">
+  <configFile name="data/config.xml"/>
+  <trapFile/>
+  <dataFile name="data/cisco7606.xml"/>
+  <device name="generic"/>
+</Simulator>
+<Simulator initialState="up" port="161"
+  name="cisco_6509" ipAddress="10.10.10.6">
+  <configFile name="data/config.xml"/>
+  <trapFile/>
+  <dataFile name="data/cisco_6509.xml"/>
+  <device name="generic"/>
+</Simulator>
+<Simulator initialState="up" port="161"
+  name="cisco_dbm" ipAddress="10.10.10.7">
+  <configFile name="data/config.xml"/>
+  <trapFile/>
+  <dataFile name="data/cisco_dbm.xml"/>
+  <device name="generic"/>
+</Simulator>
+<Simulator initialState="up" port="161"
+  name="eaton" ipAddress="10.10.10.8">
+  <configFile name="data/config.xml"/>
+  <trapFile/>
+  <dataFile name="data/eaton.xml"/>
+  <device name="generic"/>
+</Simulator>
+<Simulator initialState="up" port="161"
+  name="f5_v10" ipAddress="10.10.10.9">
+  <configFile name="data/config.xml"/>
+  <trapFile/>
+  <dataFile name="data/f5_v10.xml"/>
+  <device name="generic"/>
+</Simulator>
+<Simulator initialState="up" port="161"
+  name="f5_v9" ipAddress="10.10.10.10">
+  <configFile name="data/config.xml"/>
+  <trapFile/>
+  <dataFile name="data/f5_v9.xml"/>
+  <device name="generic"/>
+</Simulator>
+<Simulator initialState="up" port="161"
+  name="h3c_storage" ipAddress="10.10.10.11">
+  <configFile name="data/config.xml"/>
+  <trapFile/>
+  <dataFile name="data/h3c_storage.xml"/>
+  <device name="generic"/>
+</Simulator>
+<Simulator initialState="up" port="161"
+  name="h3c_wireless1" ipAddress="10.10.10.12">
+  <configFile name="data/config.xml"/>
+  <trapFile/>
+  <dataFile name="data/h3c_wireless1.xml"/>
+  <device name="generic"/>
+</Simulator>
+<Simulator initialState="up" port="161"
+  name="h3c_wireless2" ipAddress="10.10.10.13">
+  <configFile name="data/config.xml"/>
+  <trapFile/>
+  <dataFile name="data/h3c_wireless2.xml"/>
+  <device name="generic"/>
+</Simulator>
+<Simulator initialState="up" port="161"
+  name="hp_storage" ipAddress="10.10.10.14">
+  <configFile name="data/config.xml"/>
+  <trapFile/>
+  <dataFile name="data/hp_storage.xml"/>
+  <device name="generic"/>
+</Simulator>
+<Simulator initialState="up" port="161"
+  name="hpswitch" ipAddress="10.10.10.15">
+  <configFile name="data/config.xml"/>
+  <trapFile/>
+  <dataFile name="data/hpswitch.xml"/>
+  <device name="generic"/>
+</Simulator>
+<Simulator initialState="up" port="161"
+  name="huawei_usg" ipAddress="10.10.10.16">
+  <configFile name="data/config.xml"/>
+  <trapFile/>
+  <dataFile name="data/huawei_usg.xml"/>
+  <device name="generic"/>
+</Simulator>
+<Simulator initialState="up" port="161"
+  name="ibm" ipAddress="10.10.10.17">
+  <configFile name="data/config.xml"/>
+  <trapFile/>
+  <dataFile name="data/ibm.xml"/>
+  <device name="generic"/>
+</Simulator>
+<Simulator initialState="up" port="161"
+  name="ibm_switch" ipAddress="10.10.10.18">
+  <configFile name="data/config.xml"/>
+  <trapFile/>
+  <dataFile name="data/ibm_switch.xml"/>
+  <device name="generic"/>
+</Simulator>
+<Simulator initialState="up" port="161"
+  name="juniper" ipAddress="10.10.10.19">
+  <configFile name="data/config.xml"/>
+  <trapFile/>
+  <dataFile name="data/juniper.xml"/>
+  <device name="generic"/>
+</Simulator>
+<Simulator initialState="up" port="161"
+  name="juniper_nofan_notallpower" ipAddress="10.10.10.20">
+  <configFile name="data/config.xml"/>
+  <trapFile/>
+  <dataFile name="data/juniper_nofan_notallpower.xml"/>
+  <device name="generic"/>
+</Simulator>
+<Simulator initialState="up" port="161"
+  name="juniper_notallfan_nopower" ipAddress="10.10.10.21">
+  <configFile name="data/config.xml"/>
+  <trapFile/>
+  <dataFile name="data/juniper_notallfan_nopower.xml"/>
+  <device name="generic"/>
+</Simulator>
+<Simulator initialState="up" port="161"
+  name="maipu-2" ipAddress="10.10.10.22">
+  <configFile name="data/config.xml"/>
+  <trapFile/>
+  <dataFile name="data/maipu-2.xml"/>
+  <device name="generic"/>
+</Simulator>
+<Simulator initialState="up" port="161"
+  name="maipu" ipAddress="10.10.10.23">
+  <configFile name="data/config.xml"/>
+  <trapFile/>
+  <dataFile name="data/maipu.xml"/>
+  <device name="generic"/>
+</Simulator>
+<Simulator initialState="up" port="161"
+  name="netapp" ipAddress="10.10.10.24">
+  <configFile name="data/config.xml"/>
+  <trapFile/>
+  <dataFile name="data/netapp.xml"/>
+  <device name="generic"/>
+</Simulator>
+<Simulator initialState="up" port="161"
+  name="netscreen" ipAddress="10.10.10.25">
+  <configFile name="data/config.xml"/>
+  <trapFile/>
+  <dataFile name="data/netscreen.xml"/>
+  <device name="generic"/>
+</Simulator>
+<Simulator initialState="up" port="161"
+  name="overture" ipAddress="10.10.10.26">
+  <configFile name="data/config.xml"/>
+  <trapFile/>
+  <dataFile name="data/overture.xml"/>
+  <device name="generic"/>
+</Simulator>
+<Simulator initialState="up" port="161"
+  name="xiotech" ipAddress="10.10.10.27">
+  <configFile name="data/config.xml"/>
+  <trapFile/>
+  <dataFile name="data/xiotech.xml"/>
+  <device name="generic"/>
+</Simulator>
+</Networks>

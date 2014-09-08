@@ -1,0 +1,91 @@
+-- =======================================================================
+-- Version info
+--
+-- Version 0.1 Created 2001.06.05 by Yaoliyong
+-- This version of MIB is created just for the use of Network Management Systems
+-- display and config the HammerSeries Switch 's connection control.
+--
+-- Copyright(c) 2000-2001 by Harbour Networks, Ltd.
+-- =======================================================================
+
+
+-- ===========================================================================
+
+HARBOUR-DSLAMSMUPORT-MIB DEFINITIONS ::= BEGIN
+
+	IMPORTS
+    	MODULE-IDENTITY,
+        OBJECT-TYPE     FROM SNMPv2-SMI
+		DisplayString   FROM RFC1213-MIB
+        DSLAMSeries     FROM HARBOUR-BASE-MIB
+        Unsigned32		FROM SNMPv2-SMI;
+                
+           	
+    harbourDSLAMSMUPORT MODULE-IDENTITY
+        LAST-UPDATED "20020605"
+        ORGANIZATION "harbourNetworks, Inc."
+        CONTACT-INFO "www.harbournetworks.com"
+        DESCRIPTION "harbour IGMP-Snooping objects"
+    ::= { DSLAMSeries 3 }
+        
+        
+    UPSMALLBOARDTYPE          OBJECT IDENTIFIER ::= { harbourDSLAMSMUPORT 1 }
+    DOWNSMALLBOARDTYPE          OBJECT IDENTIFIER ::= { harbourDSLAMSMUPORT 2 }
+    UPSMALLBOARDPORTTOTAL          OBJECT IDENTIFIER ::= { harbourDSLAMSMUPORT 3 }
+    DOWNSMALLBOARDPORTTOTAL          OBJECT IDENTIFIER ::= { harbourDSLAMSMUPORT 4 }
+    UPSMALLBOARDPORTFIRSTNUM          OBJECT IDENTIFIER ::= { harbourDSLAMSMUPORT 5 }
+    DOWNSMALLBOARDPORTFIRSTNUM          OBJECT IDENTIFIER ::= { harbourDSLAMSMUPORT 6 }
+            
+            
+    UPSMALLBOARDTYPE OBJECT-TYPE
+    	SYNTAX  INTEGER 
+        ACCESS  read-only
+        STATUS  mandatory              
+        DESCRIPTION
+        	"Up small board port type.
+        	{10BaseTX(1),100BaseFX-SMF(2),100BaseFX-MMF(3),100BaseTX(4),1000BaseLX(5),1000BaseSX(6),100Base4ITX(7)}" 
+        ::= { harbourDSLAMSMUPORT 1 }
+
+    DOWNSMALLBOARDTYPE OBJECT-TYPE
+      	SYNTAX  INTEGER 
+        ACCESS  read-only
+        STATUS  mandatory              
+        DESCRIPTION
+        	"Down small board port type.
+             {10BaseTX(1),100BaseFX-SMF(2),100BaseFX-MMF(3),100BaseTX(4),1000BaseLX(5),1000BaseSX(6),100Base4ITX(7)}"
+       	::= { harbourDSLAMSMUPORT 2 }
+
+    UPSMALLBOARDPORTTOTAL OBJECT-TYPE
+        SYNTAX  INTEGER
+        ACCESS  read-only
+        STATUS  mandatory
+       	DESCRIPTION
+        	"Up small board port number total."
+        ::= { harbourDSLAMSMUPORT 3 }
+
+    DOWNSMALLBOARDPORTTOTAL OBJECT-TYPE
+       	SYNTAX  INTEGER
+        ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION
+        	"Down small board port number total."
+        ::= { harbourDSLAMSMUPORT 4 }
+
+    UPSMALLBOARDPORTFIRSTNUM OBJECT-TYPE
+        SYNTAX  INTEGER
+        ACCESS  read-only
+        STATUS  mandatory
+    	DESCRIPTION
+        	"Up small board first port number."
+    	::= { harbourDSLAMSMUPORT 5 }
+
+    DOWNSMALLBOARDPORTFIRSTNUM OBJECT-TYPE
+        SYNTAX  INTEGER
+        ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION
+        	"Up small board first port number."
+        ::= { harbourDSLAMSMUPORT 6 }              
+              
+END
+            

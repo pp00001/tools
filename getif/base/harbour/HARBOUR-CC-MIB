@@ -1,0 +1,1410 @@
+-- =======================================================================
+-- Connection Control info 
+--
+-- Version 0.1 Created 2001.10.17 by liuyanjun
+-- This version of MIB is created just for the use of Network Management Systems
+-- display and config the HammerSeries Switch 's connection control.
+--
+-- Copyright(c) 2000-2001 by Harbour Networks, Ltd.
+-- =======================================================================
+
+
+-- ===========================================================================
+
+--
+-- HARBOUR connection control objects
+--
+
+          HARBOUR-CC-MIB DEFINITIONS ::= BEGIN
+
+              IMPORTS
+		   IpAddress			FROM RFC1155-SMI
+                 DisplayString		FROM RFC1213-MIB
+                 OwnerString		FROM RMON-MIB
+                 MODULE-IDENTITY         	FROM SNMPv2-SMI
+                 OBJECT-TYPE		FROM SNMPv2-SMI
+                 Unsigned32	             	FROM SNMPv2-SMI
+		   MacAddress			FROM BRIDGE-MIB
+                 harbourAgent		FROM HARBOUR-BASE-MIB
+                 PortList		FROM Q-BRIDGE-MIB
+                LargePortList             FROM HARBOUR-PORT-MIB;
+              --  Connection Control MIB
+
+	   harbourCc MODULE-IDENTITY
+          	LAST-UPDATED 	"20011017"
+          	ORGANIZATION 	"Harbour Networks, Ltd."
+          	CONTACT-INFO 	"www.harbournetworks.com"
+          	DESCRIPTION  	
+          		"Harbour Connection Control objects: objects common to all platforms."
+          ::= { harbourAgent 3 }
+
+
+              harbourCcSystem   OBJECT IDENTIFIER ::= { harbourCc 1 }
+              harbourCcUser     OBJECT IDENTIFIER ::= { harbourCc 2 }
+              harbourCcDomain   OBJECT IDENTIFIER ::= { harbourCc 3 }
+              harbourCc8021x   OBJECT IDENTIFIER ::= { harbourCc 4 }
+              harbourCcDhcprelay   OBJECT IDENTIFIER ::= { harbourCc 5 }
+	      harbourNAS           OBJECT IDENTIFIER ::= { harbourCc 6 }
+
+
+          -- The Harbour Connection Control System Group
+          --
+          -- The harbour connection control group contains system
+          -- information.
+
+      
+          harbourCcArpDetectInterval OBJECT-TYPE
+              SYNTAX INTEGER
+              ACCESS read-write
+              STATUS current
+              DESCRIPTION
+                  "The arp dectect interval."
+              ::= { harbourCcSystem 1 }
+
+          harbourCcMaxUserConnectionPerDevice OBJECT-TYPE
+              SYNTAX INTEGER
+              ACCESS read-write
+              STATUS current
+              DESCRIPTION
+                  "The max permitted user num per device."
+              ::= { harbourCcSystem 2 }
+
+
+          -- The Max User Connection Per Port Table
+
+
+          harbourCcMaxUserConnectionPerPortTable OBJECT-TYPE
+              SYNTAX SEQUENCE OF harbourCcMaxUserConnectionPerPortEntry 
+              ACCESS not-accessible
+              STATUS current
+              DESCRIPTION
+                  "A list of MaxUserConnectionPerPort entries."
+              ::= { harbourCcSystem 3 }
+
+          harbourCcMaxUserConnectionPerPortEntry OBJECT-TYPE
+              SYNTAX harbourCcMaxUserConnectionPerPortEntry 
+              ACCESS not-accessible
+              STATUS current
+              DESCRIPTION
+                  "The max permitted user num per port."
+              INDEX { harbourCcMaxUserConnectionPerPortIndex }
+              ::= { harbourCcMaxUserConnectionPerPortTable 1 }
+
+          harbourCcMaxUserConnectionPerPortEntry ::= SEQUENCE {
+
+              harbourCcMaxUserConnectionPerPortIndex		INTEGER,
+              harbourCcMaxUserConnectionPerPortValue		INTEGER
+          }
+
+          harbourCcMaxUserConnectionPerPortIndex OBJECT-TYPE
+              SYNTAX INTEGER
+              ACCESS read-only
+              STATUS current
+              DESCRIPTION
+                  "The value of this object uniquely identifies this
+                  harbourCcMaxUserConnectionPerPort entry."
+              ::= { harbourCcMaxUserConnectionPerPortEntry 1 }
+
+          harbourCcMaxUserConnectionPerPortValue OBJECT-TYPE
+              SYNTAX INTEGER
+              ACCESS read-write
+              STATUS current
+              DESCRIPTION
+                  "The max permitted user num per port."
+              ::= { harbourCcMaxUserConnectionPerPortEntry 2 }
+
+
+          -- The Max User Connection Per Slot Table
+
+
+          harbourCcMaxUserConnectionPerSlotTable OBJECT-TYPE
+              SYNTAX SEQUENCE OF harbourCcMaxUserConnectionPerSlotEntry 
+              ACCESS not-accessible
+              STATUS current
+              DESCRIPTION
+                  "A list of MaxUserConnectionPerSlot entries."
+              ::= { harbourCcSystem 4 }
+
+          harbourCcMaxUserConnectionPerSlotEntry OBJECT-TYPE
+              SYNTAX harbourCcMaxUserConnectionPerSlotEntry 
+              ACCESS not-accessible
+              STATUS current
+              DESCRIPTION
+                  "The max permitted user num per slot."
+              INDEX { harbourCcMaxUserConnectionPerSlotIndex }
+              ::= { harbourCcMaxUserConnectionPerSlotTable 1 }
+
+          harbourCcMaxUserConnectionPerSlotEntry ::= SEQUENCE {
+
+              harbourCcMaxUserConnectionPerSlotIndex		INTEGER,
+              harbourCcMaxUserConnectionPerSlotValue		INTEGER
+          }
+
+          harbourCcMaxUserConnectionPerSlotIndex OBJECT-TYPE
+              SYNTAX INTEGER
+              ACCESS read-only
+              STATUS current
+              DESCRIPTION
+                  "The value of this object uniquely identifies this
+                  harbourCcMaxUserConnectionPerSlot entry."
+              ::= { harbourCcMaxUserConnectionPerSlotEntry 1 }
+
+          harbourCcMaxUserConnectionPerSlotValue OBJECT-TYPE
+              SYNTAX INTEGER
+              ACCESS read-write
+              STATUS current
+              DESCRIPTION
+                  "The max permitted user num per slot."
+              ::= { harbourCcMaxUserConnectionPerSlotEntry 2 }
+
+
+
+          -- The Harbour Connection Control User Group
+          --
+          -- The harbour connection control user group contains 
+          -- user information.
+
+
+          -- The Static User Table
+
+      
+          harbourCcStaticUserTable OBJECT-TYPE
+              SYNTAX SEQUENCE OF harbourCcStaticUserEntry 
+              ACCESS not-accessible
+              STATUS current
+              DESCRIPTION
+                  "A list of harbourCcStaticUser entries."
+              ::= { harbourCcUser 1 }
+
+          harbourCcStaticUserEntry OBJECT-TYPE
+              SYNTAX harbourCcStaticUserEntry 
+              ACCESS not-accessible
+              STATUS current
+              DESCRIPTION
+                  "The vlan static user entry."
+              INDEX { harbourCcStaticUserIndex }
+              ::= { harbourCcStaticUserTable 1 }
+
+          harbourCcStaticUserEntry ::= SEQUENCE {
+              harbourCcStaticUserIndex		INTEGER,
+              harbourCcStaticUserSlot		INTEGER,
+              harbourCcStaticUserPort		INTEGER,
+              harbourCcStaticUserVlanId		INTEGER,
+              harbourCcStaticUserMacAddress	MacAddress,
+              harbourCcStaticUserIpAddress	IpAddress,
+              harbourCcStaticUserOtherIndex	INTEGER,
+              harbourCcStaticUserName		OCTET STRING,
+              harbourCcStaticUserStatus		INTEGER
+          }
+
+          harbourCcStaticUserIndex OBJECT-TYPE
+              SYNTAX INTEGER
+              ACCESS read-only
+              STATUS current
+              DESCRIPTION
+                  "The value of this object uniquely identifies this
+                  static user entry."
+              ::= { harbourCcStaticUserEntry 1 }
+
+          harbourCcStaticUserSlot OBJECT-TYPE
+              SYNTAX INTEGER
+              ACCESS read-write
+              STATUS current
+              DESCRIPTION
+                  "The slot number."
+              ::= { harbourCcStaticUserEntry 2 }
+
+          harbourCcStaticUserPort OBJECT-TYPE
+              SYNTAX INTEGER
+              ACCESS read-write
+              STATUS current
+              DESCRIPTION
+                  "The port number."
+              ::= { harbourCcStaticUserEntry 3 }
+
+          harbourCcStaticUserVlanId OBJECT-TYPE
+              SYNTAX INTEGER
+              ACCESS read-write
+              STATUS current
+              DESCRIPTION
+                  "The vlan indentify."
+              ::= { harbourCcStaticUserEntry 4 }
+
+          harbourCcStaticUserMacAddress OBJECT-TYPE
+              SYNTAX MacAddress
+              ACCESS read-only
+              STATUS current
+              DESCRIPTION
+                  "The Mac address."
+              ::= { harbourCcStaticUserEntry 5 }
+
+          harbourCcStaticUserIpAddress OBJECT-TYPE
+              SYNTAX IpAddress
+              ACCESS read-write
+              STATUS current
+              DESCRIPTION
+                  "The Ip address."
+              ::= { harbourCcStaticUserEntry 6 }
+
+          harbourCcStaticUserOtherIndex OBJECT-TYPE
+              SYNTAX INTEGER
+              ACCESS read-only
+              STATUS current
+              DESCRIPTION
+                  "The user other index."
+              ::= { harbourCcStaticUserEntry 7 }
+
+          harbourCcStaticUserName OBJECT-TYPE
+              SYNTAX OCTET STRING
+              ACCESS read-write
+              STATUS current
+              DESCRIPTION
+                  "The radius server key."
+              ::= { harbourCcStaticUserEntry 8 }
+
+          harbourCcStaticUserStatus OBJECT-TYPE
+              SYNTAX INTEGER {
+                          valid(1),
+                          createRequest(2),
+                          underCreation(3),
+                          invalid(4),
+                          noActive(5),
+                          active(6)
+                      }
+              ACCESS read-write
+              STATUS current
+              DESCRIPTION
+                  "The user status."
+              ::= { harbourCcStaticUserEntry 9 }
+
+
+          -- The Online User Table
+
+
+          harbourCcOnlineUserTable OBJECT-TYPE
+              SYNTAX SEQUENCE OF harbourCcOnlineUserEntry 
+              ACCESS not-accessible
+              STATUS current
+              DESCRIPTION
+                  "A list of online user entries."
+              ::= { harbourCcUser 2 }
+
+          harbourCcOnlineUserEntry OBJECT-TYPE
+              SYNTAX harbourCcOnlineUserEntry 
+              ACCESS not-accessible
+              STATUS current
+              DESCRIPTION
+                  "The online user entry."
+              INDEX { harbourCcOnlineUserIndex, harbourCcOnlineUserClientIndex }
+              ::= { harbourCcOnlineUserTable 1 }
+
+          harbourCcOnlineUserEntry ::= SEQUENCE {
+              harbourCcOnlineUserIndex		INTEGER,
+              harbourCcOnlineUserClientIndex	INTEGER,
+              harbourCcOnlineUserSlot		INTEGER,
+              harbourCcOnlineUserPort		INTEGER,
+              harbourCcOnlineUserVlanId		INTEGER,
+              harbourCcOnlineUserMacAddress	MacAddress,
+              harbourCcOnlineUserIpAddress	IpAddress,
+              harbourCcOnlineUserType		INTEGER,
+              harbourCcOnlineUserStatus		INTEGER,
+              harbourCcOnlineUserOnlineTimeStr	DisplayString,
+              harbourCcOnlineUserAccessTimerStr	DisplayString,
+              harbourCcOnlineUserKickOff	INTEGER
+          }
+
+
+          harbourCcOnlineUserIndex OBJECT-TYPE
+              SYNTAX INTEGER 
+              ACCESS read-only
+              STATUS current
+              DESCRIPTION
+                  "The value of this object uniquely identifies this
+                  harbourCcOnlineUserEntry entry."
+              ::= { harbourCcOnlineUserEntry 1 }
+
+          harbourCcOnlineUserClientIndex OBJECT-TYPE
+              SYNTAX INTEGER 
+              ACCESS read-only
+              STATUS current
+              DESCRIPTION
+                  "The value of this object uniquely identifies this
+                  harbourCcOnlineUser client."
+              ::= { harbourCcOnlineUserEntry 2 }
+
+          harbourCcOnlineUserSlot OBJECT-TYPE
+              SYNTAX INTEGER 
+              ACCESS read-only
+              STATUS current
+              DESCRIPTION
+                  "The slot number."
+              ::= { harbourCcOnlineUserEntry 3 }
+
+          harbourCcOnlineUserPort OBJECT-TYPE
+              SYNTAX INTEGER 
+              ACCESS read-only
+              STATUS current
+              DESCRIPTION
+                  "The port number."
+              ::= { harbourCcOnlineUserEntry 4 }
+
+          harbourCcOnlineUserVlanId OBJECT-TYPE
+              SYNTAX INTEGER 
+              ACCESS read-only
+              STATUS current
+              DESCRIPTION
+                  "The vlan indentify."
+              ::= { harbourCcOnlineUserEntry 5 }
+
+          harbourCcOnlineUserMacAddress OBJECT-TYPE
+              SYNTAX MacAddress
+              ACCESS read-only
+              STATUS current
+              DESCRIPTION
+                  "The mac address."
+              ::= { harbourCcOnlineUserEntry 6 }
+
+          harbourCcOnlineUserIpAddress OBJECT-TYPE
+              SYNTAX IpAddress
+              ACCESS read-only
+              STATUS current
+              DESCRIPTION
+                  "The IP address."
+              ::= { harbourCcOnlineUserEntry 7 }
+
+          harbourCcOnlineUserType OBJECT-TYPE
+              SYNTAX INTEGER {
+                          unknown(0),
+                          dynamic(1),
+                          static(2),
+                          u8021x(3),
+                          pppoe(4),
+                          specialLine(5)
+                      } 
+              ACCESS read-only
+              STATUS current
+              DESCRIPTION
+                  "The user type."
+              ::= { harbourCcOnlineUserEntry 8 }
+
+          harbourCcOnlineUserStatus OBJECT-TYPE
+              SYNTAX INTEGER {
+
+                          init(1),
+                          waitUserInputAuthinfo(2),
+                          waitAuth(3),
+                          passAuth(4),
+                          passDhcp(5),
+                          online(6),
+                          leaving(7),
+                          leaved(8)
+                      } 
+              ACCESS read-only
+              STATUS current
+              DESCRIPTION
+                  "The user status."
+              ::= { harbourCcOnlineUserEntry 9 }
+
+          harbourCcOnlineUserOnlineTimeStr OBJECT-TYPE
+              SYNTAX DisplayString
+              ACCESS read-only
+              STATUS current
+              DESCRIPTION
+                  "The online timer string."
+              ::= { harbourCcOnlineUserEntry 10 }
+
+          harbourCcOnlineUserAccessTimerStr OBJECT-TYPE
+              SYNTAX DisplayString
+              ACCESS read-only
+              STATUS current
+              DESCRIPTION
+                  "The access timer string."
+              ::= { harbourCcOnlineUserEntry 11 }
+
+
+	 harbourCcOnlineUserKickOff OBJECT-TYPE
+             SYNTAX INTEGER {
+                          Ready(1),
+                          KickOff(2)
+                      }
+              ACCESS read-write
+              STATUS current
+              DESCRIPTION
+                  "Kick off the online user."
+              ::= { harbourCcOnlineUserEntry 12 }
+
+          -- The Active User Table
+
+
+          harbourCcActiveUserTable OBJECT-TYPE
+              SYNTAX SEQUENCE OF harbourCcActiveUserEntry 
+              ACCESS not-accessible
+              STATUS current
+              DESCRIPTION
+                  "A list of active user entries."
+              ::= { harbourCcUser 3 }
+
+          harbourCcActiveUserEntry OBJECT-TYPE
+              SYNTAX harbourCcActiveUserEntry 
+              ACCESS not-accessible
+              STATUS current
+              DESCRIPTION
+                  "The active user entry."
+              INDEX { harbourCcActiveUserIndex, harbourCcActiveUserClientIndex }
+              ::= { harbourCcActiveUserTable 1 }
+
+          harbourCcActiveUserEntry ::= SEQUENCE {
+              harbourCcActiveUserIndex		INTEGER,
+              harbourCcActiveUserClientIndex	INTEGER,
+              harbourCcActiveUserSlot		INTEGER,
+              harbourCcActiveUserPort		INTEGER,
+              harbourCcActiveUserVlanId		INTEGER,
+              harbourCcActiveUserMacAddress	MacAddress,
+              harbourCcActiveUserType		INTEGER,
+              harbourCcActiveUserStatus		INTEGER
+          }
+
+
+          harbourCcActiveUserIndex OBJECT-TYPE
+              SYNTAX INTEGER 
+              ACCESS read-only
+              STATUS current
+              DESCRIPTION
+                  "The value of this object uniquely identifies this
+                  harbourCcActiveUserEntry entry."
+              ::= { harbourCcActiveUserEntry 1 }
+
+          harbourCcActiveUserClientIndex OBJECT-TYPE
+              SYNTAX INTEGER 
+              ACCESS read-only
+              STATUS current
+              DESCRIPTION
+                  "The value of this object uniquely identifies this
+                  harbourCcActiveUser client."
+              ::= { harbourCcActiveUserEntry 2 }
+
+          harbourCcActiveUserSlot OBJECT-TYPE
+              SYNTAX INTEGER 
+              ACCESS read-only
+              STATUS current
+              DESCRIPTION
+                  "The slot number."
+              ::= { harbourCcActiveUserEntry 3 }
+
+          harbourCcActiveUserPort OBJECT-TYPE
+              SYNTAX INTEGER 
+              ACCESS read-only
+              STATUS current
+              DESCRIPTION
+                  "The port number."
+              ::= { harbourCcActiveUserEntry 4 }
+
+
+          harbourCcActiveUserVlanId OBJECT-TYPE
+              SYNTAX INTEGER 
+              ACCESS read-only
+              STATUS current
+              DESCRIPTION
+                  "The vlan indentify."
+              ::= { harbourCcActiveUserEntry 5 }
+
+
+          harbourCcActiveUserMacAddress OBJECT-TYPE
+              SYNTAX MacAddress
+              ACCESS read-only
+              STATUS current
+              DESCRIPTION
+                  "The mac address."
+              ::= { harbourCcActiveUserEntry 6 }
+
+          harbourCcActiveUserType OBJECT-TYPE
+              SYNTAX INTEGER  {
+                          unknown(0),
+                          dynamic(1),
+                          static(2),
+                          u8021x(3),
+                          pppoe(4),
+                          specialLine(5)
+                      } 
+
+              ACCESS read-only
+              STATUS current
+              DESCRIPTION
+                  "The user type."
+              ::= { harbourCcActiveUserEntry 7 }
+
+          harbourCcActiveUserStatus OBJECT-TYPE
+              SYNTAX INTEGER {
+                          noActive(5),
+                          active(6)
+                      } 
+              ACCESS read-only
+              STATUS current
+              DESCRIPTION
+                  "The user status."
+              ::= { harbourCcActiveUserEntry 8 }
+
+
+          -- The Harbour Connection Control Domain Group
+          --
+          -- The harbour connection control domain group contains 
+          -- domain information,include radius 
+          -- server and dhcp server.
+
+      
+          harbourCcDomainTable OBJECT-TYPE
+              SYNTAX SEQUENCE OF harbourCcDomainEntry 
+              ACCESS not-accessible
+              STATUS current
+              DESCRIPTION
+                  "A list of harbourCcDomain entries."
+              ::= { harbourCcDomain 1 }
+
+          harbourCcDomainEntry OBJECT-TYPE
+              SYNTAX harbourCcDomainEntry 
+              ACCESS not-accessible
+              STATUS current
+              DESCRIPTION
+                  "The domain entry."
+              INDEX { harbourCcDomainIndex }
+              ::= { harbourCcDomainTable 1 }
+
+          harbourCcDomainEntry ::= SEQUENCE {
+              harbourCcDomainIndex			INTEGER,
+              harbourCcDomainMaxUsers		INTEGER,
+              harbourCcDomainCurrentUsers		INTEGER,
+              harbourCcDomainName			DisplayString,
+              harbourCcDomainStatus		INTEGER
+          }
+
+          harbourCcDomainIndex OBJECT-TYPE
+              SYNTAX INTEGER 
+              ACCESS read-only
+              STATUS current
+              DESCRIPTION
+                  "The value of this object uniquely identifies this
+                  harbourCcDomain entry."
+              ::= { harbourCcDomainEntry 1 }
+
+          harbourCcDomainMaxUsers OBJECT-TYPE
+              SYNTAX INTEGER 
+              ACCESS read-write
+              STATUS current
+              DESCRIPTION
+                  "The max user number permitted of this domain."
+              ::= { harbourCcDomainEntry 2 }
+
+          harbourCcDomainCurrentUsers OBJECT-TYPE
+              SYNTAX INTEGER 
+              ACCESS read-only
+              STATUS current
+              DESCRIPTION
+                  "The current user number of this domain."
+              ::= { harbourCcDomainEntry 3 }
+
+          harbourCcDomainName OBJECT-TYPE
+              SYNTAX DisplayString 
+              ACCESS read-write
+              STATUS current
+              DESCRIPTION
+                  "The domain name."
+              ::= { harbourCcDomainEntry 4 }
+
+          harbourCcDomainStatus OBJECT-TYPE
+              SYNTAX INTEGER {
+                           valid(1),
+                           createRequest(2),
+                           underCreation(3),
+                           invalid(4)
+                      } 
+              ACCESS read-write
+              STATUS current
+              DESCRIPTION
+                  "The status of this domain."
+              ::= { harbourCcDomainEntry 5 }
+
+
+          -- The Radius Server Table
+
+
+          harbourCcRadiusTable OBJECT-TYPE
+              SYNTAX SEQUENCE OF harbourCcRadiusEntry 
+              ACCESS not-accessible
+              STATUS current
+              DESCRIPTION
+                  "A list of harbourCcRadius entries."
+              ::= { harbourCcDomain 2 }
+
+          harbourCcRadiusEntry OBJECT-TYPE
+              SYNTAX harbourCcRadiusEntry 
+              ACCESS not-accessible
+              STATUS current
+              DESCRIPTION
+                  "The radius server entry."
+              INDEX { harbourCcDomainIndex, harbourCcRadiusIndex }
+              ::= { harbourCcRadiusTable 1 }
+
+          harbourCcRadiusEntry ::= SEQUENCE {
+        --harbourCcDomainIndex			INTEGER,
+              harbourCcRadiusIndex			INTEGER,
+              harbourCcRadiusIsPrimary		INTEGER,
+              harbourCcRadiusIpAddress		IpAddress,
+              harbourCcRadiusAuthPortNumber	INTEGER,
+              harbourCcRadiusAcctPortNumber	INTEGER,
+              harbourCcRadiusKey			OCTET STRING,
+              harbourCcRadiusTimeOut		INTEGER,
+              harbourCcRadiusRetransmitNumber	INTEGER,
+              harbourCcRadiusAcctInterval		INTEGER,
+              harbourCcRadiusStatus		INTEGER
+          }
+
+
+          harbourCcRadiusIndex OBJECT-TYPE
+              SYNTAX INTEGER 
+              ACCESS read-only
+              STATUS current
+              DESCRIPTION
+                  "The value of this object uniquely identifies this
+                  harbourCcRadius entry."
+              ::= { harbourCcRadiusEntry 1 }
+
+          harbourCcRadiusIsPrimary OBJECT-TYPE
+              SYNTAX INTEGER 
+              ACCESS read-write
+              STATUS current
+              DESCRIPTION
+                  "The radius server is or isn't primary."
+              ::= { harbourCcRadiusEntry 2 }
+
+          harbourCcRadiusIpAddress OBJECT-TYPE
+              SYNTAX IpAddress 
+              ACCESS read-write
+              STATUS current
+              DESCRIPTION
+                  "The radius server IP address."
+              ::= { harbourCcRadiusEntry 3 }
+
+          harbourCcRadiusAuthPortNumber OBJECT-TYPE
+              SYNTAX INTEGER 
+              ACCESS read-write
+              STATUS current
+              DESCRIPTION
+                  "The radius server authentication port number."
+              ::= { harbourCcRadiusEntry 4 }
+
+          harbourCcRadiusAcctPortNumber OBJECT-TYPE
+              SYNTAX INTEGER 
+              ACCESS read-write
+              STATUS current
+              DESCRIPTION
+                  "The radius server account port number."
+              ::= { harbourCcRadiusEntry 5 }
+
+          harbourCcRadiusKey OBJECT-TYPE
+              SYNTAX OCTET STRING
+              ACCESS read-write
+              STATUS current
+              DESCRIPTION
+                  "The radius server key."
+              ::= { harbourCcRadiusEntry 6 }
+
+          harbourCcRadiusTimeOut OBJECT-TYPE
+              SYNTAX INTEGER 
+              ACCESS read-write
+              STATUS current
+              DESCRIPTION
+                  "The radius server timeout value."
+              ::= { harbourCcRadiusEntry 7 }
+
+          harbourCcRadiusRetransmitNumber OBJECT-TYPE
+              SYNTAX INTEGER 
+              ACCESS read-write
+              STATUS current
+              DESCRIPTION
+                  "The radius retransmit number."
+              ::= { harbourCcRadiusEntry 8 }
+
+          harbourCcRadiusAcctInterval OBJECT-TYPE
+              SYNTAX INTEGER 
+              ACCESS read-write
+              STATUS current
+              DESCRIPTION
+                  "The radius server acct interval."
+              ::= { harbourCcRadiusEntry 9 }
+
+          harbourCcRadiusStatus OBJECT-TYPE
+              SYNTAX INTEGER {
+                           valid(1),
+                           createRequest(2),
+                           underCreation(3),
+                           invalid(4)
+                      } 
+              ACCESS read-write
+              STATUS current
+              DESCRIPTION
+                  "The radius server status."
+              ::= { harbourCcRadiusEntry 10 }
+
+
+          -- The Dhcp Server Table
+
+
+          harbourCcDhcpTable OBJECT-TYPE
+              SYNTAX SEQUENCE OF harbourCcDhcpEntry 
+              ACCESS not-accessible
+              STATUS current
+              DESCRIPTION
+                  "A list of harbourCcDhcp entries."
+              ::= { harbourCcDomain 3 }
+
+          harbourCcDhcpEntry OBJECT-TYPE
+              SYNTAX harbourCcDhcpEntry 
+              ACCESS not-accessible
+              STATUS current
+              DESCRIPTION
+                  "The dhcp server entry."
+              INDEX { harbourCcDomainIndex, harbourCcDhcpIndex }
+              ::= { harbourCcDhcpTable 1 }
+
+          harbourCcDhcpEntry ::= SEQUENCE {
+        --harbourCcDomainIndex			INTEGER,
+              harbourCcDhcpIndex			INTEGER,
+              harbourCcDhcpIsPrimary		INTEGER,
+              harbourCcDhcpIpAddress		IpAddress,
+              harbourCcDhcpStatus			INTEGER
+          }
+
+          harbourCcDhcpIndex OBJECT-TYPE
+              SYNTAX INTEGER 
+              ACCESS read-only
+              STATUS current
+              DESCRIPTION
+                  "The value of this object uniquely identifies this
+                  harbourCcDhcp entry."
+              ::= { harbourCcDhcpEntry 1 }
+
+          harbourCcDhcpIsPrimary OBJECT-TYPE
+              SYNTAX INTEGER 
+              ACCESS read-write
+              STATUS current
+              DESCRIPTION
+                  "The dhcp server is or isn't the primary."
+              ::= { harbourCcDhcpEntry 2 }
+
+          harbourCcDhcpIpAddress OBJECT-TYPE
+              SYNTAX IpAddress 
+              ACCESS read-write
+              STATUS current
+              DESCRIPTION
+                  "The dhcp server IP address."
+              ::= { harbourCcDhcpEntry 3 }
+
+          harbourCcDhcpStatus OBJECT-TYPE
+              SYNTAX INTEGER {
+                           valid(1),
+                           createRequest(2),
+                           underCreation(3),
+                           invalid(4)
+                      } 
+              ACCESS read-write
+              STATUS current
+              DESCRIPTION
+                  "The dhcp server status."
+              ::= { harbourCcDhcpEntry 4 }
+
+
+
+          -- The Harbour Connection Control 8021x Group
+          --
+          -- The harbour connection control 8021x group contains some private 8021x config 
+          -- information.
+
+      
+          harbourCc8021xMultipleHostService OBJECT-TYPE
+              SYNTAX INTEGER{
+                          up(1),
+                          down(2)
+                      }
+              ACCESS read-write
+              STATUS current
+              DESCRIPTION
+                  "The status of the 8021x multipleHost service."
+              ::= { harbourCc8021x  1 }
+
+          harbourCc8021xMultipleHostNum OBJECT-TYPE
+              SYNTAX INTEGER
+              ACCESS read-write
+              STATUS current
+              DESCRIPTION
+                  "The numbers of the port supported by 8021x multipleHost service."
+              ::= { harbourCc8021x  2 }
+
+
+
+          -- The Harbour Connection Control Dhcp Relay Listen Group
+          --
+          -- The harbour connection control dhcp relay listen group contains 
+          -- dhcp relay listen vlan interface information
+
+      
+          -- The Dhcp Relay Listen Table
+
+
+          harbourCcDhcprListenTable OBJECT-TYPE
+              SYNTAX SEQUENCE OF harbourCcDhcprListenEntry 
+              ACCESS not-accessible
+              STATUS current
+              DESCRIPTION
+                  "A list of harbourCcDhcprListen entries."
+              ::= { harbourCcDhcprelay 1 }
+
+          harbourCcDhcprListenEntry OBJECT-TYPE
+              SYNTAX harbourCcDhcprListenEntry 
+              ACCESS not-accessible
+              STATUS current
+              DESCRIPTION
+                  "The dhcp relay listen entry."
+              INDEX { harbourCcDhcprListenIndex }
+              ::= { harbourCcDhcprListenTable 1 }
+
+          harbourCcDhcprListenEntry ::= SEQUENCE {
+              harbourCcDhcprListenIndex 		INTEGER,
+              harbourCcDhcprListenName		DisplayString,
+              harbourCcDhcprListenStatus		INTEGER
+          }
+
+          harbourCcDhcprListenIndex OBJECT-TYPE
+              SYNTAX INTEGER
+              ACCESS read-only
+              STATUS current
+              DESCRIPTION
+                  "The value of this object uniquely identifies this
+                  harbourCcDhcprListen entry."
+              ::= { harbourCcDhcprListenEntry 1 }
+
+          harbourCcDhcprListenName OBJECT-TYPE
+              SYNTAX DisplayString
+              ACCESS read-write
+              STATUS current
+              DESCRIPTION
+                  "The vlan interface name for dhcp relay listened."
+              ::= { harbourCcDhcprListenEntry 2 }
+
+          harbourCcDhcprListenStatus OBJECT-TYPE
+              SYNTAX INTEGER {
+                           valid(1),
+                           createRequest(2),
+                           underCreation(3),
+                           invalid(4)
+                      } 
+              ACCESS read-write
+              STATUS current
+              DESCRIPTION
+                  "The dhcp relay listen status."
+              ::= { harbourCcDhcprListenEntry 3 }
+
+
+
+          -- The Dhcp Relay Targetip Table
+
+
+          harbourCcDhcprTargetipTable OBJECT-TYPE
+              SYNTAX SEQUENCE OF harbourCcDhcprTargetipEntry 
+              ACCESS not-accessible
+              STATUS current
+              DESCRIPTION
+                  "A list of harbourCcDhcprTargetip entries."
+              ::= { harbourCcDhcprelay 2 }
+
+          harbourCcDhcprTargetipEntry OBJECT-TYPE
+              SYNTAX harbourCcDhcprTargetipEntry 
+              ACCESS not-accessible
+              STATUS current
+              DESCRIPTION
+                  "The dhcp relay targetip entry."
+              INDEX { harbourCcDhcprTargetipIndex }
+              ::= { harbourCcDhcprTargetipTable 1 }
+
+          harbourCcDhcprTargetipEntry ::= SEQUENCE {
+              harbourCcDhcprTargetipIndex 		INTEGER,
+              harbourCcDhcprTargetip			IpAddress,
+              harbourCcDhcprTargetipStatus		INTEGER
+          }
+
+          harbourCcDhcprTargetipIndex OBJECT-TYPE
+              SYNTAX INTEGER 
+              ACCESS read-only
+              STATUS current
+              DESCRIPTION
+                  "The value of this object uniquely identifies this
+                  harbourCcDhcprTargetip entry."
+              ::= { harbourCcDhcprTargetipEntry 1 }
+
+          harbourCcDhcprTargetip OBJECT-TYPE
+              SYNTAX IpAddress 
+              ACCESS read-write
+              STATUS current
+              DESCRIPTION
+                  "The target ip in the dhcp relay."
+              ::= { harbourCcDhcprTargetipEntry 2 }
+
+          harbourCcDhcprTargetipStatus OBJECT-TYPE
+              SYNTAX INTEGER {
+                           valid(1),
+                           createRequest(2),
+                           underCreation(3),
+                           invalid(4)
+                      } 
+              ACCESS read-write
+              STATUS current
+              DESCRIPTION
+                  "The dhcp relay targetip status."
+              ::= { harbourCcDhcprTargetipEntry 3 }
+
+
+          -- The Dhcp Relay Service Status
+
+
+          harbourCcDhcprService OBJECT-TYPE
+              SYNTAX INTEGER{
+                          up(1),
+                          down(2)
+                      }
+              ACCESS read-write
+              STATUS current
+              DESCRIPTION
+                  "The status of the dhcp relay service."
+              ::= { harbourCcDhcprelay 3 }
+
+          harbourCcDhcpServiceModeSwitchCtrl OBJECT-TYPE
+              SYNTAX INTEGER{
+                          swith_dhcps_enable(1),
+                          swith_dhcps_disable(2),
+                          swith_dhcpr_enable(3),
+                          swith_dhcpr_disable(4),
+                          swith_dhcp_none(5)
+                      }
+              ACCESS read-write
+              STATUS current
+              DESCRIPTION
+                  "By this leaf,you can switch the DHCP service mode
+                  between DHCP Relay and DHCP Server.
+                  You can choose none of them too."
+              ::= { harbourCcDhcprelay 4 }
+
+          NasBindUserAllPorts OBJECT-TYPE
+              SYNTAX INTEGER{
+	              disable(0),
+	              enable(1)
+	             }
+              ACCESS read-write
+              STATUS current
+              DESCRIPTION
+                  "Enable or disable the binding function of all ports."
+              ::= { harbourNAS 1 }
+              
+	NasBindUserMultiPortPerUser OBJECT-TYPE
+              SYNTAX INTEGER{
+	              disable(0),
+	              enable(1)
+	             }
+              ACCESS read-write
+              STATUS current
+              DESCRIPTION
+                  "Enable or disable user binding to multi ports."
+              ::= { harbourNAS 2 }
+
+	NasClearAllBindUserInf OBJECT-TYPE
+              SYNTAX INTEGER{
+	              notClear(0),
+	              clearAll(1)
+	             }
+              ACCESS read-write
+              STATUS current
+              DESCRIPTION
+                  "Clear all bind user bind information."
+              ::= { harbourNAS 3 }
+              
+       NasUserInforTable OBJECT-TYPE
+		SYNTAX SEQUENCE OF NasUserInforTableEntry
+		ACCESS not-accessible
+		STATUS current
+		DESCRIPTION
+			"The table of users information in NAS."
+		::= {harbourNAS 4}
+		
+	NasUserInforTableEntry 	OBJECT-TYPE
+		SYNTAX  	NasUserInforTableEntry
+		MAX-ACCESS  	not-accessible
+		STATUS 		current
+		DESCRIPTION
+				"A table entry containing information about the module in 
+				each user of the server."
+		INDEX	  	{ NasUserMAC}
+		::= { NasUserInforTable 1 }
+ 	
+ 	NasUserInforTableEntry ::= 
+	   	SEQUENCE {
+			NasUserMAC		MacAddress,
+			NasPortNo		PortList,
+			NasUserName	    	DisplayString (SIZE (1..31)),
+			NasUserIP		DisplayString (SIZE (1..31)),
+			NasISPDomain		DisplayString (SIZE (1..31)),
+			NasVlanID		INTEGER,
+			NasState 		INTEGER,
+			NasAuthType		INTEGER,
+			NasPEType		INTEGER,
+			NasLogoffCause		DisplayString (SIZE (1..31)),
+			NasLoginTime		DisplayString (SIZE (1..31)),
+			NasOnlineTime		DisplayString (SIZE (1..31)),
+			NasKickOffOnlineUser	INTEGER			
+	 	}
+  		
+	NasUserMAC   	OBJECT-TYPE		
+		SYNTAX  	MacAddress 
+		MAX-ACCESS  	read-only
+		STATUS 		current
+		DESCRIPTION
+				"the user's MAC information."
+		::= { NasUserInforTableEntry 1 }
+		
+
+       NasPortNo OBJECT-TYPE
+		SYNTAX PortList
+		ACCESS read-only
+		STATUS current
+		DESCRIPTION
+			"The port list of users using in NAS."
+		::= {NasUserInforTableEntry 2}
+		
+       	NasUserName 		OBJECT-TYPE	
+		SYNTAX  			DisplayString (SIZE (1..31)) 
+		ACCESS  			read-only
+		STATUS 				current
+		DESCRIPTION
+			"the NAS user name."
+		::={ NasUserInforTableEntry 3 }		
+
+	NasUserIP OBJECT-TYPE	
+		SYNTAX  			DisplayString (SIZE (1..31)) 
+		ACCESS  			read-only
+		STATUS 				current
+		DESCRIPTION
+			"the NAS user's IP address."
+		::={ NasUserInforTableEntry 4 }	
+	
+	NasISPDomain OBJECT-TYPE	
+		SYNTAX  			DisplayString (SIZE (1..31)) 
+		ACCESS  			read-only
+		STATUS 				current
+		DESCRIPTION
+			"the NAS user's ISP domain."
+		::={ NasUserInforTableEntry 5 }	
+	
+	NasVlanID OBJECT-TYPE
+                SYNTAX INTEGER
+                ACCESS read-only
+                STATUS current
+                DESCRIPTION
+ 	                 "the ID of the vlan which includes the port of NAS user."
+                ::= { NasUserInforTableEntry 6 }
+
+	NasState OBJECT-TYPE
+                SYNTAX INTEGER
+                {
+                	 init(1),
+                	 authenticating(2),
+                	 authenticated(3),
+                	 wait_dhcp(4),
+                	 sent_acct_start_req(5),
+                	 online(6),
+                	 sent_acct_stop_req(7),
+                	 max(8)
+                }
+                ACCESS read-only
+                STATUS current
+                DESCRIPTION
+ 	                 "this item indicates if the user is online."
+                ::= { NasUserInforTableEntry 7 }
+
+	NasAuthType OBJECT-TYPE
+                SYNTAX INTEGER
+                {
+                	PAP(1),
+                	CHAP(2),
+                	EAP-MD5(3)
+                }
+                ACCESS read-only
+                STATUS current
+                DESCRIPTION
+ 	                 "the Auth Type of NAS user."
+                ::= { NasUserInforTableEntry 8 }
+
+	NasPEType OBJECT-TYPE
+                SYNTAX INTEGER
+                {
+                	PE-PPPOE(1),
+                	PE-802Dot1x(2)
+                }
+                ACCESS read-only
+                STATUS current
+                DESCRIPTION
+ 	                 "the PE Type of NAS user."
+                ::= { NasUserInforTableEntry 9 }
+
+	NasLogoffCause  OBJECT-TYPE	
+		SYNTAX  			DisplayString (SIZE (1..31)) 
+		ACCESS  			read-only
+		STATUS 				current
+		DESCRIPTION
+			"the cause of NAS user's logoff."
+		::={ NasUserInforTableEntry 10 }	
+		
+	NasLoginTime  OBJECT-TYPE	
+		SYNTAX  			DisplayString (SIZE (1..31)) 
+		ACCESS  			read-only
+		STATUS 				current
+		DESCRIPTION
+			"this item indicates when the NAS user login."
+		::={ NasUserInforTableEntry 11 }             
+		
+	NasOnlineTime OBJECT-TYPE	
+		SYNTAX  			DisplayString (SIZE (1..31)) 
+		ACCESS  			read-only
+		STATUS 				current
+		DESCRIPTION
+			"this item indicates how much time has passed since the NAS user's login."
+		::={ NasUserInforTableEntry 12 }             
+
+        NasKickOffOnlineUser OBJECT-TYPE
+		SYNTAX  INTEGER			
+			{
+                	Ready(1),
+                	KickOff(2)
+                	}
+		ACCESS  			read-write
+		STATUS 				current
+		DESCRIPTION
+			"Kick off the online user."
+		::={ NasUserInforTableEntry 13 }             
+
+	--show the global user statistic information
+	--show nas use statistic 
+	NasTotalUserNum OBJECT-TYPE
+              SYNTAX INTEGER
+              ACCESS read-only
+              STATUS current
+              DESCRIPTION
+                  "The number of NAS Total users"
+              ::= { harbourNAS 5 }
+
+	NasUsedUserIDNum OBJECT-TYPE
+              SYNTAX INTEGER
+              ACCESS read-only
+              STATUS current
+              DESCRIPTION
+                  "The number of NAS used users' ID "
+              ::= { harbourNAS 6 }
+ 
+	NasHighMemoryUserNum OBJECT-TYPE
+              SYNTAX INTEGER
+              ACCESS read-only
+              STATUS current
+              DESCRIPTION
+                  "The number of NAS High memory users "
+              ::= { harbourNAS 7 }
+
+	NasAuthenticatingUserNum OBJECT-TYPE
+              SYNTAX INTEGER
+              ACCESS read-only
+              STATUS current
+              DESCRIPTION
+                  "The number of NAS Authenticating users "
+              ::= { harbourNAS 8 }
+
+	NasAuthenticatedUserNum OBJECT-TYPE
+              SYNTAX INTEGER
+              ACCESS read-only
+              STATUS current
+              DESCRIPTION
+                  "The number of NAS Authenticated users "
+              ::= { harbourNAS 9 }
+
+	NasWaitDHCPUsersNum OBJECT-TYPE
+              SYNTAX INTEGER
+              ACCESS read-only
+              STATUS current
+              DESCRIPTION
+                  "The number of NAS WAIT DHCP users "
+              ::= { harbourNAS 10 }
+
+	NasWAITStartAccountRsp OBJECT-TYPE
+              SYNTAX INTEGER
+              ACCESS read-only
+              STATUS current
+              DESCRIPTION
+                  "The number of NAS WAIT Start account response "
+              ::= { harbourNAS 11 }
+
+	NasOnlineUsersNum OBJECT-TYPE
+              SYNTAX INTEGER
+              ACCESS read-only
+              STATUS current
+              DESCRIPTION
+                  "The number of NAS ONLINE users "
+              ::= { harbourNAS 12 }
+
+	NasPAPAuthUsersNum OBJECT-TYPE
+              SYNTAX INTEGER
+              ACCESS read-only
+              STATUS current
+              DESCRIPTION
+                  "The number of using PAP authenticate users "
+              ::= { harbourNAS 13 }
+          
+	NasCHAPAuthUsersNum OBJECT-TYPE
+              SYNTAX INTEGER
+              ACCESS read-only
+              STATUS current
+              DESCRIPTION
+                  "The number of using CHAP authenticate users "
+              ::= { harbourNAS 14 }
+  
+ 	NasEAPMD5AuthUsersNum OBJECT-TYPE
+              SYNTAX INTEGER
+              ACCESS read-only
+              STATUS current
+              DESCRIPTION
+                  "The number of using EAP MD5 authenticate users "
+              ::= { harbourNAS 15 }
+              
+	-- show User Accounting information
+	-- show nas accounting-statistic
+ 	NasStartAccountSentReqNum OBJECT-TYPE
+              SYNTAX INTEGER
+              ACCESS read-only
+              STATUS current
+              DESCRIPTION
+                  "The number of Start Accounting Sent-Request packet "
+              ::= { harbourNAS 16 }
+
+ 	NasStartAccountGotReqNum OBJECT-TYPE
+              SYNTAX INTEGER
+              ACCESS read-only
+              STATUS current
+              DESCRIPTION
+                  "The number of Start Accounting Got-Request packet "
+              ::= { harbourNAS 17 }
+ 	
+ 	NasStopAccountSentReqNum OBJECT-TYPE
+              SYNTAX INTEGER
+              ACCESS read-only
+              STATUS current
+              DESCRIPTION
+                  "The number of Stop Accounting Sent-Request packet "
+              ::= { harbourNAS 18 }
+ 	
+ 	NasStopAccountGotReqNum OBJECT-TYPE
+              SYNTAX INTEGER
+              ACCESS read-only
+              STATUS current
+              DESCRIPTION
+                  "The number of Stop Accounting Got-Request packet "
+              ::= { harbourNAS 19 }
+
+       NasUsersPortBindTable OBJECT-TYPE
+		SYNTAX SEQUENCE OF NasUsersPortBindTableEntry
+		ACCESS not-accessible
+		STATUS current
+		DESCRIPTION
+			"The table of users binding to port information."
+		::= {harbourNAS 20}
+		
+	NasUsersPortBindTableEntry 	OBJECT-TYPE
+		SYNTAX  	NasUsersPortBindTableEntry
+		MAX-ACCESS  	not-accessible
+		STATUS 		current
+		DESCRIPTION
+				"A table entry containing information about the binding
+				 information of each port of the server.
+				 The leaves, harbourBindUserStatus and harbourBindUserList
+				 of0 table harbourPortBindTable in mib HARBOUR-PORT-BIND-MIB
+				 are moved to this table."
+		INDEX	  	{ NasUserPort}
+		::= { NasUsersPortBindTable 1 }
+
+	NasUsersPortBindTableEntry ::=
+	        SEQUENCE {
+	        NasUserPort              INTEGER,
+	        NasUserPortBindStatus    INTEGER,
+	        NasBindUserNameList          DisplayString
+	        }
+  
+	NasUserPort OBJECT-TYPE
+		SYNTAX  	INTEGER
+		MAX-ACCESS  	read-only
+		STATUS 		current
+		DESCRIPTION
+				"The port number used as index."
+		::= { NasUsersPortBindTableEntry 1 }
+
+	NasUserPortBindStatus  OBJECT-TYPE
+		SYNTAX          INTEGER { enable (1), disable (2) } 
+	        MAX-ACCESS      read-write
+	        STATUS          current
+	        DESCRIPTION     
+	            "Enable or disable binding User name to this port."
+	        ::= { NasUsersPortBindTableEntry 2 }
+
+	NasBindUserNameList  OBJECT-TYPE
+		SYNTAX          DisplayString
+		MAX-ACCESS      read-write
+        	STATUS          current
+        	DESCRIPTION     
+	            "List of user name wants to bind.
+	             Format likes 'User1,User2,...,Usern'"
+		::= { NasUsersPortBindTableEntry 3 }
+
+ 	UserBindErrorCode OBJECT-TYPE
+              SYNTAX INTEGER
+              ACCESS read-only
+              STATUS current
+              DESCRIPTION
+                  "The error code of bind user to port. "
+              ::= { harbourNAS 21 }
+
+ 	NasVersion OBJECT-TYPE
+              SYNTAX DisplayString
+              ACCESS read-only
+              STATUS current
+              DESCRIPTION
+                  "The version of the NAS. "
+              ::= { harbourNAS 22 }
+
+        NasBindUserName OBJECT-TYPE
+              SYNTAX DisplayString
+              ACCESS read-write
+              STATUS current
+              DESCRIPTION
+                  "Firstly,you should set the binding user name, of which you 
+                   want to find its information. Then read leaves (NasBindUserPortMap ,
+                   NasBindUserEnablePortMap ) for detail. "
+              ::= { harbourNAS 23 }
+
+ 	NasBindUserPortMap OBJECT-TYPE
+              SYNTAX LargePortList
+              ACCESS read-only
+              STATUS current
+              DESCRIPTION
+                  "The port map of the binding user."
+              ::= { harbourNAS 24 }
+
+ 	NasBindUserEnablePortMap OBJECT-TYPE
+              SYNTAX LargePortList
+              ACCESS read-only
+              STATUS current
+              DESCRIPTION
+                  "The port map of the binding user ,of which the binding function is enabled."
+              ::= { harbourNAS 25 }
+
+END

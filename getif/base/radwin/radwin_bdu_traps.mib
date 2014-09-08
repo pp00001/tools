@@ -1,0 +1,305 @@
+-- RADWin-TRAPS MIB  
+-- Version:   1.02
+-- Date:      Dec 8, 2008
+-- By:        Yossi Appleboum
+
+
+-- Change History
+ 
+-- 1.02		  Root OID fixed.
+
+-- 1.01		  Syntax fixed (traps bdulan pointer).
+
+-- 1.00		  BDU version.
+
+
+RADWIN-TRAPS-MIB DEFINITIONS ::= BEGIN
+
+IMPORTS
+      DisplayString                  FROM SNMPv2-TC
+      OBJECT-TYPE, Counter32,
+      IpAddress                      FROM SNMPv2-SMI;        
+	  --TRAP-TYPE                      FROM RFC-1215;
+      
+      
+--  BDU sub tree  
+enterprises     OBJECT IDENTIFIER ::= { iso org(3) dod(6) internet(1) private(4) 1 }
+radwin          OBJECT IDENTIFIER ::= { enterprises 4458 }   
+bdu             OBJECT IDENTIFIER ::= { radwin 7300 }
+bduStd 	    	OBJECT IDENTIFIER ::= { bdu 1} 	 
+bduGeneral OBJECT IDENTIFIER ::= { bduStd 1 }
+bduTraps   OBJECT IDENTIFIER ::= { bduGeneral 3 }
+
+--
+------------------------------------------------------------------------------
+--   Traps group       
+------------------------------------------------------------------------------
+trapsLastTrapSeqID OBJECT-TYPE
+	SYNTAX  Counter32
+	MAX-ACCESS  read-only
+	STATUS  current
+	DESCRIPTION    	 "The sequence number of the last trap that was sent by
+	                 the agent."
+	::= { bduTraps 1 }
+
+trapsTableMaximumSize OBJECT-TYPE
+	SYNTAX  INTEGER (0..65535)
+	MAX-ACCESS  read-only
+	STATUS  current
+	DESCRIPTION    	 "The maximum size of the trap history table."
+	::= { bduTraps 2 }
+
+trapsTable OBJECT-TYPE
+	SYNTAX SEQUENCE OF TrapsEntry
+	MAX-ACCESS not-accessible
+	STATUS current
+	DESCRIPTION 	"A table that contains all traps"
+	::= { bduTraps 3 }
+
+trapsEntry OBJECT-TYPE
+	SYNTAX TrapsEntry
+	MAX-ACCESS not-accessible
+	STATUS current
+	DESCRIPTION 	" A trap entry to the trap table"
+	INDEX  { trapsSequenceID  }
+
+	::= { trapsTable 1 }
+ 
+TrapsEntry ::=
+	SEQUENCE {
+	  trapsSequenceID 		Counter32,          
+	  trapsTick   	    	Counter32,               
+	  trapsGenericType   	INTEGER,
+	  trapsSpecificType  	INTEGER,	  
+  	  trapsModuleType  		INTEGER,
+  	  trapsSlotIndex  		INTEGER,
+  	  trapsPortIndex  		INTEGER,
+  	  trapsAck				INTEGER,
+  	  trapsSetClr			INTEGER  	  
+	}
+
+trapsSequenceID OBJECT-TYPE
+	SYNTAX Counter32 
+	MAX-ACCESS read-only
+	STATUS current
+	DESCRIPTION 	 "Sequence number of the trap in the last traps table."
+	::= { trapsEntry 1 }
+
+trapsTick OBJECT-TYPE
+	SYNTAX Counter32 
+	MAX-ACCESS read-only
+	STATUS current
+	DESCRIPTION      "Timetick when the current trap was sent."
+	::= { trapsEntry 2 }
+
+trapsGenericType OBJECT-TYPE
+	SYNTAX INTEGER (0..65535)
+	MAX-ACCESS read-only
+	STATUS current
+	DESCRIPTION 	 "The generic type of trap instance."
+	::= { trapsEntry 3 }
+
+trapsSpecificType OBJECT-TYPE
+	SYNTAX INTEGER (0..65535)
+	MAX-ACCESS read-only
+	STATUS current
+	DESCRIPTION 	 "The specific type of trap instance."
+	::= { trapsEntry 4 }
+
+trapsModuleType OBJECT-TYPE
+	SYNTAX INTEGER 
+	MAX-ACCESS read-only
+	STATUS current
+	DESCRIPTION 	 "Additional data sent with the trap. This is the  
+	                 port index that generated the trap."
+	::= { trapsEntry 5 }
+
+trapsSlotIndex OBJECT-TYPE
+	SYNTAX INTEGER 
+	MAX-ACCESS read-only
+	STATUS current
+	DESCRIPTION 	 "Additional data sent with the trap. This is the  
+	                 port index that generated the trap."
+	::= { trapsEntry 6 }
+
+trapsPortIndex OBJECT-TYPE
+	SYNTAX INTEGER 
+	MAX-ACCESS read-only
+	STATUS current
+	DESCRIPTION 	 "Additional data sent with the trap. This is the  
+	                 port index that generated the trap."
+	::= { trapsEntry 7 }
+
+trapsAck OBJECT-TYPE
+	SYNTAX INTEGER
+	MAX-ACCESS read-write
+	STATUS current
+	DESCRIPTION 	 "Additional data sent with the trap. This is the  
+	                 acknowledge status."
+	::= { trapsEntry 8 }
+
+trapsSetClr OBJECT-TYPE
+	SYNTAX INTEGER
+	MAX-ACCESS read-write
+	STATUS current
+	DESCRIPTION 	 "Additional data sent with the trap. This is the  
+	                 set/clear info."
+	::= { trapsEntry 9 }
+	
+trapPortIndex OBJECT-TYPE
+	SYNTAX INTEGER 
+	MAX-ACCESS read-only
+	STATUS current
+	DESCRIPTION 	 "Additional data sent with the trap. This is the  
+	                 port index that generated the trap."
+	::= { bduTraps 7 }
+
+
+trapDestinationsTable OBJECT-TYPE
+	SYNTAX SEQUENCE OF TrapDestinationsEntry
+	MAX-ACCESS not-accessible
+	STATUS current
+	DESCRIPTION		"Trap destination table"
+	::= { bduTraps 9 }
+
+trapDestinationsEntry OBJECT-TYPE
+	SYNTAX TrapDestinationsEntry
+	MAX-ACCESS not-accessible
+	STATUS current
+	DESCRIPTION		"Trap destination table entry"
+	INDEX  { trapDestinationsIndex  }
+
+	::= { trapDestinationsTable 1 }
+ 
+TrapDestinationsEntry ::=
+	SEQUENCE {
+	  trapDestinationsIndex 	 INTEGER,          
+      trapDestinationsAddress    IpAddress
+	}
+
+trapDestinationsIndex OBJECT-TYPE
+	SYNTAX INTEGER 
+	MAX-ACCESS read-only
+	STATUS current
+	DESCRIPTION 	 "Trap destination table index."
+	::= { trapDestinationsEntry 1 }
+
+trapDestinationsAddress OBJECT-TYPE
+	SYNTAX IpAddress 
+	MAX-ACCESS read-only
+	STATUS current
+	DESCRIPTION 	 "IP Address of the destination host."
+	::= { trapDestinationsEntry 2 }
+
+trapDestinationsCommands OBJECT IDENTIFIER    ::= { bduTraps 10 }
+
+trapDestTempAddress OBJECT-TYPE
+	SYNTAX IpAddress 
+	MAX-ACCESS read-write
+	STATUS current
+	DESCRIPTION 	 "Used for temporary storage of the IP address to add
+	                 or remove from the trap destinations table."
+	::= { trapDestinationsCommands 1 }
+
+trapDestCommand OBJECT-TYPE
+	SYNTAX INTEGER 
+	{
+	  add(1),
+	  remove(2)
+	} 
+	MAX-ACCESS read-write
+	STATUS current
+	DESCRIPTION 	 "Activation command: setting this OID with value 1(add) adds 
+	                 the IP address that is stored in the ritTrapDestTempAddress
+	                 to the trap destinations table. setting this OID with value 2(remove)
+	                 deletes the IP address from the trap destinations table."
+	::= { trapDestinationsCommands 2 }
+ 
+ 
+ 
+-- Trap types:
+
+overVoltage TRAP-TYPE
+   ENTERPRISE bduGeneral
+   VARIABLES { trapPortIndex }
+    --&ACTIONS  { normal }
+   --&MESG "Over voltage"
+   DESCRIPTION
+       "Over voltage."
+   ::= 10
+
+normalVoltage TRAP-TYPE
+   ENTERPRISE bduGeneral
+   VARIABLES { trapPortIndex }
+   --&ACTIONS  { normal }
+   --&MESG "Normal voltage"
+   DESCRIPTION
+       "Normal voltage."
+   ::= 11
+   
+underVoltage TRAP-TYPE
+   ENTERPRISE bduGeneral
+   VARIABLES { trapPortIndex }
+   --&ACTIONS  { normal }
+   --&MESG "Under voltage"
+   DESCRIPTION
+       "Under voltage."
+   ::= 12
+ 
+temperatureHigh TRAP-TYPE
+   ENTERPRISE bduGeneral
+   VARIABLES { trapPortIndex }
+   --&ACTIONS  { normal }
+   --&MESG "High temperature alarm"
+   DESCRIPTION
+       "High temperature alarm."
+   ::= 30
+
+temperatureNormal TRAP-TYPE
+   ENTERPRISE bduGeneral
+   VARIABLES { trapPortIndex }
+   --&ACTIONS  { normal }
+   --&MESG "Normal temperature"
+   DESCRIPTION
+       "Normal temperature."
+   ::= 31
+
+temperatureLow TRAP-TYPE
+   ENTERPRISE bduGeneral
+   VARIABLES { trapPortIndex }
+    --&ACTIONS  { normal }
+   --&MESG "Low temperature alarm"
+   DESCRIPTION
+       "Low temperature alarm."
+   ::= 32
+ 
+linkUp TRAP-TYPE
+   ENTERPRISE bduGeneral
+   VARIABLES { trapPortIndex }
+   --&ACTIONS  { normal }
+   --&MESG "Link is Up"
+   DESCRIPTION
+       "Link up."
+   ::= 50
+ 
+linkDown TRAP-TYPE
+   ENTERPRISE bduGeneral
+   VARIABLES { trapPortIndex }
+   --&ACTIONS  { normal }
+   --&MESG "Link Down"
+   DESCRIPTION
+       "Link down."
+   ::= 51
+   
+   
+
+systemStartUp TRAP-TYPE
+   ENTERPRISE bduGeneral
+   VARIABLES { trapPortIndex }
+   --&ACTIONS  { normal }
+   --&MESG "System start up"
+   DESCRIPTION
+       "System start up."
+   ::= 100
+
+END

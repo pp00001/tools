@@ -1,0 +1,207 @@
+-- These MIBs were created on 05/08/2000
+-- This module defines NetScreen private MIBs for VPN tunnel monitoring
+-- 
+-- Copyright (c) 1999 - 2001 by NetScreen Technologies, Inc.
+-- All rights reserved.
+-- 
+
+-- MODULE-IDENTITY
+--  OrgName
+--    Netscreen Technologies, Inc.
+--  ContactInfo
+--     Customer Support
+--     
+--     2860 San TOmas Expwy
+--     Santa Clara, CA  95051
+--     USA
+--    
+--     Tel: 1.877.NETSCREEN
+--     E-mail: support@netscreen.com
+--     Http://www.netscreen.com
+
+--  Descr
+--    This module defines the object that are used to monitor
+--    all the entries in the Address Book 
+--
+--  Last modified date: 09/28/2001
+--    
+
+NETSCREEN-VSYS-MIB DEFINITIONS ::= BEGIN
+IMPORTS
+
+    IpAddress FROM RFC1155-SMI
+    DisplayString 	FROM RFC1213-MIB 
+    netscreenVsys    FROM NETSCREEN-SMI;
+    nsVsysCfg 	OBJECT IDENTIFIER ::= {netscreenVsys 1}
+    
+	nsVsysCfgTable OBJECT-TYPE
+		SYNTAX  SEQUENCE OF NsVsysCfgTblEntry
+		ACCESS  not-accessible
+		STATUS  mandatory
+		DESCRIPTION 
+		        "NetScreen-500, NetScreen-1000 and above series support virtual system.
+		        This table collect the vsys configuration in NetScreen device."
+		::= { nsVsysCfg 1 }
+
+    nsVsysCfgTblEntry OBJECT-TYPE
+        SYNTAX  NsVsysCfgTblEntry
+        ACCESS  not-accessible
+        STATUS  mandatory
+        DESCRIPTION
+               "Each entry in the table holds a set of configuration parameters associated 
+               with an instance of virtual system."
+        INDEX   { nsVsysCfgId }
+        ::= { nsVsysCfgTable 1 }
+
+	NsVsysCfgTblEntry ::=
+		SEQUENCE {
+          nsVsysCfgId
+              INTEGER,
+		  nsVsysCfgName
+		      DisplayString
+       }
+
+	nsVsysCfgId OBJECT-TYPE
+    	SYNTAX  INTEGER
+        ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION
+             "A unique ID for each virturl system." 
+        ::= { nsVsysCfgTblEntry 1 }
+
+	nsVsysCfgName OBJECT-TYPE
+        SYNTAX  DisplayString (SIZE (0..32))
+    	ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION
+             "secure zone name."
+        ::= { nsVsysCfgTblEntry 2 }       
+END
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

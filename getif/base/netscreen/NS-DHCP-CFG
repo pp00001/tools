@@ -1,0 +1,69 @@
+-- These MIBs were created on 05/027/2001 
+-- This module defines NetScreen private MIBs for Configuration monitoring
+-- 
+-- Copyright (c) 1999 - 2001 by NetScreen Technologies, Inc.
+-- All rights reserved.
+-- 
+
+-- MODULE-IDENTITY
+--  OrgName
+--    Netscreen Technologies, Inc.
+--  ContactInfo
+--     Customer Support
+--     
+--     350 Oakmead Parkway
+--     Sunnyvale, CA  94085
+--     USA
+--    
+--     Tel: 1.877.NETSCREEN
+--     E-mail: support@netscreen.com
+--     Http://www.netscreen.com
+
+--  Descr
+--    This module defines the object that are used to monitor
+--    all the configuration info  
+--
+--  Last modified date: 09/28/2001
+--    
+
+NETSCREEN-SET-DHCP-MIB DEFINITIONS ::= BEGIN
+IMPORTS
+    IpAddress FROM RFC1155-SMI
+
+    DisplayString 	FROM RFC1213-MIB 
+    netscreenSetting FROM NETSCREEN-SMI;
+    
+    nsSetDHCP OBJECT IDENTIFIER ::= { netscreenSetting 6 }
+
+	nsSetDHCPService OBJECT-TYPE
+        SYNTAX  INTEGER {
+        		none(0),
+        		dhcp_relay_agent(1),
+        		dhcp_server(2)
+        }
+    	ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION
+             "DHCP service type for trusted network."
+        ::= { nsSetDHCP 1 }
+        
+	nsSetDHCPRelayServer OBJECT-TYPE
+        SYNTAX  DisplayString(SIZE(0..32))
+    	ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION
+             "DHCP relay agent server name."
+        ::= { nsSetDHCP 2 }
+        
+	nsSetDHCPVpnEncryp OBJECT-TYPE
+        SYNTAX  INTEGER {
+        		disable(0),
+        		enabled(1)
+        }
+    	ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION
+             "secure DHCP relay agent traffic via VPN encrption."
+        ::= { nsSetDHCP 3 }
+
+END

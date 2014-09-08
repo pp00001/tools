@@ -1,0 +1,1435 @@
+-- =========================================================
+-- Copyright (c) 2001-2003, Harbour Networks Limited
+-- All rights reserved.
+--
+-- Name     : HARBOUR-ACLG-MIB
+-- Intro    : The MIB definition for acl management.
+-- History  : When          Who         What & Why
+--            2001.11.27    liuyanjun   Create
+--            2003.11.26    Lida        Clean up for Hos
+-- =========================================================
+
+HARBOUR-ACL-MIB DEFINITIONS ::= BEGIN
+
+IMPORTS
+    MODULE-IDENTITY,
+    OBJECT-TYPE,
+    IpAddress,
+    Counter64           FROM SNMPv2-SMI
+    DisplayString,
+    RowStatus           FROM SNMPv2-TC
+    PortList            FROM Q-BRIDGE-MIB
+    harbourAgent        FROM HARBOUR-BASE-MIB;
+
+
+harbourAcl MODULE-IDENTITY
+    LAST-UPDATED    "200311260000Z"
+    ORGANIZATION    "Harbour Networks Limited"
+    CONTACT-INFO    "www.harbournetworks.com"
+    DESCRIPTION
+            "Access Control List Management."
+    ::= { harbourAgent 4 }
+
+
+harbourAclServiceStatus OBJECT-TYPE
+    SYNTAX      INTEGER {
+                    up(1),
+                    down(2)
+                }
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "The status of the acl service is up or down."
+    ::= { harbourAcl 1 }
+
+
+harbourUserMultiDomainGroup     OBJECT IDENTIFIER ::= { harbourAcl 7 }
+
+
+-- ACL Group
+
+harbourAclGroup                 OBJECT IDENTIFIER ::= { harbourAcl 2 }
+
+-- ACL Group Table
+
+harbourAclGroupTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF HarbourAclGroupEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+            "A list of group entries."
+    ::= { harbourAclGroup 1 }
+
+harbourAclGroupEntry OBJECT-TYPE
+    SYNTAX      HarbourAclGroupEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+            "The access control list group entry."
+    INDEX       { harbourAclGroupIndex }
+    ::= { harbourAclGroupTable 1 }
+
+HarbourAclGroupEntry ::= SEQUENCE {
+    harbourAclGroupIndex        INTEGER,
+    harbourAclGroupUsed         INTEGER,
+    harbourAclGroupFlag         INTEGER,
+    harbourAclGroupName         DisplayString,
+    harbourAclGroupStatus       INTEGER
+}
+
+harbourAclGroupIndex OBJECT-TYPE
+    SYNTAX      INTEGER
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "The value of this object uniquely identifies this
+            harbourAclGroup entry."
+    ::= { harbourAclGroupEntry 1 }
+
+harbourAclGroupUsed OBJECT-TYPE
+    SYNTAX      INTEGER {
+                    unused(0),
+                    used(1)
+                }
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "The access control group entry is or not used."
+    ::= { harbourAclGroupEntry 2 }
+
+harbourAclGroupFlag OBJECT-TYPE
+    SYNTAX      INTEGER {
+                    system(1),
+                    config(2),
+                    unconfig(3)
+                }
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "The flag of the access control group entry."
+    ::= { harbourAclGroupEntry 3 }
+
+harbourAclGroupName OBJECT-TYPE
+    SYNTAX      DisplayString
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "The access control group entry name."
+    ::= { harbourAclGroupEntry 4 }
+
+harbourAclGroupStatus OBJECT-TYPE
+    SYNTAX      INTEGER {
+                    valid(1),
+                    createRequest(2),
+                    underCreation(3),
+                    invalid(4)
+                }
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "The access control group entry status."
+    ::= { harbourAclGroupEntry 5 }
+
+
+-- ACL Group Information Table
+
+harbourAclGroupInfoTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF HarbourAclGroupInfoEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+            "A list of harbourAclGroupInfo entries."
+    ::= { harbourAclGroup 2 }
+
+harbourAclGroupInfoEntry OBJECT-TYPE
+    SYNTAX      HarbourAclGroupInfoEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+            "The access control list group infomation entry."
+    INDEX       { harbourAclGroupIndex , harbourAclGroupInfoIpAddress }
+    ::= { harbourAclGroupInfoTable 1 }
+
+HarbourAclGroupInfoEntry ::= SEQUENCE {
+    harbourAclGroupInfoIpAddress    IpAddress,
+    harbourAclGroupInfoStatus       INTEGER
+}
+
+harbourAclGroupInfoIpAddress OBJECT-TYPE
+    SYNTAX      IpAddress
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "The value of this object uniquely identifies this
+            harbourAclGroupInfo entry."
+    ::= { harbourAclGroupInfoEntry 1 }
+
+harbourAclGroupInfoStatus OBJECT-TYPE
+    SYNTAX      INTEGER {
+                    valid(1),
+                    createRequest(2),
+                    underCreation(3),
+                    invalid(4)
+                }
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "The access control group information entry status."
+    ::= { harbourAclGroupInfoEntry 2 }
+
+
+-- ACL Matrix Group
+
+harbourAclMatrix                OBJECT IDENTIFIER ::= { harbourAcl 3 }
+
+-- ACL Matrix Table
+
+harbourAclMatrixTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF HarbourAclMatrixEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+            "A list of matrix entries."
+    ::= { harbourAclMatrix 1 }
+
+harbourAclMatrixEntry OBJECT-TYPE
+    SYNTAX      HarbourAclMatrixEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+            "The access control list matrix entry."
+    INDEX { harbourAclSourceIndex, harbourAclDestinationIndex }
+    ::= { harbourAclMatrixTable 1 }
+
+HarbourAclMatrixEntry ::= SEQUENCE {
+    harbourAclSourceIndex               INTEGER,
+    harbourAclDestinationIndex          INTEGER,
+    harbourAclAccess                    INTEGER
+}
+
+harbourAclSourceIndex OBJECT-TYPE
+    SYNTAX      INTEGER
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "The value of this object uniquely identifies this
+            harbourAclMatrix entry."
+    ::= { harbourAclMatrixEntry 1 }
+
+harbourAclDestinationIndex OBJECT-TYPE
+    SYNTAX      INTEGER
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "The value of this object uniquely identifies this
+            harbourAclMatrix entry."
+    ::= { harbourAclMatrixEntry 2 }
+
+harbourAclAccess OBJECT-TYPE
+    SYNTAX      INTEGER {
+                    route(0),
+                    deny(1),
+                    intervention(2),
+                    flowclassify(3),
+                    nogroup(4)
+                }
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "The access of the access control list matrix entry."
+    ::= { harbourAclMatrixEntry 3 }
+
+
+-- ACL Source Control Group
+
+harbourAclSourceControl         OBJECT IDENTIFIER ::= { harbourAcl 4 }
+
+-- ACL Source Control Table
+
+harbourAclSourceControlTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF HarbourAclSourceControlEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+            "A list of source control entries."
+    ::= { harbourAclSourceControl 1 }
+
+harbourAclSourceControlEntry OBJECT-TYPE
+    SYNTAX      HarbourAclSourceControlEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+            "The source access control entry."
+    INDEX       { harbourAclSourceControlIndex }
+    ::= { harbourAclSourceControlTable 1 }
+
+HarbourAclSourceControlEntry ::= SEQUENCE {
+    harbourAclSourceControlIndex            IpAddress,
+    harbourAclSourceControlAccess           INTEGER,
+    harbourAclSourceControlStatus           INTEGER
+}
+
+harbourAclSourceControlIndex OBJECT-TYPE
+    SYNTAX      IpAddress
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "The value of this object uniquely identifies this
+            harbourAclSourceControl entry."
+    ::= { harbourAclSourceControlEntry 1 }
+
+harbourAclSourceControlAccess OBJECT-TYPE
+    SYNTAX      INTEGER {
+                    route(0),
+                    deny(1),
+                    intervention(2),
+                    flowclassify(3)
+                }
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "The access right of the source ip address."
+    ::= { harbourAclSourceControlEntry 2 }
+
+harbourAclSourceControlStatus OBJECT-TYPE
+    SYNTAX      INTEGER {
+                    valid(1),
+                    createRequest(2),
+                    underCreation(3),
+                    invalid(4)
+                }
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "The source ip address entry status."
+    ::= { harbourAclSourceControlEntry 3 }
+
+
+-- ACL Destination Control Group
+
+harbourAclDestinationControl    OBJECT IDENTIFIER ::= { harbourAcl 5 }
+
+-- ACL Destination Control Table
+
+harbourAclDestinationControlTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF HarbourAclDestinationControlEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+            "A list of destination control entries."
+    ::= { harbourAclDestinationControl 1 }
+
+harbourAclDestinationControlEntry OBJECT-TYPE
+    SYNTAX      HarbourAclDestinationControlEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+            "The destination access control entry."
+    INDEX       { harbourAclDestinationControlIndex }
+    ::= { harbourAclDestinationControlTable 1 }
+
+HarbourAclDestinationControlEntry ::= SEQUENCE {
+    harbourAclDestinationControlIndex       IpAddress,
+    harbourAclDestinationControlAccess      INTEGER,
+    harbourAclDestinationControlStatus      INTEGER
+}
+
+harbourAclDestinationControlIndex OBJECT-TYPE
+    SYNTAX      IpAddress
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "The value of this object uniquely identifies this
+            harbourAclDestinationControl entry."
+    ::= { harbourAclDestinationControlEntry 1 }
+
+harbourAclDestinationControlAccess OBJECT-TYPE
+    SYNTAX      INTEGER {
+                    route(0),
+                    deny(1),
+                    intervention(2),
+                    flowclassify(3)
+                }
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "The access right of the destination ip address."
+    ::= { harbourAclDestinationControlEntry 2 }
+
+harbourAclDestinationControlStatus OBJECT-TYPE
+    SYNTAX      INTEGER {
+                    valid(1),
+                    createRequest(2),
+                    underCreation(3),
+                    invalid(4)
+                }
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "The destination ip address entry status."
+    ::= { harbourAclDestinationControlEntry 3 }
+
+
+-- ACL Protocol Filter Group
+
+harbourAclProtocolFilterGroup   OBJECT IDENTIFIER ::= { harbourAcl 6 }
+
+harbourAclProtocolFilterStatus OBJECT-TYPE
+    SYNTAX      INTEGER {
+                    disable(0),
+                    enable(1)
+                }
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "Read get 0 means the protocol filter function is disable.
+             Read get 1 means the protocol filter function is enable.
+             Set to 0 means to disable the protocol filter function.
+             Set to 1 means to enable the protocol filter function."
+    ::= {harbourAclProtocolFilterGroup 1}
+
+-- ACL IP Filter Table
+
+harbourAclIpFilterTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF HarbourAclIpFilterEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+            "A list of ip filter entries."
+    ::= { harbourAclProtocolFilterGroup 2 }
+
+harbourAclIpFilterEntry OBJECT-TYPE
+    SYNTAX      HarbourAclIpFilterEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+            "The ip filter entry."
+    INDEX       { harbourAclIpFilterName }
+    ::= { harbourAclIpFilterTable 1 }
+
+HarbourAclIpFilterEntry ::= SEQUENCE {
+    harbourAclIpFilterName          DisplayString,
+    harbourAclIpFilterDesIp         IpAddress,
+    harbourAclIpFilterDesMask       IpAddress,
+    harbourAclIpFilterSourceIp      IpAddress,
+    harbourAclIpFilterSourceMask    IpAddress,
+    harbourAclIpFilterCtrl          INTEGER,
+    harbourAclIpFilterPortlist      PortList,
+    harbourAclIpFilterPrecedence    INTEGER,
+    harbourAclIpFilterStatus        INTEGER,
+    harbourAclIpFilterCounterName   DisplayString
+}
+
+harbourAclIpFilterName OBJECT-TYPE
+    SYNTAX      DisplayString
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "The name of a Ip filter way.
+            The name should be a string in the size of 1 to 30.
+            As a index the string should be filled in the corresponding field
+            in the oid. One char of the string take up one oid field.
+            '0' should be added to the tail of the string if it's size under 30.
+            eg:(harbourAclIpFilterStatus.105.112.49.0.0.0.0.0.0.0.0.0.0.0.0.0.0.
+            0.0.0.0.0.0.0.0.0.0.0.0.0)."
+    ::= { harbourAclIpFilterEntry 1 }
+
+harbourAclIpFilterDesIp OBJECT-TYPE
+    SYNTAX      IpAddress
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "The destination ip address of a Ip filter way.
+            Especially 0.0.0.0 means any ip address."
+    ::= { harbourAclIpFilterEntry 2 }
+
+harbourAclIpFilterDesMask OBJECT-TYPE
+    SYNTAX      IpAddress
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "The destination ip mask of a Ip filter way."
+    ::= { harbourAclIpFilterEntry 3 }
+
+harbourAclIpFilterSourceIp OBJECT-TYPE
+    SYNTAX      IpAddress
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "The source ip address of a Ip filter way.
+            Especially 0.0.0.0 means any ip address."
+    ::= { harbourAclIpFilterEntry 4 }
+
+harbourAclIpFilterSourceMask OBJECT-TYPE
+    SYNTAX      IpAddress
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "The source ip mask of a Ip filter way."
+    ::= { harbourAclIpFilterEntry 5 }
+
+harbourAclIpFilterCtrl OBJECT-TYPE
+    SYNTAX      INTEGER {
+                    permit(1),
+                    deny(0)
+                }
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "This function is to control the type for a fiter way.
+            1 means to permit the destination or source ip,
+            0 means to deny."
+    ::= { harbourAclIpFilterEntry 6 }
+
+harbourAclIpFilterPortlist OBJECT-TYPE
+    SYNTAX      PortList
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            ""
+    ::= { harbourAclIpFilterEntry 7 }
+
+harbourAclIpFilterPrecedence OBJECT-TYPE
+    SYNTAX      INTEGER (0..255)
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "The priority of a ip filter way.
+            Especially 000000 means any port."
+    ::= { harbourAclIpFilterEntry 8 }
+
+harbourAclIpFilterStatus OBJECT-TYPE
+    SYNTAX      INTEGER {
+                    valid(1),
+                    createRequest(2),
+                    underCreation(3),
+                    invalid(4)
+                }
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "The Ip filter entry status."
+    ::= { harbourAclIpFilterEntry 9 }
+
+harbourAclIpFilterCounterName OBJECT-TYPE
+    SYNTAX      DisplayString
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "The counter which this filter belong to."
+    ::= { harbourAclIpFilterEntry 10 }
+
+
+-- ACL Transport Layer Filter Table
+
+harbourAclTransportFilterTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF HarbourAclTransportFilterEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+            "A list of transport layer filter entries."
+    ::= { harbourAclProtocolFilterGroup 3 }
+
+harbourAclTransportFilterEntry OBJECT-TYPE
+    SYNTAX      HarbourAclTransportFilterEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+            "The transport layer filter entry."
+    INDEX       { harbourAclTransportFilterName }
+    ::= { harbourAclTransportFilterTable 1 }
+
+HarbourAclTransportFilterEntry ::= SEQUENCE {
+    harbourAclTransportFilterName           DisplayString,
+    harbourAclTransportFilterProtocolType   INTEGER,
+    harbourAclTransportFilterDesIp          IpAddress,
+    harbourAclTransportFilterDesMask        IpAddress,
+    harbourAclTransportFilterDesIpPort      INTEGER,
+    harbourAclTransportFilterSourceIp       IpAddress,
+    harbourAclTransportFilterSourceMask     IpAddress,
+    harbourAclTransportFilterSourceIpPort   INTEGER,
+    harbourAclTransportFilterCtrl           INTEGER,
+    harbourAclTransportFilterPortlist       PortList,
+    harbourAclTransportFilterPrecedence     INTEGER,
+    harbourAclTransportFilterStatus         INTEGER,
+    harbourAclTransportFilterCounterName    DisplayString
+}
+
+harbourAclTransportFilterName OBJECT-TYPE
+    SYNTAX      DisplayString
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "The name of a transport layer filter way.
+            The name should be a string in the size of 1 to 30.
+            As a index the string should be filled in the corresponding field
+            in the oid. One char of the string take up one oid field.
+            'o' should be added to the tail of the string if it's size under 30.
+            eg:(harbourAclIpFilterStatus.105.112.49.0.0.0.0.0.0.0.0.0.0.0.0.0.0.
+            0.0.0.0.0.0.0.0.0.0.0.0.0)."
+    ::= { harbourAclTransportFilterEntry 1 }
+
+harbourAclTransportFilterProtocolType OBJECT-TYPE
+    SYNTAX      INTEGER {
+                    udp(1),
+                    tcp(2)
+                }
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "The protocol type of a transport layer protocol type."
+    ::= { harbourAclTransportFilterEntry 2 }
+
+harbourAclTransportFilterDesIp OBJECT-TYPE
+    SYNTAX      IpAddress
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "The destination Ip address of a transport layer filter way."
+    ::= { harbourAclTransportFilterEntry 3 }
+
+harbourAclTransportFilterDesMask OBJECT-TYPE
+    SYNTAX      IpAddress
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "The destination Ip mask of a transport layer filter way."
+    ::= { harbourAclTransportFilterEntry 4 }
+
+harbourAclTransportFilterDesIpPort OBJECT-TYPE
+    SYNTAX      INTEGER
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "The Ip port number of a transport layer filter.
+            '0'means any ipport."
+    ::= { harbourAclTransportFilterEntry 5 }
+
+harbourAclTransportFilterSourceIp OBJECT-TYPE
+    SYNTAX      IpAddress
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "The source Ip address of a transport layer filter way."
+    ::= { harbourAclTransportFilterEntry 6 }
+
+harbourAclTransportFilterSourceMask OBJECT-TYPE
+    SYNTAX      IpAddress
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "The source ip mask of a transport layer filter way."
+    ::= { harbourAclTransportFilterEntry 7 }
+
+harbourAclTransportFilterSourceIpPort OBJECT-TYPE
+    SYNTAX      INTEGER
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "The Ip port number of a transport layer filter.
+            '0'means any ipport."
+    ::= { harbourAclTransportFilterEntry 8 }
+
+harbourAclTransportFilterCtrl OBJECT-TYPE
+    SYNTAX      INTEGER {
+                    permit(1),
+                    deny(0)
+                }
+    MAX-ACCESS  read-write
+    STATUS  current
+    DESCRIPTION
+            "This function is to control the type for a fiter way.
+            1 means to permit the destination or source ip,
+            0 means to deny."
+    ::= { harbourAclTransportFilterEntry 9 }
+
+harbourAclTransportFilterPortlist OBJECT-TYPE
+    SYNTAX      PortList
+    MAX-ACCESS  read-write
+    STATUS  current
+    DESCRIPTION
+            "Especially 000000 means any port."
+    ::= { harbourAclTransportFilterEntry 10 }
+
+harbourAclTransportFilterPrecedence OBJECT-TYPE
+    SYNTAX      INTEGER (0..255)
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "The priority of a transport layer filter way."
+    ::= { harbourAclTransportFilterEntry 11 }
+
+harbourAclTransportFilterStatus OBJECT-TYPE
+    SYNTAX      INTEGER {
+                    valid(1),
+                    createRequest(2),
+                    underCreation(3),
+                    invalid(4)
+                }
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "The transport layer filter entry status."
+    ::= { harbourAclTransportFilterEntry 12 }
+
+harbourAclTransportFilterCounterName OBJECT-TYPE
+    SYNTAX      DisplayString
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "The counter which this filter belong to."
+    ::= { harbourAclTransportFilterEntry 13 }
+
+
+-- ACL MAC Filter Table
+
+harbourAclMACFilterTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF HarbourAclMACFilterEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+            "A list of MAC layer filter entries."
+    ::= { harbourAclProtocolFilterGroup 4 }
+
+harbourAclMACFilterEntry OBJECT-TYPE
+    SYNTAX      HarbourAclMACFilterEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+            "The MAC layer filter entry."
+    INDEX       { harbourAclMACFilterName }
+    ::= { harbourAclMACFilterTable 1 }
+
+HarbourAclMACFilterEntry ::= SEQUENCE {
+    harbourAclMACFilterName         DisplayString,
+    harbourAclMACFilterDesIp        IpAddress,
+    harbourAclMACFilterDesMask      IpAddress,
+    harbourAclMACFilterDesMAC       DisplayString,
+    harbourAclMACFilterSourceIp     IpAddress,
+    harbourAclMACFilterSourceMask   IpAddress,
+    harbourAclMACFilterSourceMAC    DisplayString,
+    harbourAclMACFilterCtrl         INTEGER,
+    harbourAclMACFilterPortlist     PortList,
+    harbourAclMACFilterPrecedence   INTEGER,
+    harbourAclMACFilterStatus       INTEGER,
+    harbourAclMACFilterCounterName  DisplayString
+}
+
+harbourAclMACFilterName OBJECT-TYPE
+    SYNTAX      DisplayString
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "The name of a MAC layer filter way.
+            The name should be a string in the size of 1 to 30.
+            As a index the string should be filled in the corresponding field
+            in the oid. One char of the string take up one oid field.
+            'o' should be added to the tail of the string if it's size under 30.
+            eg:(harbourAclIpFilterStatus.105.112.49.0.0.0.0.0.0.0.0.0.0.0.0.0.0.
+            0.0.0.0.0.0.0.0.0.0.0.0.0)"
+    ::= { harbourAclMACFilterEntry 1 }
+
+harbourAclMACFilterDesIp OBJECT-TYPE
+    SYNTAX      IpAddress
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "The destination Ip address of a MAC layer filter way."
+    ::= { harbourAclMACFilterEntry 2 }
+
+harbourAclMACFilterDesMask OBJECT-TYPE
+    SYNTAX      IpAddress
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "The destination Ip mask of a MAC layer filter way."
+    ::= { harbourAclMACFilterEntry 3 }
+
+harbourAclMACFilterDesMAC OBJECT-TYPE
+    SYNTAX      DisplayString
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "The Ip port number of a MAC layer filter.."
+    ::= { harbourAclMACFilterEntry 4 }
+
+harbourAclMACFilterSourceIp OBJECT-TYPE
+    SYNTAX      IpAddress
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "The source Ip address of a MAC layer filter way."
+    ::= { harbourAclMACFilterEntry 5 }
+
+harbourAclMACFilterSourceMask OBJECT-TYPE
+    SYNTAX      IpAddress
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "The source ip mask of a MAC layer filter way."
+    ::= { harbourAclMACFilterEntry 6 }
+
+harbourAclMACFilterSourceMAC OBJECT-TYPE
+    SYNTAX      DisplayString
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "The Ip port number of a MAC layer filter."
+    ::= { harbourAclMACFilterEntry 7 }
+
+harbourAclMACFilterCtrl OBJECT-TYPE
+    SYNTAX      INTEGER {
+                    permit(1),
+                    deny(0)
+                }
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "This function is to control the type for a fiter way.
+            1 means to permit the destination or source ip,
+            0 means to deny."
+    ::= { harbourAclMACFilterEntry 8 }
+
+harbourAclMACFilterPortlist OBJECT-TYPE
+    SYNTAX      PortList
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "Especially 000000 means any port."
+    ::= { harbourAclMACFilterEntry 9 }
+
+harbourAclMACFilterPrecedence OBJECT-TYPE
+    SYNTAX      INTEGER (0..255)
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "The priority of a MAC layer filter way."
+    ::= { harbourAclMACFilterEntry 10 }
+
+harbourAclMACFilterStatus OBJECT-TYPE
+    SYNTAX      INTEGER {
+                    valid(1),
+                    createRequest(2),
+                    underCreation(3),
+                    invalid(4)
+                }
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "The MAC layer filter entry status."
+    ::= { harbourAclMACFilterEntry 11 }
+
+harbourAclMACFilterCounterName OBJECT-TYPE
+    SYNTAX      DisplayString
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "The counter which this filter belong to."
+    ::= { harbourAclMACFilterEntry 12 }
+
+
+harbourAclFilterDeleteAll OBJECT-TYPE
+    SYNTAX      INTEGER {
+                    ready(0),
+                    deleting(1)
+                }
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "Set to 1 to 1 to delete all the filter entry."
+    ::= { harbourAclProtocolFilterGroup 5 }
+
+
+-- ACL ICMP Filter table
+
+harbourAclICMPFilterTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF HarbourAclICMPFilterEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+            "A list of ICMP layer filter entries."
+    ::= { harbourAclProtocolFilterGroup 6 }
+
+harbourAclICMPFilterEntry OBJECT-TYPE
+    SYNTAX      HarbourAclICMPFilterEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+            "The ICMP layer filter entry."
+    INDEX       { harbourAclICMPFilterName }
+    ::= { harbourAclICMPFilterTable 1 }
+
+HarbourAclICMPFilterEntry ::= SEQUENCE {
+    harbourAclICMPFilterName        DisplayString,
+    harbourAclICMPFilterDesIp       IpAddress,
+    harbourAclICMPFilterDesMask     IpAddress,
+    harbourAclICMPFilterSourceIp    IpAddress,
+    harbourAclICMPFilterSourceMask  IpAddress,
+    harbourAclICMPFilterType        INTEGER,
+    harbourAclICMPFilterCode        INTEGER,
+    harbourAclICMPFilterCtrl        INTEGER,
+    harbourAclICMPFilterPortlist    PortList,
+    harbourAclICMPFilterPrecedence  INTEGER,
+    harbourAclICMPFilterStatus      INTEGER,
+    harbourAclICMPFilterCounterName DisplayString
+}
+
+harbourAclICMPFilterName OBJECT-TYPE
+    SYNTAX      DisplayString
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "The name of a ICMP layer filter way.
+            The name should be a string in the size of 1 to 30.
+            As a index the string should be filled in the corresponding field
+            in the oid. One char of the string take up one oid field.
+            'o' should be added to the tail of the string if it's size under 30.
+            eg:(harbourAclIpFilterStatus.105.112.49.0.0.0.0.0.0.0.0.0.0.0.0.0.0.
+            0.0.0.0.0.0.0.0.0.0.0.0.0)"
+    ::= { harbourAclICMPFilterEntry 1 }
+
+harbourAclICMPFilterDesIp OBJECT-TYPE
+    SYNTAX      IpAddress
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "The destination Ip address of a ICMP layer filter way."
+    ::= { harbourAclICMPFilterEntry 2 }
+
+harbourAclICMPFilterDesMask OBJECT-TYPE
+    SYNTAX      IpAddress
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "The destination Ip mask of a ICMP layer filter way."
+    ::= { harbourAclICMPFilterEntry 3 }
+
+harbourAclICMPFilterSourceIp OBJECT-TYPE
+    SYNTAX      IpAddress
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "The source Ip address of a ICMP layer filter way."
+    ::= { harbourAclICMPFilterEntry 4 }
+
+harbourAclICMPFilterSourceMask OBJECT-TYPE
+    SYNTAX      IpAddress
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "The source ip mask of a ICMP layer filter way."
+    ::= { harbourAclICMPFilterEntry 5 }
+
+harbourAclICMPFilterType OBJECT-TYPE
+    SYNTAX      INTEGER (0..254)
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "The type of a ICMP layer filter way."
+    ::= { harbourAclICMPFilterEntry 6 }
+
+harbourAclICMPFilterCode OBJECT-TYPE
+    SYNTAX      INTEGER (0..254)
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "The code of a ICMP layer filter way."
+    ::= { harbourAclICMPFilterEntry 7 }
+
+harbourAclICMPFilterCtrl OBJECT-TYPE
+    SYNTAX      INTEGER {
+                    permit(1),
+                    deny(0)
+                }
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "This function is to control the type for a fiter way.
+            1 means to permit the destination or source ip,
+            0 means to deny."
+    ::= { harbourAclICMPFilterEntry 8 }
+
+harbourAclICMPFilterPortlist OBJECT-TYPE
+    SYNTAX      PortList
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "Especially 000000 means any port."
+    ::= { harbourAclICMPFilterEntry 9 }
+
+harbourAclICMPFilterPrecedence OBJECT-TYPE
+    SYNTAX      INTEGER (0..255)
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "The priority of a ICMP layer filter way."
+    ::= { harbourAclICMPFilterEntry 10 }
+
+harbourAclICMPFilterStatus OBJECT-TYPE
+    SYNTAX      INTEGER {
+                    valid(1),
+                    createRequest(2),
+                    underCreation(3),
+                    invalid(4)
+                }
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "The ICMP layer filter entry status."
+    ::= { harbourAclICMPFilterEntry 11 }
+
+harbourAclICMPFilterCounterName OBJECT-TYPE
+    SYNTAX      DisplayString
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "The counter which this filter belong to."
+    ::= { harbourAclICMPFilterEntry 12 }
+
+
+-- ACL Counter Table
+
+harbourAclCounterTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF HarbourAclCounterEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+            "A list of acl counter entries."
+    ::= { harbourAclProtocolFilterGroup 7 }
+
+harbourAclCounterEntry OBJECT-TYPE
+    SYNTAX      HarbourAclCounterEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+            "The acl counter entry."
+    INDEX       { harbourAclCounterIndex }
+    ::= { harbourAclCounterTable 1 }
+
+HarbourAclCounterEntry ::= SEQUENCE {
+    harbourAclCounterIndex      INTEGER,
+    harbourAclCounterName       DisplayString,
+    harbourAclCounterData       DisplayString,
+    harbourAclCounterStatus     INTEGER,
+    harbourAclCounterReset      INTEGER
+}
+
+harbourAclCounterIndex OBJECT-TYPE
+    SYNTAX      INTEGER
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "The index for Acl counter.This value should >1 and <33,
+            for we only support 32 counters."
+    ::= { harbourAclCounterEntry 1 }
+
+harbourAclCounterName OBJECT-TYPE
+    SYNTAX      DisplayString
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+            "The name of a counter.The length of this object is <=30(include '\0')."
+    ::= { harbourAclCounterEntry 2 }
+
+harbourAclCounterData OBJECT-TYPE
+    SYNTAX      DisplayString
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "The Data of a counter."
+    ::= { harbourAclCounterEntry 3 }
+
+harbourAclCounterStatus OBJECT-TYPE
+    SYNTAX      INTEGER {
+                    valid(1),
+                    createRequest(2),
+                    underCreation(3),
+                    invalid(4)
+                }
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+            "The status of a Acl counter."
+    ::= { harbourAclCounterEntry 4 }
+
+harbourAclCounterReset OBJECT-TYPE
+    SYNTAX      INTEGER {
+                    ready(0),
+                    reset(1)
+                }
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+            "Reset a Acl counter."
+    ::= { harbourAclCounterEntry 5 }
+
+harbourAclCounterDeleteAll OBJECT-TYPE
+    SYNTAX      INTEGER {
+                    ready(0),
+                    deleting(1)
+                }
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "To delete all the acl counter."
+    ::= { harbourAclProtocolFilterGroup 8 }
+
+
+-- ACL Rule Table
+
+harbourAclRuleTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF HarbourAclRuleEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+            "The table of Acl filter, designed for IP-DSLAM2.0."
+    ::= { harbourAclProtocolFilterGroup 9 }
+
+harbourAclRuleEntry OBJECT-TYPE
+    SYNTAX      HarbourAclRuleEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+            "The entry of Acl filter, designed for IP-DSLAM2.0."
+    INDEX       { aclRuleIndex }
+    ::= { harbourAclRuleTable 1 }
+
+HarbourAclRuleEntry ::= SEQUENCE {
+    aclRuleIndex            INTEGER,
+    aclRuleDestIP           IpAddress,
+    aclRuleDestIPMask       IpAddress,
+    aclRuleDestPort         INTEGER,
+    aclRuleSourceIP         IpAddress,
+    aclRuleSourceIPMask     IpAddress,
+    aclRuleSourcePort       INTEGER,
+    aclRuleProtocol         INTEGER,
+    aclRuleCtrl             INTEGER,
+    aclRulePortlist         PortList,
+    aclRulePrecedence       INTEGER,
+    aclRuleStatus           RowStatus
+}
+
+aclRuleIndex OBJECT-TYPE
+    SYNTAX      INTEGER
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "The index of acl rule in the system."
+    ::= { harbourAclRuleEntry 1 }
+
+aclRuleDestIP OBJECT-TYPE
+    SYNTAX      IpAddress
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+            "The destination IP of acl rule in the system."
+    ::= { harbourAclRuleEntry 2 }
+
+aclRuleDestIPMask OBJECT-TYPE
+    SYNTAX      IpAddress
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+            "The destination IP mask of acl rule in the system."
+    ::= { harbourAclRuleEntry 3 }
+
+aclRuleDestPort OBJECT-TYPE
+    SYNTAX      INTEGER
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+            "The destination port of acl rule in the system."
+    ::= { harbourAclRuleEntry 4 }
+
+aclRuleSourceIP OBJECT-TYPE
+    SYNTAX      IpAddress
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+            "The source IP of acl rule in the system.
+            It will be used later."
+    ::= { harbourAclRuleEntry 5 }
+
+aclRuleSourceIPMask OBJECT-TYPE
+    SYNTAX      IpAddress
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+            "The source IP mask of acl rule in the system.
+            It will be used later."
+    ::= { harbourAclRuleEntry 6 }
+
+aclRuleSourcePort OBJECT-TYPE
+    SYNTAX      INTEGER
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+            "The source port of acl rule in the system.
+            It will be used later."
+    ::= { harbourAclRuleEntry 7 }
+
+aclRuleProtocol OBJECT-TYPE
+    SYNTAX      INTEGER {
+                    tcp(1),
+                    udp(2),
+                    icmp(3),
+                    ip(6),
+                    default(5)
+                }
+    MAX-ACCESS  read-create
+    STATUS  current
+    DESCRIPTION
+            "The protocol type of Acl rule:
+            TCP (1),UDP (2),ICMP(3),IP (6),default (5)"
+    ::= { harbourAclRuleEntry 8 }
+
+aclRuleCtrl OBJECT-TYPE
+    SYNTAX      INTEGER {
+                    permit ( 0 ) ,
+                    deny ( 1 )
+                }
+    MAX-ACCESS  read-create
+    STATUS  current
+    DESCRIPTION
+            "The default control of Acl rule"
+    ::= { harbourAclRuleEntry 9 }
+
+aclRulePortlist OBJECT-TYPE
+    SYNTAX      PortList
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+            "The port map of the acl rule."
+    ::= { harbourAclRuleEntry 10 }
+
+aclRulePrecedence OBJECT-TYPE
+    SYNTAX      INTEGER
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+            "The priority of the acl rule."
+    ::= { harbourAclRuleEntry 11 }
+
+aclRuleStatus OBJECT-TYPE
+    SYNTAX      RowStatus
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+            "The status of a Acl rule."
+    ::= { harbourAclRuleEntry 12 }
+
+
+-- ACL Custormer Profile Table
+
+harbourCustomerProfileTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF HarbourCustomerProfileEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+            "The table of customer profile."
+    ::= { harbourUserMultiDomainGroup 1 }
+
+harbourCustomerProfileEntry OBJECT-TYPE
+    SYNTAX      HarbourCustomerProfileEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+            "The entry of custom profile."
+    INDEX       { customerProfileName }
+    ::= { harbourCustomerProfileTable 1 }
+
+HarbourCustomerProfileEntry ::= SEQUENCE {
+    customerProfileIndex            INTEGER,
+    customerProfileName             DisplayString,
+    customerProfileDefaultCmd       INTEGER,
+    customerProfilePriority         INTEGER,
+    customerProfileDiscardability   INTEGER,
+    customerProfileVPT              INTEGER,
+    customerProfileTOS              INTEGER,
+    customerProfileUpBandWidth      INTEGER,
+    customerProfileDownBandWidth    INTEGER,
+    customerProfileIP               IpAddress,
+    customerProfileMask             IpAddress,
+    customerProfileStatus           RowStatus,
+    customerProfileBindFlag         INTEGER,
+    customerProfileBindToUser       DisplayString
+}
+
+customerProfileIndex OBJECT-TYPE
+    SYNTAX      INTEGER
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "The index of customer profile in the system."
+    ::= { harbourCustomerProfileEntry 1 }
+
+customerProfileName OBJECT-TYPE
+    SYNTAX      DisplayString
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+            "The name of customer profile."
+    ::= { harbourCustomerProfileEntry 2 }
+
+customerProfileDefaultCmd OBJECT-TYPE
+    SYNTAX      INTEGER {
+                    permit(0),
+                    deny(1)
+                }
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "The default command of customer profile.
+            The default setting is permit, the customer can
+            access any net resource. If deny is set, the
+            customer can only access the net resource appointed
+            by access rules."
+    ::= { harbourCustomerProfileEntry 3 }
+
+customerProfilePriority OBJECT-TYPE
+    SYNTAX      INTEGER (0..3)
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "The priority of the customer's exchange out queue."
+    ::= { harbourCustomerProfileEntry 4 }
+
+customerProfileDiscardability OBJECT-TYPE
+    SYNTAX      INTEGER {
+                    hold(0),
+                    discard(1)
+                }
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "This leaf configures whether the system discards
+            the packets When the queue congests."
+    ::= { harbourCustomerProfileEntry 5 }
+
+customerProfileVPT OBJECT-TYPE
+    SYNTAX      INTEGER (0..7)
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "Configure the parameter VPT in the packets."
+    ::= { harbourCustomerProfileEntry 6 }
+
+customerProfileTOS OBJECT-TYPE
+    SYNTAX      INTEGER (0..255)
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "Configure the parameter TOS in the packets."
+    ::= { harbourCustomerProfileEntry 7 }
+
+customerProfileUpBandWidth OBJECT-TYPE
+    SYNTAX      INTEGER (0..1000)
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "Restrict the customer's up bandwidth. The granularity
+            of the bandwidth is 32kbps."
+    ::= { harbourCustomerProfileEntry 8 }
+
+customerProfileDownBandWidth OBJECT-TYPE
+    SYNTAX      INTEGER (0..1000)
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "Restrict the customer's down bandwidth. The granularity
+            of the bandwidth is 32kbps."
+    ::= { harbourCustomerProfileEntry 9 }
+
+customerProfileIP OBJECT-TYPE
+    SYNTAX      IpAddress
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "The IP address appoints to the customer.
+            If the entered IP is 0, the system does not restrict the IP address
+            configuration for this kind of customer. The system distributes
+            an arbitrary IP address for the customer."
+    ::= { harbourCustomerProfileEntry 10 }
+
+customerProfileMask OBJECT-TYPE
+    SYNTAX      IpAddress
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "The IP net mask appoints to the customer."
+    ::= { harbourCustomerProfileEntry 11 }
+
+customerProfileStatus OBJECT-TYPE
+    SYNTAX      RowStatus
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+            "The status of a Acl counter."
+    ::= { harbourCustomerProfileEntry 12 }
+
+customerProfileBindFlag OBJECT-TYPE
+    SYNTAX      INTEGER {
+                    isBind(1),
+                    notBind(2)
+                }
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "This leaf indicates whether this profile is
+            binding to some ports.
+            If you want to delete this profile, you should
+            check this flag first."
+    ::= { harbourCustomerProfileEntry 13 }
+
+customerProfileBindToUser OBJECT-TYPE
+    SYNTAX      DisplayString
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "By this leaf, you can bind or unbind this profile to a user.
+            if you want to unbind this profile,please input NONE."
+    ::= { harbourCustomerProfileEntry 14 }
+
+
+-- Customer Profile and ACL Rule Table
+
+harbourCustomerProfileACLRulesTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF HarbourCustomerProfileACLRulesEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+            "The table of binding ACL rules to customer profile."
+    ::= { harbourUserMultiDomainGroup 2 }
+
+harbourCustomerProfileACLRulesEntry OBJECT-TYPE
+    SYNTAX      HarbourCustomerProfileACLRulesEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+            "The entry of binding ACL rules to custom profile."
+    INDEX       { customerProfileIndex, customerAclRuleIndex }
+    ::= { harbourCustomerProfileACLRulesTable 1 }
+
+HarbourCustomerProfileACLRulesEntry ::= SEQUENCE {
+    customerAclRuleIndex            INTEGER,
+    customerProfileRuleBindStatus   RowStatus
+}
+
+customerAclRuleIndex OBJECT-TYPE
+    SYNTAX      INTEGER
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "The index of ACL rules."
+    ::= { harbourCustomerProfileACLRulesEntry 1 }
+
+customerProfileRuleBindStatus OBJECT-TYPE
+    SYNTAX      RowStatus
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+            "This leaf binds or disbinds a ACL rule to customer profile."
+    ::= { harbourCustomerProfileACLRulesEntry 2 }
+
+
+END

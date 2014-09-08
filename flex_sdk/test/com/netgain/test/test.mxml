@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml"
+    layout="absolute" width="100%" height="100%" initialize="initApp();">
+<mx:Script>
+<![CDATA[
+  import mx.core.UIComponent;
+  import mx.controls.Label;
+  import mx.containers.VBox;
+  import flash.display.Shape;
+  import mx.controls.Alert;
+  import com.netgain.test.Test;
+  import com.netgain.test.Subnet;
+  private function initApp():void
+  {
+    var req:URLRequest = new URLRequest();
+    req.url = "http://localhost/jsp/test/1.jsp";
+    var ldr:URLLoader = new URLLoader();
+    ldr.load(req);
+    var subnet:Subnet = new Subnet();
+    subnet.x = 80;
+    subnet.y = 80;
+    mainPanel.addChild(subnet);
+
+    subnet = new Subnet();
+    subnet.x = 180;
+    subnet.y = 80;
+    mainPanel.addChild(subnet);
+  }
+
+  private function zoomIn():void
+  {
+    mainPanel.scaleX += 0.15;
+    mainPanel.scaleY += 0.15;
+  }
+
+  private function zoomOut():void
+  {
+    mainPanel.scaleX -= 0.15;
+    mainPanel.scaleY -= 0.15;
+  }
+
+  private function loadCompleted(evt:Event):void
+  {
+    var xml:XML = new XML(evt.currentTarget.data);
+    XML.ignoreWhitespace = true;
+    var nodes:XMLList = xml.children(); 
+    for (var i:uint=0; i<nodes.length(); i++) {
+    }
+  }
+]]>
+</mx:Script>
+<mx:HBox x="5" y="0" >
+<mx:Button label="Zoom in" click="zoomIn()" />
+<mx:Button label="Zoom out" click="zoomOut()" />
+</mx:HBox>
+<mx:Container id="mainPanel" width="10000" height="10000" x="10" y="40" >
+</mx:Container>
+</mx:Application>

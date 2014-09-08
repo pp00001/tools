@@ -1,0 +1,410 @@
+-- ********************************************************************
+
+--  UnitransMib-MS-performance.mib
+
+--  Copyright (c) 2008 ZTE CORPORATION.All rights reserved.
+
+--  Description:This file includes the performance related difinitions 
+
+--  Version     v1.0
+
+--  Modification Record:
+
+--********************************************************************
+
+UnitransMib-MS-performance 
+DEFINITIONS ::= BEGIN
+IMPORTS
+    MODULE-IDENTITY, OBJECT-TYPE, NOTIFICATION-TYPE,
+    enterprises, Integer32, Unsigned32, IpAddress
+	FROM SNMPv2-SMI
+    TEXTUAL-CONVENTION, DisplayString, TimeStamp, DateAndTime
+	FROM SNMPv2-TC  
+    MODULE-COMPLIANCE, OBJECT-GROUP, NOTIFICATION-GROUP
+	FROM SNMPv2-CONF
+	
+	zteUnitransMS
+	FROM 
+	UnitransMib-MS-root	
+	BOOL-TC,Time-TC,Unit-TC,	
+	ObjectNVSList-T,NamingAttributes-T,LayerRate-TC,LayerRate-TC
+	FROM
+	UnitransMib-MS-common;
+	
+zteuPfmObjects MODULE-IDENTITY
+        LAST-UPDATED   "0602130000Z"
+        ORGANIZATION   "ZTE"
+        CONTACT-INFO   "
+           ZTE Corporation
+           
+           Postal: 518057      
+           
+           via the WEB:  http://www.zte.com.cn                           
+            
+           via phone:    86-755-26773000"
+   DESCRIPTION
+      "The module describing ZTE Unitrans MIB."
+::= { zteUnitransMS 9 }       
+
+-- ********************************************************************
+-- TEXTUAL-CONVENTION Definition
+-- ********************************************************************
+   	PMParameterName-TC ::= TEXTUAL-CONVENTION
+    STATUS current
+   	DESCRIPTION "
+   	This textual convention presents performance parameter's name
+   	"
+   	SYNTAX OCTET STRING	
+    
+    PMValue-TC ::=  TEXTUAL-CONVENTION
+    STATUS current
+   	DESCRIPTION "
+   	This variable presents performance monitor value
+  	"
+   	SYNTAX  OCTET STRING
+    
+   	PMLocation-TC ::=  TEXTUAL-CONVENTION
+    STATUS current
+   	DESCRIPTION "
+   	This textual convention presents location to monitor performance of object,it is reserved.
+   	"
+   	SYNTAX  OCTET STRING
+    
+    Granularity-TC ::=  TEXTUAL-CONVENTION
+    STATUS current
+   	DESCRIPTION "
+   	This textusl convention presents granuarity to monitor performance
+   	g-15min(1):15 mininutes
+	g-24h(2): 24 hours
+	g-na(3):Unknown
+	"
+   	SYNTAX INTEGER 
+   {
+   		g-15min(1),
+   		g-24h(2),
+   		g-na(3)   		
+   }    	    	
+     
+    PMThresholdType-TC  ::=  TEXTUAL-CONVENTION
+    STATUS current
+   	DESCRIPTION "
+   	This textual convention presents threshold type of performance
+   	twm-HIGHEST   Highest
+	twm-HIGH      High
+	twm-LOW       Low
+	twm-LOWEST    Lowest"
+   	SYNTAX INTEGER
+   	{
+	    twm-NA(0),
+   		twm-HIGHEST(1),
+		twm-HIGH(2),
+		twm-LOW(3),
+		twm-LOWEST(4)
+   	}    	
+   	
+
+-- ********************************************************************
+-- Table And Object  Definition
+-- ********************************************************************
+-- ********************************************************************
+-- Performance Definitoin 
+-- ********************************************************************
+--Current performance
+zteuCurPMTable  OBJECT-TYPE
+	SYNTAX		SEQUENCE OF ZTEUCurPMEntry
+	MAX-ACCESS	not-accessible
+	STATUS		current
+	DESCRIPTION
+		"
+		This object presents current performance table
+		"
+	::= { zteuPfmObjects 1 }
+
+zteuCurPMEntry  OBJECT-TYPE
+	SYNTAX		ZTEUCurPMEntry
+	MAX-ACCESS	not-accessible
+	STATUS		current
+	DESCRIPTION
+		"
+		This object presents current performance entry
+		"
+	INDEX  { curPMSource, curPMLayerRate,curPMLocation,curPMGranularity,curPMParameter }
+	::= { zteuCurPMTable 1 }
+
+ZTEUCurPMEntry ::= SEQUENCE
+   {
+    	curPMSource 		 		 NamingAttributes-T,
+    	curPMLayerRate 			    LayerRate-TC,				
+    	curPMLocation               PMLocation-TC,
+		curPMGranularity            Granularity-TC,		
+		curPMendOrElapsedTime  	     Time-TC,  
+		curPMParameter      		 PMParameterName-TC, 		
+	    curPMValue                	 PMValue-TC,   
+	    curPMUnit                   Unit-TC,
+		curPMDescription			DisplayString,
+        curPMAdditionalInfo         ObjectNVSList-T
+   
+ 	}        
+ 	
+curPMSource OBJECT-TYPE
+     SYNTAX NamingAttributes-T
+     MAX-ACCESS read-only
+     STATUS current
+     DESCRIPTION "
+     This variable presents performance source
+     For details,please refer NamingAttributes-T's definition
+     "
+     ::= {zteuCurPMEntry 1}
+
+curPMLayerRate OBJECT-TYPE
+     SYNTAX LayerRate-TC
+     MAX-ACCESS read-only
+     STATUS current
+     DESCRIPTION "
+     This variable presents layer rate
+     "
+     ::= {zteuCurPMEntry 2}
+
+curPMLocation OBJECT-TYPE
+     SYNTAX PMLocation-TC
+     MAX-ACCESS read-only
+     STATUS current
+     DESCRIPTION "
+     This variable presents monitor location for performance
+     "
+     ::= {zteuCurPMEntry 3}
+
+curPMGranularity  OBJECT-TYPE
+     SYNTAX Granularity-TC
+     MAX-ACCESS read-only
+     STATUS current
+     DESCRIPTION "
+     This variable presents the granularity to monitor performance     
+     "
+     ::= {zteuCurPMEntry 4}	
+
+curPMendOrElapsedTime  OBJECT-TYPE
+     SYNTAX Time-TC
+     MAX-ACCESS read-only
+     STATUS current
+     DESCRIPTION "
+     This variable presents performance end or elapsed time
+     "
+     ::= {zteuCurPMEntry 5}	
+
+curPMParameter   OBJECT-TYPE
+     SYNTAX PMParameterName-TC
+     MAX-ACCESS read-only
+     STATUS current
+     DESCRIPTION "
+     This variable presents performance parameter's name
+     "
+     ::= {zteuCurPMEntry 6}	   	
+     
+curPMValue    OBJECT-TYPE
+     SYNTAX PMValue-TC
+     MAX-ACCESS read-only
+     STATUS current
+     DESCRIPTION "
+     This variable presents performance value
+     "
+     ::= {zteuCurPMEntry 7}	   	
+
+curPMUnit     OBJECT-TYPE
+     SYNTAX Unit-TC
+     MAX-ACCESS read-only
+     STATUS current
+     DESCRIPTION "
+     This variable presents unit of performance valure
+     "
+     ::= {zteuCurPMEntry 8}	   
+
+curPMDescription     OBJECT-TYPE
+     SYNTAX DisplayString
+     MAX-ACCESS read-only
+     STATUS current
+     DESCRIPTION "
+     This variable presents Description information for PMParameter
+     "
+     ::= {zteuCurPMEntry 9}	  
+
+curPMAdditionalInfo     OBJECT-TYPE
+     SYNTAX ObjectNVSList-T
+     MAX-ACCESS read-only
+     STATUS current
+     DESCRIPTION "
+     This variable presents additional information
+     "
+     ::= {zteuCurPMEntry 10}	 
+
+zteuCurPMEntryGroup OBJECT-GROUP
+OBJECTS
+  {
+    	curPMSource,
+    	curPMLayerRate,	
+    	curPMLocation,
+		curPMGranularity,
+		curPMendOrElapsedTime, 
+		curPMParameter, 
+	    curPMValue,   
+	    curPMUnit,
+		curPMDescription,
+        curPMAdditionalInfo   
+		}        
+
+ STATUS current
+
+ DESCRIPTION "An object group of current performance entry"
+
+ ::= { zteuPfmObjects 20 }
+
+--Historical performance
+zteuHisPMTable  OBJECT-TYPE
+	SYNTAX		SEQUENCE OF ZTEUHisPMEntry
+	MAX-ACCESS	not-accessible
+	STATUS		current
+	DESCRIPTION
+		"
+		This object presents historical performance table
+		"
+	::= { zteuPfmObjects 2 }
+
+
+
+zteuHisPMEntry  OBJECT-TYPE
+	SYNTAX		ZTEUHisPMEntry
+	MAX-ACCESS	not-accessible
+	STATUS		current
+	DESCRIPTION
+		"
+		This object presents historical performance entry
+		"
+	INDEX  { hisPMSource, hisPMLayerRate,hisPMLocation,hisPMGranularity,hisPMParameter,hisPMendOrElapsedTime }
+	::= { zteuHisPMTable 1 }
+
+ZTEUHisPMEntry ::= SEQUENCE
+   {
+    	hisPMSource 		 		NamingAttributes-T,
+    	hisPMLayerRate 			    LayerRate-TC,				
+    	hisPMLocation               PMLocation-TC,
+		hisPMGranularity            Granularity-TC,		
+		hisPMendOrElapsedTime  	    Time-TC,  
+		hisPMParameter      		PMParameterName-TC, 		
+	    hisPMValue                	PMValue-TC,   
+	    hisPMUnit                   Unit-TC,
+		hisPMDescription            DisplayString,
+        hisPMAdditionalInfo         ObjectNVSList-T   
+ 	}        
+ 	
+hisPMSource OBJECT-TYPE
+     SYNTAX NamingAttributes-T
+     MAX-ACCESS read-only
+     STATUS current
+     DESCRIPTION "
+     This variable presents historical performance source
+     For details,please refer NamingAttributes-T's definition
+     "
+     ::= {zteuHisPMEntry 1}
+
+hisPMLayerRate OBJECT-TYPE
+     SYNTAX LayerRate-TC
+     MAX-ACCESS read-only
+     STATUS current
+     DESCRIPTION "
+     This variable presents layer rate
+     "
+     ::= {zteuHisPMEntry 2}
+
+hisPMLocation OBJECT-TYPE
+     SYNTAX PMLocation-TC
+     MAX-ACCESS read-only
+     STATUS current
+     DESCRIPTION "
+     This variable presents monitor location for performance
+     "
+     ::= {zteuHisPMEntry 3}
+
+hisPMGranularity  OBJECT-TYPE
+     SYNTAX Granularity-TC
+     MAX-ACCESS read-only
+     STATUS current
+     DESCRIPTION "
+     This variable presents the granularity to monitor performance
+     "
+     ::= {zteuHisPMEntry 4}	
+
+hisPMendOrElapsedTime  OBJECT-TYPE
+     SYNTAX Time-TC
+     MAX-ACCESS read-only
+     STATUS current
+     DESCRIPTION "
+     This variable presents performance end or elapsed time
+     "
+     ::= {zteuHisPMEntry 5}	
+
+hisPMParameter   OBJECT-TYPE
+     SYNTAX PMParameterName-TC
+     MAX-ACCESS read-only
+     STATUS current
+     DESCRIPTION "
+     This variable presents performance parameter's name
+     "
+     ::= {zteuHisPMEntry 6}	   	
+     
+hisPMValue    OBJECT-TYPE
+     SYNTAX PMValue-TC
+     MAX-ACCESS read-only
+     STATUS current
+     DESCRIPTION "
+     This variable presents performance value
+     "
+     ::= {zteuHisPMEntry 7}	   	
+
+hisPMUnit     OBJECT-TYPE
+     SYNTAX Unit-TC
+     MAX-ACCESS read-only
+     STATUS current
+     DESCRIPTION "
+     This variable presents unit of performance valure
+     "
+     ::= {zteuHisPMEntry 8}	 
+	 
+hisPMDescription OBJECT-TYPE
+	 SYNTAX DisplayString
+     MAX-ACCESS read-only
+     STATUS current
+     DESCRIPTION "
+     This variable presents description information for PMParameter
+     "
+     ::= {zteuHisPMEntry 9}	 
+	 
+hisPMAdditionalInfo     OBJECT-TYPE
+     SYNTAX ObjectNVSList-T
+     MAX-ACCESS read-only
+     STATUS current
+     DESCRIPTION "
+     This variable presents additional information
+     "
+     ::= {zteuHisPMEntry 10}	 
+
+    
+	zteuHisPMEntryGroup OBJECT-GROUP
+	OBJECTS
+   {
+    	hisPMSource,
+    	hisPMLayerRate,				
+    	hisPMLocation,
+		hisPMGranularity,		
+		hisPMendOrElapsedTime,  
+		hisPMParameter, 		
+	    hisPMValue,   
+	    hisPMUnit,
+		hisPMDescription,
+        hisPMAdditionalInfo
+ 	}
+ 	STATUS current
+ 	DESCRIPTION 
+ 	"An object group of historical performance  entry"       
+	::= {zteuPfmObjects 21}
+	
+    END

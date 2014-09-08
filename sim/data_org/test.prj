@@ -1,0 +1,157 @@
+<?xml version="1.0"  encoding="UTF-8"?>
+<Networks name="Test">
+<Simulator initialState="up" port="161"
+  name="test" ipAddress="10.10.10.1">
+  <configFile name="data/config.xml"/>
+  <trapFile/>
+  <dataFile name="data/test.xml"/>
+  <device name="generic"/>
+</Simulator>
+<Simulator initialState="up" port="161"
+  name="a10" ipAddress="10.10.10.2">
+  <configFile name="data/config.xml"/>
+  <trapFile/>
+  <dataFile name="data/a10.xml"/>
+  <device name="generic"/>
+</Simulator>
+<Simulator initialState="up" port="161"
+  name="as400-2" ipAddress="10.10.10.3">
+  <configFile name="data/config.xml"/>
+  <trapFile/>
+  <dataFile name="data/as400-2.xml"/>
+  <device name="generic"/>
+</Simulator>
+<Simulator initialState="up" port="161"
+  name="ascendlink" ipAddress="10.10.10.4">
+  <configFile name="data/config.xml"/>
+  <trapFile/>
+  <dataFile name="data/ascendlink.xml"/>
+  <device name="generic"/>
+</Simulator>
+<Simulator initialState="up" port="161"
+  name="avaya" ipAddress="10.10.10.5">
+  <configFile name="data/config.xml"/>
+  <trapFile/>
+  <dataFile name="data/avaya.xml"/>
+  <device name="generic"/>
+</Simulator>
+<Simulator initialState="up" port="161"
+  name="cisco_6509" ipAddress="10.10.10.6">
+  <configFile name="data/config.xml"/>
+  <trapFile/>
+  <dataFile name="data/cisco_6509.xml"/>
+  <device name="generic"/>
+</Simulator>
+<Simulator initialState="up" port="161"
+  name="dptech" ipAddress="10.10.10.7">
+  <configFile name="data/config.xml"/>
+  <trapFile/>
+  <dataFile name="data/dptech.xml"/>
+  <device name="generic"/>
+</Simulator>
+<Simulator initialState="up" port="161"
+  name="env1" ipAddress="10.10.10.8">
+  <configFile name="data/config.xml"/>
+  <trapFile/>
+  <dataFile name="data/env1.xml"/>
+  <device name="generic"/>
+</Simulator>
+<Simulator initialState="up" port="161"
+  name="env2" ipAddress="10.10.10.9">
+  <configFile name="data/config.xml"/>
+  <trapFile/>
+  <dataFile name="data/env2.xml"/>
+  <device name="generic"/>
+</Simulator>
+<Simulator initialState="up" port="161"
+  name="exchange2010" ipAddress="10.10.10.10">
+  <configFile name="data/config.xml"/>
+  <trapFile/>
+  <dataFile name="data/exchange2010.xml"/>
+  <device name="generic"/>
+</Simulator>
+<Simulator initialState="up" port="161"
+  name="f5" ipAddress="10.10.10.11">
+  <configFile name="data/config.xml"/>
+  <trapFile/>
+  <dataFile name="data/f5.xml"/>
+  <device name="generic"/>
+</Simulator>
+<Simulator initialState="up" port="161"
+  name="fortigate" ipAddress="10.10.10.12">
+  <configFile name="data/config.xml"/>
+  <trapFile/>
+  <dataFile name="data/fortigate.xml"/>
+  <device name="generic"/>
+</Simulator>
+<Simulator initialState="up" port="161"
+  name="h3c_fw_7506" ipAddress="10.10.10.13">
+  <configFile name="data/config.xml"/>
+  <trapFile/>
+  <dataFile name="data/h3c_fw_7506.xml"/>
+  <device name="generic"/>
+</Simulator>
+<Simulator initialState="up" port="161"
+  name="h3c_load_balancer" ipAddress="10.10.10.14">
+  <configFile name="data/config.xml"/>
+  <trapFile/>
+  <dataFile name="data/h3c_load_balancer.xml"/>
+  <device name="generic"/>
+</Simulator>
+<Simulator initialState="up" port="161"
+  name="juniper_netscreen" ipAddress="10.10.10.15">
+  <configFile name="data/config.xml"/>
+  <trapFile/>
+  <dataFile name="data/juniper_netscreen.xml"/>
+  <device name="generic"/>
+</Simulator>
+<Simulator initialState="up" port="161"
+  name="juniper_router" ipAddress="10.10.10.16">
+  <configFile name="data/config.xml"/>
+  <trapFile/>
+  <dataFile name="data/juniper_router.xml"/>
+  <device name="generic"/>
+</Simulator>
+<Simulator initialState="up" port="161"
+  name="juniper_vpn" ipAddress="10.10.10.17">
+  <configFile name="data/config.xml"/>
+  <trapFile/>
+  <dataFile name="data/juniper_vpn.xml"/>
+  <device name="generic"/>
+</Simulator>
+<Simulator initialState="up" port="161"
+  name="juniper_vpn2" ipAddress="10.10.10.18">
+  <configFile name="data/config.xml"/>
+  <trapFile/>
+  <dataFile name="data/juniper_vpn2.xml"/>
+  <device name="generic"/>
+</Simulator>
+<Simulator initialState="up" port="161"
+  name="renshou_windows" ipAddress="10.10.10.19">
+  <configFile name="data/config.xml"/>
+  <trapFile/>
+  <dataFile name="data/renshou_windows.xml"/>
+  <device name="generic"/>
+</Simulator>
+<Simulator initialState="up" port="161"
+  name="soonseah" ipAddress="10.10.10.20">
+  <configFile name="data/config.xml"/>
+  <trapFile/>
+  <dataFile name="data/soonseah.xml"/>
+  <device name="generic"/>
+</Simulator>
+<Simulator initialState="up" port="161"
+  name="topsec" ipAddress="10.10.10.21">
+  <configFile name="data/config.xml"/>
+  <trapFile/>
+  <dataFile name="data/topsec.xml"/>
+  <device name="generic"/>
+</Simulator>
+<Simulator initialState="up" port="161"
+  name="win_ibm_director" ipAddress="10.10.10.22">
+  <configFile name="data/config.xml"/>
+  <trapFile/>
+  <dataFile name="data/win_ibm_director.xml"/>
+  <device name="generic"/>
+</Simulator>
+</Networks>

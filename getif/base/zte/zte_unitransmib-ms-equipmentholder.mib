@@ -1,0 +1,273 @@
+-- ********************************************************************
+
+--  UnitransMib-MS-equipmentholder.mib
+
+--  Copyright (c) 2008 ZTE CORPORATION.All rights reserved.
+
+--  Description: This file includes the equipmentHolder related difinitions 
+
+--  Version     v1.0
+
+--  Modification Record:
+
+--********************************************************************
+UnitransMib-MS-equipmentholder 
+DEFINITIONS ::= BEGIN
+IMPORTS
+    MODULE-IDENTITY, OBJECT-TYPE, NOTIFICATION-TYPE,
+    enterprises, Integer32, Unsigned32, IpAddress
+        FROM SNMPv2-SMI
+    TEXTUAL-CONVENTION, DisplayString, TimeStamp, DateAndTime
+        FROM SNMPv2-TC  
+    MODULE-COMPLIANCE, OBJECT-GROUP, NOTIFICATION-GROUP
+        FROM SNMPv2-CONF        
+        zteUnitransMS
+	FROM 
+	UnitransMib-MS-root
+	BOOL-TC,Time-TC,Unit-TC,       
+        ObjectNVSList-T,NamingAttributes-T
+        FROM 
+        UnitransMib-MS-common;   
+        
+--*********************************************************************
+--
+--*********************************************************************         
+zteuEquipmentHolder MODULE-IDENTITY
+        LAST-UPDATED   "0602130000Z"
+        ORGANIZATION   "ZTE"
+        CONTACT-INFO   "
+           ZTE Corporation
+           
+           Postal: 518057      
+           
+           via the WEB:  http://www.zte.com.cn                           
+            
+           via phone:    86-755-26773000"
+   DESCRIPTION
+      "This module describes ZTE Unitrans MIB."
+::= { zteUnitransMS 4 }
+
+       
+   EquipmentHolderType-TC ::= TEXTUAL-CONVENTION
+   STATUS current
+   DESCRIPTION "
+   This textual convention presents the holder type of the device,
+   the detail types as follows:
+   rack:            eht-RACK(1)
+   shelf:           eht-SHELF(2)
+   sub-shelf:       eht-SUB-SHELF(3)
+   slot:            eht-SLOT(4)
+   sub-slot:        eht-SUB-SLOT(5)
+   sub-sub-slot:    eht-SUB-SLOT(6)
+   "
+   SYNTAX INTEGER 
+   {
+   		eht-RACK(1),
+   		eht-SHELF(2),
+   		eht-SUB-SHELF(3),
+   		eht-SLOT(4),
+   		eht-SUB-SLOT(5),
+		eht-SUB-SUB-SLOT(6)
+   }
+        
+  
+   HolderState-TC ::= TEXTUAL-CONVENTION
+   STATUS current
+   DESCRIPTION "
+   This textual convention presents
+   holder status:
+        EMPTY                               :empty
+        INSTALLED-AND-EXPECTED,             :installed and expected
+        EXPECTED-AND-NOT-INSTALLED,             :expected and not installed
+        INSTALLED-AND-NOT-EXPECTED,             :installed and not expected
+        MISMATCH-OF-INSTALLED-AND-EXPECTED,     mismatch of installed and expected
+        UNAVAILABLE,                        unavailable
+        UNKNOWN                             unknown
+         "
+   SYNTAX INTEGER
+   {
+    hs-EMPTY(1),
+    hs-INSTALLED-AND-EXPECTED(2),
+    hs-EXPECTED-AND-NOT-INSTALLED(3),
+    hs-INSTALLED-AND-NOT-EXPECTED(4),
+    hs-MISMATCH-OF-INSTALLED-AND-EXPECTED(5),
+    hs-UNAVAILABLE(6),
+    hs-UNKNOWN(7)
+   }                  
+   
+   ServiceState-TC ::= TEXTUAL-CONVENTION
+   STATUS current
+   DESCRIPTION "
+   This textual convention presents service state:   
+    ss-IN-SERVICE(1)                   :in service
+    ss-OUT-OF-SERVICE(2)               :out of service
+    ss-OUT-OF-SERVICE-BY-MAINTENANCE(3) :out of service by maintenance
+    ss-SERV-NA(4)                       :service state is unknown
+
+   "
+   SYNTAX INTEGER 
+   {
+        ss-IN-SERVICE(1),
+        ss-OUT-OF-SERVICE(2),
+        ss-OUT-OF-SERVICE-BY-MAINTENANCE(3),
+        ss-SERV-NA(4) 
+   }
+   
+  
+-- ********************************************************************
+-- SEQUENCE And SEQUENCE OF  Definition
+-- ********************************************************************
+        
+        EquipmentObjectTypeList-T ::= TEXTUAL-CONVENTION
+    	STATUS current
+        DESCRIPTION " This textual convention presents equipment type,
+		using comma to seperate the element,eg.'10,120,300'.
+        "
+        SYNTAX OCTET STRING
+        
+-- ********************************************************************
+-- Table And Object  Definition
+-- ********************************************************************
+    
+    zteuEquipmentHolderTable     OBJECT-TYPE
+        SYNTAX          SEQUENCE OF     ZTEUEquipmentHolderEntry
+        MAX-ACCESS      not-accessible
+        STATUS          current
+        DESCRIPTION
+                "
+                This object presents equipment holder table
+                "
+        ::= { zteuEquipmentHolder 1 }
+    
+    zteuEquipmentHolderEntry  OBJECT-TYPE
+        SYNTAX  ZTEUEquipmentHolderEntry
+        MAX-ACCESS  not-accessible
+        STATUS  current
+        DESCRIPTION
+                "This object presents equipment holder entry"
+        INDEX  {ehName }
+        ::= { zteuEquipmentHolderTable 1 }
+
+    ZTEUEquipmentHolderEntry ::= SEQUENCE 
+    {   
+    	ehName                   	   NamingAttributes-T,
+        ehUserLabel                    DisplayString,          
+        ehOwner                        DisplayString,      
+        ehHolderType                   EquipmentHolderType-TC, 
+		ehVersion					   DisplayString,
+        ehExpectedOrInstalledEquipment NamingAttributes-T,
+        ehAcceptableEquipmentTypeList  EquipmentObjectTypeList-T,   
+        holderState                    HolderState-TC,
+        ehAdditionalInfo               ObjectNVSList-T           
+    }     
+     ehName OBJECT-TYPE
+     SYNTAX NamingAttributes-T
+     MAX-ACCESS read-only
+     STATUS current
+     DESCRIPTION "
+     This variable presents equipment holder identifier
+     For details,please refer NamingAttributes-T's definition
+     "
+     ::= {zteuEquipmentHolderEntry 1}       
+          
+     ehUserLabel OBJECT-TYPE
+     SYNTAX DisplayString
+     MAX-ACCESS read-write
+     STATUS current
+     DESCRIPTION "
+     This variable presents user label,for the mibs supported 
+	 directly by devices,this field can be reserved.
+     "
+     ::= {zteuEquipmentHolderEntry 2}
+     
+     ehOwner  OBJECT-TYPE
+     SYNTAX DisplayString
+     MAX-ACCESS read-only
+     STATUS current
+     DESCRIPTION "
+     This variable presents equipment holder's owner,for the mibs
+	 supported directly by devices,this field can be reserved.
+     "
+     ::= {zteuEquipmentHolderEntry 3}
+     
+     ehHolderType   OBJECT-TYPE
+     SYNTAX EquipmentHolderType-TC
+     MAX-ACCESS read-only
+     STATUS current
+     DESCRIPTION "
+     This variable presents euqipment holder's type
+      "
+     ::= {zteuEquipmentHolderEntry 4}
+
+	 ehVersion   OBJECT-TYPE
+     SYNTAX DisplayString
+     MAX-ACCESS read-only
+     STATUS current
+     DESCRIPTION "     
+	 This variable presents euqipment holder's version,
+	 uses 'hw' to represents hardware version,'sw' to represents 
+	 software version,uses the '/' to seperate different segment,
+	 example:'/hw=1.20/sw=3.30'
+      "
+     ::= {zteuEquipmentHolderEntry 5}
+                
+     ehExpectedOrInstalledEquipment OBJECT-TYPE
+     SYNTAX NamingAttributes-T
+     MAX-ACCESS read-only
+     STATUS current
+     DESCRIPTION "
+     This variable presents expected or installed equipment 
+     For details,please refer NamingAttributes-T's definition,
+	 ,this filed is only valid when the equipmentholder is slot,
+	 otherwise it should be empty
+      " 
+     ::= {zteuEquipmentHolderEntry 6} 
+     
+     ehAcceptableEquipmentTypeList OBJECT-TYPE
+     SYNTAX EquipmentObjectTypeList-T
+     MAX-ACCESS read-only
+     STATUS current
+     DESCRIPTION "
+     This variable presents acceptable equipment type,this filed is only
+	 valid when the equipmentholder is slot,otherwise it should be empty
+     " 
+     ::= {zteuEquipmentHolderEntry 7} 
+        
+     holderState OBJECT-TYPE
+     SYNTAX HolderState-TC
+     MAX-ACCESS read-only
+     STATUS current
+     DESCRIPTION "
+     This variable presents the state of the holder.
+     " 
+     ::= {zteuEquipmentHolderEntry 8} 
+             
+     ehAdditionalInfo OBJECT-TYPE
+     SYNTAX ObjectNVSList-T
+     MAX-ACCESS read-write
+     STATUS current
+     DESCRIPTION "
+     This variable presents additional information
+     " 
+     ::= {zteuEquipmentHolderEntry 9}
+     
+     zteuEquipmentHolderEntryGroup OBJECT-GROUP
+     OBJECTS
+    {                              
+        ehName,
+        ehUserLabel,
+        ehOwner,
+        ehHolderType, 
+		ehVersion,
+        ehExpectedOrInstalledEquipment,
+        ehAcceptableEquipmentTypeList,   
+        holderState,
+        ehAdditionalInfo
+    } 
+     STATUS current
+     DESCRIPTION
+     "A collection of zteuEquipmentHolderEntry objects"    
+     ::= {zteuEquipmentHolder 22}                        
+  
+		
+    END

@@ -1,0 +1,532 @@
+-- =========================================================
+-- Copyright (c) 2001-2004, Harbour Networks Limited
+-- All rights reserved.
+--
+-- Name     : HARBOUR-VDSL-LINE-MIB
+-- Intro    : The MIB definition for vdsl line management.
+-- History  : When          Who         What & Why
+--            2001.12.10    Jin fusheng Create
+--            2004.01.18    Lida        Clean up for Hos
+-- =========================================================
+
+HARBOUR-VDSL-LINE-MIB DEFINITIONS ::= BEGIN
+
+IMPORTS
+	MODULE-IDENTITY,
+	OBJECT-TYPE       		FROM SNMPv2-SMI
+	RowStatus,
+	TEXTUAL-CONVENTION		FROM SNMPv2-TC
+	SnmpAdminString   		FROM SNMP-FRAMEWORK-MIB
+	AdslLineCodingType		FROM ADSL-TC-MIB
+	harbourAgent      		FROM HARBOUR-BASE-MIB;
+
+
+vdslQAMMib MODULE-IDENTITY
+    LAST-UPDATED	"200401180000Z"
+    ORGANIZATION	"Harbour Networks Limited"
+    CONTACT-INFO	"www.harbournetworks.com"
+    DESCRIPTION
+        	"This MIB module defines a collection of objects for
+        	managing VDSL QAM Lines.  These objects extend the ADSL-LINE-MIB
+        	(RFC2662)."
+    ::= { harbourAgent 7 }
+
+
+-- VDSL Line Table
+
+vdslLineTable OBJECT-TYPE
+    SYNTAX     	SEQUENCE OF VdslLineEntry
+    MAX-ACCESS 	not-accessible
+    STATUS     	current
+    DESCRIPTION
+        	"This table includes common attributes describing
+        	both ends of the line.  It is required for all VDSL
+        	physical interfaces.  VDSL physical interfaces are
+        	those ifEntries where ifType is equal to vdsl(97)."
+    ::= { vdslQAMMib 1 }
+
+vdslLineEntry OBJECT-TYPE
+    SYNTAX      VdslLineEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        	"An entry in the vdslLineTable."
+    INDEX       {vdslindex }
+    ::= { vdslLineTable 1 }
+
+VdslLineEntry ::= SEQUENCE {
+    vdslindex                 INTEGER,
+    vdslLineCoding            INTEGER,
+    harbourglobalIfIndex      INTEGER
+}
+
+vdslindex OBJECT-TYPE
+   	SYNTAX    	INTEGER
+   	MAX-ACCESS	read-only
+   	STATUS    	current
+   	DESCRIPTION
+        	"A unique integer identifying the particular ifindex
+        	in the chassis."
+   	::= { vdslLineEntry 1 }
+
+vdslLineCoding OBJECT-TYPE
+    SYNTAX     	AdslLineCodingType
+    MAX-ACCESS 	read-only
+    STATUS     	current
+    DESCRIPTION
+        	"Specifies the VDSL coding type used on this line."
+    ::= { vdslLineEntry 2}
+
+harbourglobalIfIndex OBJECT-TYPE
+    SYNTAX     INTEGER
+    MAX-ACCESS read-only
+    STATUS     current
+    DESCRIPTION
+            "A unique value, greater than zero, for each
+            interface.  It is recommended that values are assigned
+            contiguously starting from 1.  The value for each
+            interface sub-layer must remain constant at least from
+            one re-initialization of the entity's network
+            management system to the next re-initialization."
+    ::= { vdslLineEntry 3  }
+
+
+-- VDSL Phys Table
+
+vdslPhysTable OBJECT-TYPE
+    SYNTAX     	SEQUENCE OF VdslPhysEntry
+    MAX-ACCESS 	not-accessible
+    STATUS     	current
+    DESCRIPTION
+        	"This table provides one row for each Vtu.  Each row
+        	contains the Physical Layer Parameters table for that
+        	Vtu.  VDSL physical interfaces are those ifEntries where
+        	ifType is equal to vdsl(97)."
+ 	::= { vdslQAMMib 2 }
+
+vdslPhysEntry OBJECT-TYPE
+    SYNTAX     	VdslPhysEntry
+    MAX-ACCESS 	not-accessible
+    STATUS     	current
+    DESCRIPTION "An entry in the vdslPhysTable."
+    INDEX      	{  harbourvdslIfIndex }
+    ::= { vdslPhysTable 1 }
+
+VdslPhysEntry ::= SEQUENCE {
+    harbourvdslIfIndex          INTEGER,
+    vdslInvSerialNumber         SnmpAdminString,
+    vdslInvVendorID             SnmpAdminString,
+    vdslInvVersionNumber        SnmpAdminString,
+    vdslCurrSnrMgn              INTEGER,
+    vdslProfilePSD              INTEGER,
+    vdslCurrds-cfreq            INTEGER,
+    vdslCurrds-ufreq            INTEGER,
+    vdslCurrAttainableRate      Gauge32,
+    vdslConfProfile             SnmpAdminString,
+    vdslConfDetachProfile       SnmpAdminString
+}
+
+harbourvdslIfIndex OBJECT-TYPE
+    SYNTAX  	INTEGER
+    MAX-ACCESS 	read-only
+    STATUS 		current
+    DESCRIPTION
+        	"The index value of this row and the vlan's ifIndex in the
+        	ifTable. The NMS obtains the index value for this row by
+        	reading the   harbourglobalIfIndex  object."
+    ::= { vdslPhysEntry 1 }
+
+vdslInvSerialNumber OBJECT-TYPE
+    SYNTAX     	SnmpAdminString
+    MAX-ACCESS 	read-only
+    STATUS     	current
+    DESCRIPTION
+        	"The vendor specific string that identifies the
+        	vendor equipment."
+    ::= { vdslPhysEntry 2 }
+
+vdslInvVendorID OBJECT-TYPE
+    SYNTAX     	SnmpAdminString
+    MAX-ACCESS 	read-only
+    STATUS     	current
+    DESCRIPTION
+        	"The vendor ID code is a copy of the binary vendor
+        	identification field defined by the PHY[10] and
+        	expressed as readable characters."
+    ::= { vdslPhysEntry 3 }
+
+vdslInvVersionNumber OBJECT-TYPE
+    SYNTAX     	SnmpAdminString
+    MAX-ACCESS 	read-only
+    STATUS     	current
+    DESCRIPTION
+        	"The vendor specific version number sent by this Vtu
+        	as part of the initialization messages.  It is a copy
+        	of the binary version number field defined by the
+        	PHY[10] and expressed as readable characters."
+    ::= { vdslPhysEntry 4 }
+
+vdslCurrSnrMgn OBJECT-TYPE
+    SYNTAX     	INTEGER
+    UNITS      	"0.01 dB"
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        	"Noise Margin as seen by this Vtu with respect to its
+        	received signal in 0.01 dB."
+    ::= { vdslPhysEntry 5 }
+
+vdslProfilePSD OBJECT-TYPE
+    SYNTAX     	INTEGER
+    UNITS      	"0.01 dBm"
+    MAX-ACCESS 	read-only
+    STATUS     	current
+    DESCRIPTION
+        	"Power Spectral Density level in steps of 0.01dB.
+        	 Especialy for hammer3100 ,the units is 0.001dB."
+    ::= { vdslPhysEntry 6 }
+
+vdslCurrds-cfreq  OBJECT-TYPE
+    SYNTAX     	INTEGER
+    UNITS      	"kHZ"
+    MAX-ACCESS 	read-only
+    STATUS     	current
+    DESCRIPTION
+        	"The Transmit filter, Receive filter and PSD function operates according
+         	to theparameters defined by the external configuration pins, the general
+         	COMMAND registerand the transmit registers. The rate is defined by the
+         	configuration pins and theCOMMAND register, respectively. The central
+         	frequency of the carriers and the transmitpower level is controlled by
+         	the transmit registers."
+    ::= { vdslPhysEntry 7 }
+
+vdslCurrds-ufreq OBJECT-TYPE
+    SYNTAX     	INTEGER
+    UNITS      	"kHZ"
+    MAX-ACCESS 	read-only
+    STATUS     	current
+    DESCRIPTION
+        	"The Transmit filter, Receive filter and PSD function operates according
+         	to theparameters defined by the external configuration pins, the general
+         	COMMAND registerand the transmit registers. The rate is defined by the
+         	configuration pins and theCOMMAND register, respectively. The central
+         	frequency of the carriers and the transmitpower level is controlled by
+         	the transmit registers."
+    ::= { vdslPhysEntry 8 }
+
+vdslCurrAttainableRate OBJECT-TYPE
+    SYNTAX     	Gauge32
+    UNITS      	"bps"
+    MAX-ACCESS 	read-only
+    STATUS     	current
+    DESCRIPTION
+        	"Indicates the maximum currently attainable data rate
+        	by the Vtu.  This value will be equal or greater than
+        	the current line rate."
+    ::= { vdslPhysEntry 9 }
+
+vdslConfProfile OBJECT-TYPE
+    SYNTAX     	SnmpAdminString(SIZE (1..32))
+    MAX-ACCESS 	read-write
+    STATUS     	current
+    DESCRIPTION
+        	"The value of this object identifies the row
+            in the VDSL Line Configuration Profile Table,
+            (vdslLineConfProfileTable), which applies for this
+            VDSL line, and channels if applicable.
+            For `dynamic' mode, in the case which the
+            configuration profile has not been set, the
+            value will be set to `DEFVAL'.
+            If the implementator of this MIB has chosen not
+            to implement `dynamic assignment' of profiles, this
+            object's MIN-ACCESS is read-only."
+    ::= { vdslPhysEntry 10 }
+
+vdslConfDetachProfile OBJECT-TYPE
+    SYNTAX     	SnmpAdminString(SIZE (1..32))
+    MAX-ACCESS 	read-write
+    STATUS     	current
+    DESCRIPTION
+        	"Detach VDSL Profile."
+    ::= { vdslPhysEntry 11 }
+
+
+-- VDSL Line Config Profile Table
+
+vdslLineConfProfileTable OBJECT-TYPE
+    SYNTAX     	SEQUENCE OF VdslLineConfProfileEntry
+    MAX-ACCESS 	not-accessible
+    STATUS     	current
+    DESCRIPTION
+        	"This table contains information on the VDSL line
+        	configuration.  One entry in this table reflects a
+        	profile defined by a manager which can be used to
+        	configure the VDSL line."
+    ::= { vdslQAMMib 3 }
+
+vdslLineConfProfileEntry OBJECT-TYPE
+    SYNTAX     	VdslLineConfProfileEntry
+    MAX-ACCESS 	not-accessible
+    STATUS     	current
+    DESCRIPTION
+        	"Each entry consists of a list of parameters that
+        	represents the configuration of a VDSL modem.  A
+        	default profile will always exist.  This profile's
+        	name will be set to `DEFVAL' and its parameters will
+        	be set to vendor specific values, unless otherwise
+        	specified in this document."
+    INDEX 		{ harbourvdslIfIndex }
+    ::= { vdslLineConfProfileTable 1 }
+
+VdslLineConfProfileEntry ::= SEQUENCE {
+    vdslLineTxRate     	INTEGER,
+    vdslLineRxRate     	INTEGER
+}
+
+vdslLineTxRate OBJECT-TYPE
+    SYNTAX     	INTEGER {
+               		r12-5(1),
+               		r8-33(2),
+               		rom(3),
+               		r4-17(4),
+               		r2-08(5),
+               		r16-67(6),
+               		r1-04(7),
+               		r25(8),
+               		r0-78(9),
+               		r10-04(10)
+               	}
+    UNITS      	"Mbps"
+    MAX-ACCESS 	read-write
+    STATUS     	current
+    DESCRIPTION
+            "Transmit speed for this modem.  The corresponding modem
+            on the other end of the VDSL line will have an equal
+            vdslLineConfRxSpeed value.
+            Rate:
+            r12.5(1),r8.33(2),rom(3),r4.17(4),r2.08(5),r16.7(6),r1.04(7),
+            r25(8),r0.78(9),r10.04(10)"
+    ::= { vdslLineConfProfileEntry 1 }
+
+vdslLineRxRate OBJECT-TYPE
+    SYNTAX      INTEGER {
+              		r12-5(1),
+              		r8-33(2),
+              		rom(3),
+              		r4-17(4),
+              		r2-08(5),
+              		r16-67(6),
+              		r1-04(7),
+              		r25(8),
+              		r0-78(9),
+              		r10-04(10)
+                }
+    UNITS       "Mbps"
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "Receive speed for this modem.  The corresponding modem
+            on the other end of the VDSL line will have an equal
+            vdslLineConfTxSpeed value.
+            Rate:
+            r12.5(1),r8.33(2),rom(3),r4.17(4),r2.08(5),r16.7(6),r1.04(7),
+            r25(8),r0.78(9),r10.04(10)"
+    ::= { vdslLineConfProfileEntry 2 }
+
+
+-- New VDSL Line Config Profile Table
+
+newvdslLineConfProfileTable OBJECT-TYPE
+    SYNTAX     	SEQUENCE OF NewvdslLineConfProfileEntry
+    MAX-ACCESS 	not-accessible
+    STATUS     	current
+    DESCRIPTION
+        	"This table contains information on the VDSL line
+        	configuration.  One entry in this table reflects a
+        	profile defined by a manager which can be used to
+        	configure the VDSL line."
+    ::= { vdslQAMMib 4}
+
+newvdslLineConfProfileEntry OBJECT-TYPE
+    SYNTAX     	NewvdslLineConfProfileEntry
+    MAX-ACCESS 	not-accessible
+    STATUS     	current
+    DESCRIPTION
+        	"Each entry consists of a list of parameters that
+        	represents the configuration of an VDSL modem.
+        	When `dynamic' profiles are implemented, a default
+        	profile will always exist.  This profile's name will
+        	be set to `DEFVAL' and its parameters will be set
+        	to vendor specific values, unless otherwise specified
+        	in this document.
+        	When `static' profiles are implemented, profiles
+        	are automaticly created or destroyed as VDSL
+        	physical lines are discovered and removed by
+        	the system.  The name of the profile will be
+        	equivalent to the decimal value of the line's
+        	interface index."
+    INDEX 		{ IMPLIED newvdslLineConfProfileName}
+    ::= { newvdslLineConfProfileTable 1}
+
+NewvdslLineConfProfileEntry ::= SEQUENCE {
+    newvdslLineConfProfileName            SnmpAdminString,
+    UpstreamRate                          INTEGER,
+    DownstreamRate                        INTEGER,
+    RTEthernetAutoNegotiate               INTEGER,
+    RTEthernetSpeed                       INTEGER,
+    RTEthernetDuplex                      INTEGER,
+    RTEthernetFlowctrl                    INTEGER,
+    newvdslLineConfProfileRowStatus       RowStatus,
+    newvdslLineConfProfileIfAttachFlag    INTEGER,
+    newvdslLineConfProfileFlushtoPort     INTEGER
+}
+
+newvdslLineConfProfileName OBJECT-TYPE
+    SYNTAX     	SnmpAdminString (SIZE (1..32))
+    MAX-ACCESS 	not-accessible
+    STATUS     	current
+    DESCRIPTION
+        	"This object is used by the line configuration table
+        	in order to identify a row of this table.
+        	When `dynamic' profiles are implemented, the profile
+        	name is user specified.  Also, the system will always
+        	provide a default profile whose name is `DEFVAL'.
+        	When `static' profiles are implemented, there is an
+        	one-to-one relationship between each line and its
+        	profile.  In which case, the profile name will
+        	need to algorithmicly represent the Line's ifIndex.
+        	Therefore, the profile's name is a decimalized string
+        	of the ifIndex that is fixed-length (i.e., 10) with
+        	leading zero(s).  For example, the profile name for
+        	ifIndex which equals '15' will be '0000000015'."
+    ::= { newvdslLineConfProfileEntry 1 }
+
+UpstreamRate OBJECT-TYPE
+    SYNTAX    	INTEGER {
+                	r1-04(1),       --Set vdslprofile's UpRate to r1.04Mbps.
+                	r1-56(2),       --Set vdslprofile's UpRate to r1.56Mbps.
+                	r12-5(3),       --Set vdslprofile's UpRate to r12.5Mbps.
+                	r16-67(4),       --Set vdslprofile's UpRate to r16.67Mbps.
+                	r2-08(5),       --Set vdslprofile's UpRate to r2.08Mbps.
+                	r25(6),         --Set vdslprofile's UpRate to r25Mbps.
+                	r4-17(7),       --Set vdslprofile's UpRate to r4.17Mbps.
+                	r8-33(8),       --Set vdslprofile's UpRate to r8.33Mbps.
+                	rom(9),         --Set vdslprofile's UpRate to rom.
+                	r10-04(10)      --Set vdslprofile's UpRate to r10.04.
+                }
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        	"Config vdsl line upstram rate."
+    ::= { newvdslLineConfProfileEntry 2 }
+
+DownstreamRate OBJECT-TYPE
+    SYNTAX     	INTEGER {
+                   r1-04(1),    	--Set vdslprofile's DownRate to r1.04Mbps.
+                   r12-5(2),    	--Set vdslprofile's DownRate to r12.5Mbps.
+                   r16-67(3),    	--Set vdslprofile's DownRate to r16.67Mbps.
+                   r2-08(4),    	--Set vdslprofile's DownRate to r2.08Mbps.
+                   r4-17(5),    	--Set vdslprofile's DownRate to r4.17Mbps.
+                   r8-33(6),    	--Set vdslprofile's DownRate to r8.33Mbps.
+                   rom(7),      	--Set vdslprofile's DownRate to rom.
+                   r10-04(8)    	--Set vdslprofile's DownRate to r10.04.
+               	}
+    MAX-ACCESS 	read-create
+    STATUS     	current
+    DESCRIPTION
+        	"Config vdsl line downstram rate."
+    ::= { newvdslLineConfProfileEntry 3 }
+
+RTEthernetAutoNegotiate OBJECT-TYPE
+    SYNTAX     	INTEGER {
+                  	off(1),         --Set vdsl profile's auto negotiation off.
+                   	on(2)           --Set vdsl profile's auto negotiation on.
+               	}
+    MAX-ACCESS 	read-create
+    STATUS     	current
+    DESCRIPTION
+        	"Config vdsl line AutoNegotiate."
+    ::= { newvdslLineConfProfileEntry 4 }
+
+RTEthernetSpeed OBJECT-TYPE
+    SYNTAX     	INTEGER {
+                   	speed10M(1),    --Set vdsl profile's remote speed to 10Mbps.
+                   	speed100M(2)  	--Set vdsl profile's remote speed to 100Mbps.
+               	}
+    MAX-ACCESS 	read-create
+    STATUS     	current
+    DESCRIPTION
+        	"Config vdsl line remote speed."
+    ::= { newvdslLineConfProfileEntry 5 }
+
+RTEthernetDuplex OBJECT-TYPE
+    SYNTAX   	INTEGER {
+                	full(1),    	--Set vdsl profile's remote duplex full.
+                   	half(2)     	--Set vdsl profile's remote duplex half.
+               	}
+    MAX-ACCESS 	read-create
+    STATUS     	current
+    DESCRIPTION
+        	"Config vdsl line remote duplex."
+    ::= { newvdslLineConfProfileEntry 6 }
+
+RTEthernetFlowctrl OBJECT-TYPE
+    SYNTAX     	INTEGER {
+                  	off(1),        	--Set vdsl profile's remote flowcontrol off.
+                  	on(2)          	--Set vdsl profile's remote flowcontrol on.
+               	}
+    MAX-ACCESS 	read-create
+    STATUS     	current
+    DESCRIPTION
+        	"Config vdsl line remote flowcontrol."
+    ::= { newvdslLineConfProfileEntry 7 }
+
+newvdslLineConfProfileRowStatus OBJECT-TYPE
+    SYNTAX     	RowStatus
+    MAX-ACCESS 	read-create
+    STATUS     	current
+    DESCRIPTION
+        	"This object is used to create a new row or modify or
+        	delete an existing row in this table.
+        	A profile activated by setting this object to
+        	`active'.  When `active' is set, the system
+        	will validate the profile.
+
+        	Before a profile can be deleted or taken out of
+        	service, (by setting this object to `destroy' or
+        	`outOfService') it must be first unreferenced
+        	from all associated lines.
+
+        	If the implementator of this MIB has chosen not
+        	to implement `dynamic assignment' of profiles, this
+        	object's MIN-ACCESS is read-only and its value
+        	is always to be `active'."
+    ::= { newvdslLineConfProfileEntry 8 }
+
+newvdslLineConfProfileIfAttachFlag OBJECT-TYPE
+    SYNTAX      INTEGER {
+               		detached(1),
+               		attached(2)
+    			}
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+	        "If the profile attachs to ports, this flag returns attached(2)."
+    ::= { newvdslLineConfProfileEntry 9 }
+    
+newvdslLineConfProfileFlushtoPort  OBJECT-TYPE
+    SYNTAX      INTEGER {
+               		ready(1),
+               		flush(2)
+    			}
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+	        "If the profile changes ,it will flush to port."
+    ::= { newvdslLineConfProfileEntry 10 }
+
+
+
+
+
+END

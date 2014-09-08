@@ -1,0 +1,331 @@
+-- =========================================================
+-- Copyright (c) 2001-2004, Harbour Networks Limited
+-- All rights reserved.
+--
+-- Name     : HARBOUR-BASE-MANAGEMENT-MIB
+-- Intro    : This version of MIB is created just for base management.
+-- History  : When          Who         What & Why
+--            2002.5.11     Huruoheng   Create
+--            2003.11.7     Liaoyuxia   Clean up for Hos
+-- =========================================================
+
+HARBOUR-BASE-MANAGEMENT-MIB DEFINITIONS ::= BEGIN
+
+IMPORTS
+    MODULE-IDENTITY,
+    IpAddress,
+    OBJECT-TYPE         FROM SNMPv2-SMI
+    DisplayString,
+    RowStatus           FROM SNMPv2-TC
+    harbourAgent        FROM HARBOUR-BASE-MIB;
+
+
+harbourBaseManagement    MODULE-IDENTITY
+    LAST-UPDATED    "200311070000Z"
+    ORGANIZATION    "Harbour Networks Limited"
+    CONTACT-INFO    "www.harbournetworks.com"
+    DESCRIPTION
+            "The MIB module defining objects for base management"
+    ::= { harbourAgent  18}
+
+
+harbourBaseFunctionGroup      OBJECT IDENTIFIER ::= {harbourBaseManagement 1}
+
+harbourUserManageGroup        OBJECT IDENTIFIER ::= {harbourBaseManagement 2}
+
+harbourVersionInfoGroup       OBJECT IDENTIFIER ::= {harbourBaseManagement 3}
+
+harbourTrapInfoGroup          OBJECT IDENTIFIER ::= {harbourBaseManagement 4}
+
+harbourSpeicialFunctionGroup  OBJECT IDENTIFIER ::= {harbourBaseManagement 5}
+
+
+-- Harbour Base Function Group
+
+harbourErase OBJECT-TYPE
+    SYNTAX      INTEGER { ready(0), erasing(1) }
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "To erase the start-up config."
+    ::= { harbourBaseFunctionGroup 1 }
+
+harbourSave OBJECT-TYPE
+    SYNTAX      INTEGER { ready(0), saving(1) }
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "To save the running config."
+    ::= { harbourBaseFunctionGroup 2 }
+
+harbourReboot OBJECT-TYPE
+    SYNTAX      INTEGER { ready(0), rebooting(1) }
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "To reboot the system."
+    ::= { harbourBaseFunctionGroup 3 }
+
+--Harbour DSLAM Reboot Slot Table
+
+HarbourRebootSlotTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF HarbourRebootSlotEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+            "The table use for reboot Dslam Slot."
+    ::= {  harbourBaseFunctionGroup 4 }
+
+harbourRebootSlotEntry OBJECT-TYPE
+    SYNTAX      HarbourRebootSlotEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+            ""
+    INDEX   { SlotNumIndex }
+    ::= { HarbourRebootSlotTable 1 }
+
+HarbourRebootSlotEntry ::= SEQUENCE {
+    SlotNumIndex     INTEGER,
+    SlotReboot       INTEGER
+}
+
+SlotNumIndex OBJECT-TYPE
+    SYNTAX      INTEGER
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "Slot Num."
+    ::= { harbourRebootSlotEntry 1 }
+
+SlotReboot OBJECT-TYPE
+    SYNTAX      INTEGER { ready(0), rebooting(1) }
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "Reboot status."
+    ::= { harbourRebootSlotEntry 2 }
+
+harbourSystime OBJECT-TYPE
+    SYNTAX      DisplayString
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "To get system time."
+    ::= { harbourBaseFunctionGroup 5 }
+    
+harbourLastOperateResult  OBJECT-TYPE
+    SYNTAX      INTEGER  { cfgsavesuccess ( 1 ) , cfgsavefail(2) } 
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "This specifies the result of 
+               harbourSave or harbourReboot ."
+     ::={ harbourBaseFunctionGroup 6 }
+
+
+-- harbour User Manage Group
+
+-- harbour User Table
+
+harbourUserTable    OBJECT-TYPE
+    SYNTAX      SEQUENCE OF HarbourUserEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+            "User manage table"
+    ::= { harbourUserManageGroup 1 }
+
+harbourUserEntry    OBJECT-TYPE
+    SYNTAX      HarbourUserEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+            "An entry in the harbourUserTable."
+    INDEX       { harbourUsername }
+    ::= { harbourUserTable 1 }
+
+HarbourUserEntry ::= SEQUENCE {
+    harbourUsername             DisplayString,
+    harbourUserLoginPassword    DisplayString,
+    harbourUserRole             INTEGER,
+    harbourUserEnablePassword   DisplayString,
+    harbourUserStatus           RowStatus
+}
+
+harbourUsername OBJECT-TYPE
+    SYNTAX      DisplayString (SIZE (4..20))
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "The name a user login the device with."
+    ::= { harbourUserEntry 1 }
+
+harbourUserLoginPassword OBJECT-TYPE
+    SYNTAX      DisplayString (SIZE (6..20))
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+            "This string is to set the password for a username."
+    ::= { harbourUserEntry 2 }
+
+harbourUserRole OBJECT-TYPE
+    SYNTAX      INTEGER { normalUser(0), adminUser(1) }
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "This object indicates the role of a username."
+    ::= { harbourUserEntry 3 }
+
+harbourUserEnablePassword OBJECT-TYPE
+    SYNTAX      DisplayString  (SIZE (6..20))
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "This object indicates the enable password."
+    ::= { harbourUserEntry 4 }
+
+harbourUserStatus OBJECT-TYPE
+    SYNTAX      RowStatus
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+            "This object is to show the status of a user name."
+    ::= { harbourUserEntry 5 }
+
+
+-- Harbour VersionInfo Group
+
+harbourHardwareVersion  OBJECT-TYPE
+    SYNTAX      DisplayString
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "This object is to show the hardware version of the switch."
+    ::= { harbourVersionInfoGroup 1 }
+
+harbourBootromVersion OBJECT-TYPE
+    SYNTAX      DisplayString
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "This object is to show the bootrom version of the switch."
+    ::= { harbourVersionInfoGroup 2 }
+
+harbourSoftwareVersion OBJECT-TYPE
+    SYNTAX      DisplayString
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "This object is to show the software version of the switch."
+    ::= { harbourVersionInfoGroup 3 }
+
+harbourManufactureData OBJECT-TYPE
+    SYNTAX      DisplayString
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "This object is to show the manufacture data of the switch."
+    ::= { harbourVersionInfoGroup 4 }
+
+harbourSerialNumber OBJECT-TYPE
+    SYNTAX      DisplayString
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "This object is to show the serial number of the switch."
+    ::= { harbourVersionInfoGroup 5 }
+
+harbourMacAddress OBJECT-TYPE
+    SYNTAX      DisplayString
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "This object is to show the Mac address of the switch."
+    ::= { harbourVersionInfoGroup 6 }
+
+
+-- Harbour TrapInfo Group
+
+harbourTrapStatus OBJECT-TYPE
+    SYNTAX      INTEGER { disable(0), enable(1) }
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "This object is to enable or disable the trap sending function."
+    ::= { harbourTrapInfoGroup 1 }
+
+-- Harbour Trap Receiver Table
+
+harbourTrapReceiverTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF HarbourTrapReceiverEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+            "For config trap receiver."
+    ::= { harbourTrapInfoGroup 2 }
+
+harbourTrapReceiverEntry    OBJECT-TYPE
+    SYNTAX      HarbourTrapReceiverEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+            "An entry in the harbourTrapReceiverTable."
+    INDEX { harbourTrapReceiverIpAddress }
+    ::= { harbourTrapReceiverTable 1 }
+
+HarbourTrapReceiverEntry ::= SEQUENCE {
+    harbourTrapReceiverIpAddress    IpAddress,
+    harbourTrapReceiverVerion       INTEGER,
+    harbourTrapReceiverCommunity    DisplayString,
+    harbourTrapReceiverStatus       RowStatus
+}
+
+harbourTrapReceiverIpAddress OBJECT-TYPE
+    SYNTAX      IpAddress
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "This object is to set the ip address of trap receiver
+            for an unique entry."
+    ::= { harbourTrapReceiverEntry 1 }
+
+harbourTrapReceiverVerion OBJECT-TYPE
+    SYNTAX      INTEGER { v1(1), v2c(2) }
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+            "This object is to set the trap version for the trap
+            sending to a trap receiver."
+    ::= { harbourTrapReceiverEntry 2 }
+
+harbourTrapReceiverCommunity OBJECT-TYPE
+    SYNTAX      DisplayString  (SIZE (0..255))
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+            "This object is to set the community for the trap sending
+            to a trap receiver."
+    ::= { harbourTrapReceiverEntry 3 }
+
+harbourTrapReceiverStatus OBJECT-TYPE
+    SYNTAX      RowStatus
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+            "This object is to show the status of an entry."
+    ::= { harbourTrapReceiverEntry 4 }
+
+
+-- Harbour Speicial Function Group
+
+harbourStpStatus OBJECT-TYPE
+    SYNTAX      INTEGER { disable(0), enable(1) }
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "This object is to enable or disable the Stp  function."
+    ::= { harbourSpeicialFunctionGroup 1 }
+
+
+END

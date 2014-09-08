@@ -1,0 +1,951 @@
+UNEM-MIB DEFINITIONS ::= BEGIN
+-- Revision 8     Replaces all previous versions.
+--                Applies for FOXMAN-UN Release R8A onwards
+
+
+IMPORTS
+        DisplayString,
+        TEXTUAL-CONVENTION
+                FROM SNMPv2-TC
+
+        AGENT-CAPABILITIES,
+        OBJECT-GROUP,
+        NOTIFICATION-GROUP,
+        MODULE-COMPLIANCE
+                FROM SNMPv2-CONF
+
+        MODULE-IDENTITY,
+        OBJECT-TYPE,
+        NOTIFICATION-TYPE,
+        Integer32,
+        Counter32,
+        IpAddress,
+        Unsigned32,
+        enterprises
+                FROM SNMPv2-SMI;
+
+
+-- This module defines the object used by the SNMP proxy agent
+-- of FOXMAN-UN R8A - SMIv2
+unemMIB MODULE-IDENTITY
+        LAST-UPDATED "200606141400Z"        -- June 14, 2006 14:00:00 PM
+        ORGANIZATION "ABB Switzerland Ltd"
+        CONTACT-INFO
+                "
+                ABB Switzerland Ltd
+                Power Systens
+                CH-5400 Baden
+                Switzerland
+                "
+        DESCRIPTION
+                "The MIB module for the SNMP northbound interface on 
+                 the FOXMAN-UN Network Management System"
+        REVISION     "200606141400Z"        -- June 14, 2006 14:00:00 PM
+        DESCRIPTION
+                "Initial revision FOXMAN-UN R8 SMIv2 MIB"
+        REVISION     "200707051400Z"        -- July 5, 2007 14:00:00 PM
+        DESCRIPTION
+                "Released with FOXMAN-UN R8B, added support for additional family
+                 snmpfamily(5) and 2 more neTypes: milegate2010(17) and 
+                 snmpdevice(16)"
+        -- 1.3.6.1.4.1.21696.93.1
+        ::= { unem 100 }
+
+abb             OBJECT IDENTIFIER ::= { enterprises 21696 }
+unem            OBJECT IDENTIFIER ::= { abb 93 }
+release1        OBJECT IDENTIFIER ::= { unem 1 }
+trap-object     OBJECT IDENTIFIER ::= { release1 1 }
+ne              OBJECT IDENTIFIER ::= { release1 2 }
+card            OBJECT IDENTIFIER ::= { release1 3 }
+alarm           OBJECT IDENTIFIER ::= { release1 4 }
+notification    OBJECT IDENTIFIER ::= { release1 0 }
+
+
+-- textual conventions
+
+NemTime ::=
+        INTEGER (0..4294967295)
+        -- This data type is used to model the time_t datatype in the C
+        -- lib. It contains the number of seconds since 00:00 01-01-1970
+        -- GMT.
+
+-- Object Types
+
+
+neNumber OBJECT-TYPE
+        SYNTAX INTEGER (0..4294967295)
+        MAX-ACCESS read-only
+        STATUS current
+        DESCRIPTION
+                "Number of entries in neTable"
+        ::= { ne 2 }
+
+cardNumber OBJECT-TYPE
+        SYNTAX INTEGER (0..65535)
+        MAX-ACCESS read-only
+        STATUS current
+        DESCRIPTION
+                "Number of entries in cardTable"
+        ::= { card 2 }
+
+
+-- Network Element Group
+
+neTable OBJECT-TYPE
+        SYNTAX SEQUENCE OF NEEntry
+        MAX-ACCESS not-accessible
+        STATUS current
+        DESCRIPTION
+                        "This FOXMAN-UN's table of network elements"
+        ::= { ne 1 }
+
+neEntry OBJECT-TYPE
+        SYNTAX NEEntry
+        MAX-ACCESS not-accessible
+        STATUS current
+        DESCRIPTION
+                        "Each entry contains some basic informations about
+                         the network element."
+        INDEX {         neFamily,
+                        neIndex }
+        ::= { neTable 1 }
+
+NEEntry ::=
+        SEQUENCE {
+                neFamily
+                        INTEGER,
+                neIndex
+                        INTEGER,
+                neName
+                        DisplayString,
+                neUNEMAddress
+                        OCTET STRING,
+                neType
+                        INTEGER,
+                neOperationalState
+                        INTEGER,
+                nePollingStatus
+                        INTEGER
+
+        }
+
+neFamily OBJECT-TYPE
+        SYNTAX INTEGER {
+                        umux1300family(1),
+                        foreign(2),
+                        umux1500family(3),
+                        system(4),
+                        milegatefamily(5),
+                        snmpfamily(6)
+        }
+        MAX-ACCESS read-only
+        STATUS current
+        DESCRIPTION
+                        "The NE Family identifies the kind of Network Element"
+        ::= { neEntry 1 }
+
+neIndex OBJECT-TYPE                      -- This correspond to the last number
+        SYNTAX INTEGER  (0..4294967295)  -- of the logical object ID in the DB.
+        MAX-ACCESS read-only
+        STATUS current
+        DESCRIPTION
+                        "The index uniquely identifies the network element
+                        in its family"
+        ::= { neEntry 2 }
+
+neName OBJECT-TYPE
+        SYNTAX DisplayString
+        MAX-ACCESS read-only
+        STATUS current
+        DESCRIPTION
+                        "This is the name of network element. It can change
+                         during the lifetime of the network element."
+        ::= { neEntry 3 }
+
+neUNEMAddress OBJECT-TYPE
+        SYNTAX OCTET STRING
+        MAX-ACCESS read-only
+        STATUS current
+        DESCRIPTION
+                        "This is a string describing the physical address
+                         of the network element.(See section 4.2)"
+        ::= { neEntry 4 }
+
+neType OBJECT-TYPE
+        SYNTAX INTEGER {
+                umux1300(0),    -- System UMUX 1300.
+                umux1100(1),    -- System UMUX 1100.
+                umux1100e(2),   -- System UMUX 1100E.
+                colt2(3),       -- System COLT.
+                lecar(4),       -- desktop Leca
+                tunor(5),       -- desktop Tunor
+                umux1400(6),    -- System UMUX 1400.
+                umux1500(7),    -- System UMUX 1500.
+                foreign(8),     -- Foreign object.   (neFamily is set to foreign in that case)
+                umux1200(8),    -- System UMUX 1200. (neFamily is set to umux1500family in that case)
+                colt-e(9),      -- System COLT-E.
+                colt-ec(10),    -- System COLT-EC.
+                umux900(11),    -- System UMUX 900.
+                milegate2500(12),  -- System MileGate 2500.
+                milegate2110(13),  -- System MileGate 2110.
+                milegate2120(14),  -- System MileGate 2120.
+                milegate2130(15),  -- System MileGate 2130.
+                snmpdevice(16),  -- SNMP managed NE.
+                milegate2010(17),  -- System MileGate 2130.
+                system(20)      -- special value
+        }
+        MAX-ACCESS read-only
+        STATUS current
+        DESCRIPTION
+                        "These are the types of the network elements. The
+                         FOREIGN(8) is associated with the foreign(2) family
+                         of NEs, UMUX1300(0), UMUX1100(1), UMUX1100E(2),
+                         and COLT2(3) are associated with the
+                         umux1300family(1) family of NEs and the UMUX1400(6),
+                         UMUX1200(8), COLT_E(9), COLT_EC(10),
+                         UMUX1500(7) and UMUX900(11) are associated with the
+                         umux1500family(3) family of NEs. The milegate2500(12),
+                         milegate2110(13), milegate2120(14), milegate2130(15),
+                         and milegate2010(17) are associated with the 
+                         MileGate family.The snmpdevice(16) is associated with
+                         the snmpfamily(6) group of NEs."
+        ::= { neEntry 5 }
+
+neOperationalState OBJECT-TYPE
+        SYNTAX INTEGER {
+                        notConfigured(49),
+                        normal(50),
+                        notSameConfigId(51),
+                        unmanageable(52)
+        }
+        MAX-ACCESS read-only
+        STATUS current
+        DESCRIPTION
+                        "This object describes the state of the network
+                         element.When no upload of the Network Element
+                         has been done, its in the notConfigured state;
+                         if the configuration of the network element
+                         differs from the one in the proxy agent Database
+                         the network element is in the notSameConfigId
+                         state; if the proxy agent cannot communicate with
+                         the network element, it is in the unmanageable
+                         state; otherwise the Network Element is in the
+                         normal(50) state."
+        ::= { neEntry 6 }
+
+nePollingStatus OBJECT-TYPE
+        SYNTAX INTEGER {
+                        enabled(1),
+                        disabled(2)
+        }
+        MAX-ACCESS read-only
+        STATUS current
+        DESCRIPTION
+                        "This object indicates if the network element is
+                         currently being polled for alarms. If the element
+                         notifies changes in alarms, then the polling is said
+                         to be enabled."
+        ::= { neEntry 7 }
+
+-- Card Group
+
+cardTable OBJECT-TYPE
+        SYNTAX SEQUENCE OF CardEntry
+        MAX-ACCESS not-accessible
+        STATUS current
+        DESCRIPTION
+                        "This FOXMAN-UN's table of cards. Indexed by network
+                         element (family and number) and slot number."
+        ::= { card 1 }
+
+cardEntry OBJECT-TYPE
+        SYNTAX CardEntry
+        MAX-ACCESS not-accessible
+        STATUS current
+        DESCRIPTION
+                        "Each entry contains the basic information about the
+                         card in the given slot. If the slot is empty, the
+                         corresponding card object does not exists."
+        INDEX   {       cardNEfamily,
+                        cardNE,
+                        cardSlot }
+        ::= { cardTable 1 }
+
+CardEntry ::=
+        SEQUENCE {
+                cardNEfamily
+                        INTEGER,
+                cardNE
+                        INTEGER,
+                cardSlot
+                        INTEGER,
+                cardName
+                        DisplayString,
+                cardIdentifier
+                        DisplayString,
+                cardSwVersion
+                        DisplayString,
+                cardNEName
+                        DisplayString
+        }
+
+cardNEfamily OBJECT-TYPE
+        SYNTAX INTEGER {
+                        umux1300family(1),
+                        foreign(2),
+                        umux1500family(3),
+                        system(4),
+                        milegatefamily(5),
+                        snmpfamily(6)
+        }
+        MAX-ACCESS read-only
+        STATUS current
+        DESCRIPTION
+                        "The family of the network element containing the
+                         card."
+        ::= { cardEntry 1 }
+
+cardNE OBJECT-TYPE
+        SYNTAX INTEGER (0..4294967295)
+        MAX-ACCESS read-only
+        STATUS current
+        DESCRIPTION
+                        "The identifier of the network element containing the
+                         card which is unique within a family of network
+                         elements."
+        ::= { cardEntry 2 }
+
+cardSlot OBJECT-TYPE
+        SYNTAX INTEGER (1..21)
+        MAX-ACCESS read-only
+        STATUS current
+        DESCRIPTION
+                        "The slot number where the card is, in the subrack."
+        ::= { cardEntry 3 }
+
+cardName OBJECT-TYPE
+        SYNTAX DisplayString
+        MAX-ACCESS read-only
+        STATUS current
+        DESCRIPTION
+                        "A string giving the name of the card."
+
+        ::= { cardEntry 4 }
+
+cardIdentifier OBJECT-TYPE
+        SYNTAX DisplayString
+        MAX-ACCESS read-only
+        STATUS current
+        DESCRIPTION
+            "A string identifying the Hardware characteristics
+             of the card."
+        ::= { cardEntry 5 }
+
+
+cardSwVersion OBJECT-TYPE
+        SYNTAX DisplayString
+        MAX-ACCESS read-only
+        STATUS current
+        DESCRIPTION
+                        "The version of the firmware of the card."
+        ::= { cardEntry 6 }
+
+cardNEName OBJECT-TYPE
+        SYNTAX DisplayString
+        MAX-ACCESS read-only
+        STATUS current
+        DESCRIPTION
+                        "The name of the network element containing the
+                         card. It can change
+                         during the lifetime of the network element."
+        ::= { cardEntry 7 }
+
+
+-- Alarm Group
+
+alarmTable OBJECT-TYPE
+        SYNTAX SEQUENCE OF AlarmEntry
+        MAX-ACCESS not-accessible
+        STATUS current
+        DESCRIPTION
+                        "This is the FOXMAN-UN's table of alarms. Indexed by
+                        network element (neFamily and neIndex) and alarm
+                        number."
+        ::= { alarm 1 }
+
+alarmEntry OBJECT-TYPE
+        SYNTAX AlarmEntry
+        MAX-ACCESS not-accessible
+        STATUS current
+        DESCRIPTION
+                        "Each entry contains information about an alarm."
+        INDEX    {      alarmNEfamily,
+                        alarmNE,
+                        alarmId }
+        ::= { alarmTable 1 }
+
+AlarmEntry ::=
+        SEQUENCE {
+                alarmNEfamily
+                        INTEGER,
+                alarmNE
+                        INTEGER,
+                alarmId
+                        INTEGER,
+                alarmCardSlot
+                        INTEGER,
+                alarmLayer
+                        INTEGER,
+                alarmSubUnit
+                        INTEGER,
+                alarmStatus
+                        INTEGER,
+                alarmSeverity
+                        INTEGER,
+                alarmEventType
+                        INTEGER,
+                alarmText
+                        DisplayString,
+                alarmOnTime
+                        NemTime,
+                alarmOffTime
+                        NemTime,
+                alarmAckOnStatus
+                        INTEGER,
+                alarmAckOnTime
+                        NemTime,
+                alarmAckOffStatus
+                        INTEGER,
+                alarmAckOffTime
+                        NemTime,
+                alarmIntermittency
+                        INTEGER,
+                alarmIntermittentPeriod
+                        INTEGER,
+                alarmNEName
+                        DisplayString,
+                alarmLocation
+                        DisplayString
+        }
+
+alarmNEfamily OBJECT-TYPE
+        SYNTAX INTEGER {
+                        umux1300family(1),
+                        foreign(2),
+                        umux1500family(3),
+                        system(4),
+                        milegatefamily(5),
+                        snmpfamily(6)
+        }
+        MAX-ACCESS read-only
+        STATUS current
+        DESCRIPTION
+                        "The family of the network element which has the
+                         alarm."
+        ::= { alarmEntry 1 }
+
+alarmNE OBJECT-TYPE
+        SYNTAX INTEGER (0..4294967295)
+        MAX-ACCESS read-only
+        STATUS current
+        DESCRIPTION
+                        "The ID of the network element which has the alarm.
+                        The ID is unique within a family of NEs."
+        ::= { alarmEntry 2 }
+
+alarmId OBJECT-TYPE
+        SYNTAX INTEGER (0..4294967295)
+        MAX-ACCESS read-only
+        STATUS current
+        DESCRIPTION
+                "The identifier of an alarm. It is unique for each
+                 network element."
+        ::= { alarmEntry 3 }
+
+alarmCardSlot OBJECT-TYPE
+                SYNTAX INTEGER (1..21)
+                MAX-ACCESS read-only
+                STATUS current
+                DESCRIPTION
+                        "The slot number where the alarm occured."
+        ::= { alarmEntry 4 }
+
+alarmLayer OBJECT-TYPE
+                SYNTAX INTEGER (0..255)
+                MAX-ACCESS read-only
+                STATUS current
+                DESCRIPTION
+                        "The layer number of the alarm"
+        ::= { alarmEntry 5 }
+
+alarmSubUnit OBJECT-TYPE
+                SYNTAX INTEGER (0..255)
+                MAX-ACCESS read-only
+                STATUS current
+                DESCRIPTION
+                        "The Sub-Unit Where the alarm occured."
+        ::= { alarmEntry 6 }
+
+alarmStatus OBJECT-TYPE
+        SYNTAX INTEGER {
+                outstanding(0),
+                cleared(1)
+        }
+        MAX-ACCESS read-only
+        STATUS current
+        DESCRIPTION
+                        "alarmStatus indicates if the alarm is active, or
+                        if a previously active alarm has been cleared"
+        ::= { alarmEntry 7}
+
+alarmSeverity OBJECT-TYPE
+        SYNTAX INTEGER {
+                critical(0),
+                major(1),
+                minor(2),
+                warning(3),
+                indeterminate(4),
+                off(5)
+        }
+        MAX-ACCESS read-only
+        STATUS current
+        DESCRIPTION
+                        "The level of severity of the alarm."
+        ::= { alarmEntry 8}
+
+alarmEventType OBJECT-TYPE
+        SYNTAX INTEGER {
+                communicationAlarm(0),
+                equipmentAlarm(1),
+                environmentalAlarm(2),
+                processingErrorAlarm(3),
+                qualityOfServiceAlarm(4)
+        }
+        MAX-ACCESS read-only
+        STATUS current
+        DESCRIPTION
+                        "The type of service to which the alarm is related."
+        ::= { alarmEntry 9}
+
+alarmText OBJECT-TYPE
+        SYNTAX DisplayString
+        MAX-ACCESS read-only
+        STATUS current
+        DESCRIPTION
+                        "The text describing the alarm."
+        ::= { alarmEntry 10 }
+
+alarmOnTime OBJECT-TYPE
+        SYNTAX NemTime
+        MAX-ACCESS read-only
+        STATUS current
+        DESCRIPTION
+                        "The time the alarm alarm was activated."
+        ::= { alarmEntry 11 }
+
+alarmOffTime OBJECT-TYPE
+        SYNTAX NemTime
+        MAX-ACCESS read-only
+        STATUS current
+        DESCRIPTION
+                        "The time the alarm was cleared."
+        ::= { alarmEntry 12 }
+
+alarmAckOnStatus OBJECT-TYPE
+        SYNTAX INTEGER {
+                not-acknowledged(0),
+                acknowledged(1)
+        }
+        MAX-ACCESS read-only
+        STATUS current
+        DESCRIPTION
+                        "Indicates if the activation of the alarm has been
+                        acknowledged"
+        ::= { alarmEntry 13 }
+
+alarmAckOnTime OBJECT-TYPE
+        SYNTAX NemTime
+        MAX-ACCESS read-only
+        STATUS current
+        DESCRIPTION
+                        "The time when the activation of the alarm has been
+                         acknowledged. This object has no valid value if the
+                         alarm is not acknowledged."
+        ::= { alarmEntry 14 }
+
+alarmAckOffStatus OBJECT-TYPE
+        SYNTAX INTEGER {
+                not-acknowledged(0),
+                acknowledged(1)
+        }
+        MAX-ACCESS read-only
+        STATUS current
+        DESCRIPTION
+                        "Indicates if the clearing of the alarm has been
+                        acknowledged
+                        stopped."
+        ::= { alarmEntry 15 }
+
+alarmAckOffTime OBJECT-TYPE
+        SYNTAX NemTime
+        MAX-ACCESS read-only
+        STATUS current
+        DESCRIPTION
+                        "The time when the clearing of the alarm has been
+                         acknowledged. This object has no valid value if the
+                         alarm is not acknowledged."
+        ::= { alarmEntry 16 }
+
+alarmIntermittency OBJECT-TYPE
+        SYNTAX INTEGER {
+                off(0),
+                on(1)
+        }
+        MAX-ACCESS read-only
+        STATUS current
+        DESCRIPTION
+                        "Is the alarm is an intermittent alarm."
+        ::= { alarmEntry 17 }
+
+alarmIntermittentPeriod OBJECT-TYPE
+        SYNTAX INTEGER (0..65535)
+        MAX-ACCESS read-only
+        STATUS current
+        DESCRIPTION
+                        "The time that should elapse between two raising of
+                         intermittent alarms; they are considered
+                         as two separate alarms. If this is not an
+                         intermittent alarm, this object has no valid value."
+        ::= { alarmEntry 18 }
+
+alarmNEName OBJECT-TYPE
+        SYNTAX DisplayString
+        MAX-ACCESS read-only
+        STATUS current
+        DESCRIPTION
+                        "The name of the network element which has the
+                         alarm. It can change
+                         during the lifetime of the network element."
+        ::= { alarmEntry 19 }
+
+alarmLocation OBJECT-TYPE
+        SYNTAX DisplayString
+        MAX-ACCESS read-only
+        STATUS current
+        DESCRIPTION
+                        "The location of the alarm."
+        ::= { alarmEntry 20 }
+
+
+-- Trap Objects group
+
+-- Note: Although these objects can be accessed using the GET-
+-- REQUEST and the GET-NEXT-REQUEST, the value returned by this
+-- method correspond to those set by the latest trap sent which
+-- can be different to the latest trap received by the HLM
+
+unemTrapSequenceNumber OBJECT-TYPE
+        SYNTAX INTEGER (0..4294967295)
+        MAX-ACCESS read-only
+        STATUS current
+        DESCRIPTION
+                        "Each trap sent to the defined address are given a
+                         sequence number."
+        ::= { trap-object 4 }
+
+-- Traps in UNEM 3.00: these traps are intended to replace
+-- the UNEM 2.00 traps. Configuration information of the UNEM
+-- will let the user choose between the old- or new-fashioned
+-- traps
+
+alarmRaisedTrap NOTIFICATION-TYPE
+        OBJECTS {     unemTrapSequenceNumber,
+                      alarmNEfamily,
+                      alarmNE,
+                      alarmId,
+                      alarmCardSlot,
+                      alarmLayer,
+                      alarmSubUnit,
+                      alarmStatus,
+                      alarmSeverity,
+                      alarmEventType,
+                      alarmText,
+                      alarmOnTime,
+                      alarmOffTime,           -- value is undefined
+                      alarmAckOnStatus,
+                      alarmAckOnTime,
+                      alarmAckOffStatus,      -- value is 'not_acknowledged'
+                      alarmAckOffTime,        -- value is undefined
+                      alarmIntermittency,
+                      alarmIntermittentPeriod,
+                      alarmNEName,
+                      alarmLocation}
+        STATUS        current
+
+    --&FILTNAME    "Critical" 
+    --&ACTIONS     { log, critical }
+    --&MATCH       { alarmSeverity "critical", alarmId }
+    --&MESG        "$20 $21 $11 $'9 $'8" 
+
+    --&FILTNAME    "Major"
+    --&ACTIONS     { log, major }
+    --&MATCH       { alarmSeverity "major", alarmId }
+    --&MESG        "$20 $21 $11 $'9 $'8"
+ 
+    --&FILTNAME    "Minor"
+    --&ACTIONS     { log, minor }
+    --&MATCH       { alarmSeverity "minor", alarmId }
+    --&MESG        "$20 $21 $11 $'9 $'8"
+ 
+    --&FILTNAME    "Warning"
+    --&ACTIONS     { log, warning }
+    --&MATCH       { alarmSeverity "warning", alarmId }
+    --&MESG        "$20 $21 $11 $'9 $'8"
+
+        DESCRIPTION
+                "Trap sent when a new Alarm is raised."
+        ::= {notification 3}
+
+alarmAckedTrap NOTIFICATION-TYPE
+        OBJECTS {     unemTrapSequenceNumber,
+                      alarmNEfamily,
+                      alarmNE,
+                      alarmId,
+                      alarmCardSlot,
+                      alarmLayer,
+                      alarmSubUnit,
+                      alarmStatus,
+                      alarmSeverity,
+                      alarmEventType,
+                      alarmText,
+                      alarmOnTime,
+                      alarmOffTime,
+                      alarmAckOnStatus,
+                      alarmAckOnTime,
+                      alarmAckOffStatus,
+                      alarmAckOffTime,
+                      alarmIntermittency,
+                      alarmIntermittentPeriod,
+                      alarmNEName,
+                      alarmLocation}
+        STATUS        current
+
+    --&FILTNAME    "Ack" 
+    --&ACTIONS     { nolog }
+    --&MESG        "$20 $21 $11 $'9 $'8"
+
+        DESCRIPTION
+                        "Trap sent when an alarm is acknowledged."
+        ::= {notification 4}
+
+alarmClearedTrap NOTIFICATION-TYPE
+        OBJECTS {     unemTrapSequenceNumber,
+                      alarmNEfamily,
+                      alarmNE,
+                      alarmId,
+                      alarmCardSlot,
+                      alarmLayer,
+                      alarmSubUnit,
+                      alarmStatus,              -- value is 'cleared'
+                      alarmSeverity,
+                      alarmEventType,
+                      alarmText,
+                      alarmOnTime,
+                      alarmOffTime,
+                      alarmAckOnStatus,
+                      alarmAckOnTime,
+                      alarmAckOffStatus,
+                      alarmAckOffTime,
+                      alarmIntermittency,
+                      alarmIntermittentPeriod,
+                      alarmNEName,
+                      alarmLocation}
+         STATUS       current
+
+    --&FILTNAME      "Cleared" 
+    --&ACTIONS     { clrdups, log, normal }
+    --&CLEARS      { "Warning", "Critical", "Major", "Minor" }
+    --&MATCH       { alarmId }
+    --&MESG        "$20 $21 $11 $'9 $'8" 
+
+         DESCRIPTION
+                        "Trap sent when an alarm is cleared."
+        ::= {notification 5}
+
+neAdded NOTIFICATION-TYPE
+        OBJECTS {     unemTrapSequenceNumber,
+                      neFamily,
+                      neIndex,
+                      neName,
+                      neUNEMAddress,
+                      neType,
+                      neOperationalState,
+                      nePollingStatus}
+        STATUS        current
+        DESCRIPTION
+                        "An UMUX Network Element has been added to the
+                         Agent Database."
+        ::= {notification 6}
+
+neDeleted NOTIFICATION-TYPE
+        OBJECTS {     unemTrapSequenceNumber,
+                      neFamily,
+                      neIndex,
+                      neName,
+                      neUNEMAddress,
+                      neType,
+                      neOperationalState,
+                      nePollingStatus}
+        STATUS        current
+        DESCRIPTION
+                        "An UMUX Network Element has been deleted from the
+                        Agent Database."
+        ::= {notification 7}
+
+neNameModified NOTIFICATION-TYPE
+        OBJECTS {     unemTrapSequenceNumber,
+                      neFamily,
+                      neIndex,
+                      neName,
+                      neUNEMAddress,
+                      neType,
+                      neOperationalState,
+                      nePollingStatus}
+        STATUS        current
+        DESCRIPTION
+                        "Name of Network Element has been modified."
+        ::= {notification 8}
+
+neOpStatModified NOTIFICATION-TYPE
+        OBJECTS {     unemTrapSequenceNumber,
+                      neFamily,
+                      neIndex,
+                      neOperationalState,
+                      neName,
+                      neUNEMAddress,
+                      neType,
+                      nePollingStatus}
+        STATUS        current
+        DESCRIPTION
+                        "Operational state of the NE has been modified."
+        ::= {notification 9}
+
+nePollStatModified NOTIFICATION-TYPE
+        OBJECTS {     unemTrapSequenceNumber,
+                      neFamily,
+                      neIndex,
+                      nePollingStatus,
+                      neName,
+                      neUNEMAddress,
+                      neType,
+                      neOperationalState}
+        STATUS        current
+        DESCRIPTION
+                        "Polling status of the NE has been modified."
+        ::= {notification 10}
+
+cardAdded NOTIFICATION-TYPE
+        OBJECTS {     unemTrapSequenceNumber,
+                      cardNEfamily,
+                      cardNE,
+                      cardSlot,
+                      cardName,
+                      cardIdentifier,
+                      cardSwVersion,
+                      cardNEName}
+        STATUS        current
+        DESCRIPTION
+                        "A card has been added to a Network Element."
+        ::= {notification 11}
+
+cardDeleted NOTIFICATION-TYPE
+        OBJECTS {     unemTrapSequenceNumber,
+                      cardNEfamily,
+                      cardNE,
+                      cardSlot,
+                      cardName,
+                      cardIdentifier,
+                      cardSwVersion,
+                      cardNEName}
+        STATUS        current
+        DESCRIPTION
+                        "A card has been deleted from an Network Element."
+        ::= {notification 12}
+
+
+--
+-- conformance groups
+--
+unemMIBConformance OBJECT IDENTIFIER ::= { release1 5 }
+unemMIBCompliances OBJECT IDENTIFIER ::= { unemMIBConformance 1 }
+unemMIBGroups      OBJECT IDENTIFIER ::= { unemMIBConformance 2 }
+
+unemMIBCompliance MODULE-COMPLIANCE
+                  STATUS current
+                  DESCRIPTION "The compliance statement for SNMPv2 entities which implement UNEM v1"
+                  MODULE -- this module
+                  MANDATORY-GROUPS {unemMIBGroup }
+                  ::= { unemMIBCompliances 1 }
+
+
+unemMIBGroup OBJECT-GROUP
+OBJECTS      { unemTrapSequenceNumber,
+               neFamily,
+               neIndex,
+               neName,
+               neUNEMAddress,
+               neType,
+               neOperationalState,
+               nePollingStatus,
+               neNumber,
+               cardNumber,
+               cardNEfamily,
+               cardNE,
+               cardSlot,
+               cardName,
+               cardIdentifier,
+               cardSwVersion,
+               cardNEName,
+               alarmNEfamily,
+               alarmNE,
+               alarmId,
+               alarmCardSlot,
+               alarmLayer,
+               alarmSubUnit,
+               alarmStatus,
+               alarmSeverity,
+               alarmEventType,
+               alarmText,
+               alarmOnTime,
+               alarmOffTime,
+               alarmAckOnStatus,
+               alarmAckOnTime,
+               alarmAckOffStatus,
+               alarmAckOffTime,
+               alarmIntermittency,
+               alarmIntermittentPeriod,
+               alarmNEName,
+               alarmLocation
+             }
+STATUS       current
+DESCRIPTION "The current unem V1 group of objects providing for management of UNEM"
+::= { unemMIBGroups 1 }
+
+
+unemTrapGroup NOTIFICATION-GROUP
+        NOTIFICATIONS { alarmRaisedTrap,
+                        alarmAckedTrap,
+                        alarmClearedTrap,
+                        neAdded,
+                        neDeleted,
+                        neNameModified,
+                        neOpStatModified,
+                        nePollStatModified,
+                        cardAdded,
+                        cardDeleted }
+        STATUS current
+        DESCRIPTION ""
+        ::= { unemMIBGroups 2 }
+
+END
+

@@ -1,0 +1,131 @@
+-- RADWin-MAC MIB  
+-- Version:   1.01
+-- Date:      Nov 18, 2008
+-- By:        Yossi Appleboum
+
+
+-- Change History
+
+-- 1.01		  Root OID fixed.
+
+-- 1.00		  BDU version.
+
+
+RADWIN-MAC-MIB DEFINITIONS ::= BEGIN
+
+IMPORTS
+      OBJECT-TYPE                    FROM SNMPv2-SMI
+   	  DisplayString,PhysAddress      FROM SNMPv2-TC;   
+   	  
+
+--  BDU sub tree  
+enterprises     OBJECT IDENTIFIER ::= { iso org(3) dod(6) internet(1) private(4) 1 }
+radwin          OBJECT IDENTIFIER ::= { enterprises 4458 }   
+bdu             OBJECT IDENTIFIER ::= { radwin 7300 }
+bduStd 	    	OBJECT IDENTIFIER ::= { bdu 1} 	 
+bduGeneral OBJECT IDENTIFIER ::= { bduStd 1 }
+bduMac     OBJECT IDENTIFIER ::= { bduGeneral 7 }
+
+
+--
+------------------------------------------------------------------------------
+--   MAC group       
+------------------------------------------------------------------------------
+macSecAuthSrc OBJECT-TYPE
+		SYNTAX        INTEGER {
+                        na(1),                        
+                      	internal(2),       		
+                        external(3)
+                      } 
+        MAX-ACCESS    read-write
+        STATUS        current
+        DESCRIPTION   "Authentication database for MAC security."
+        ::= { bduMac 1 }
+
+portMacSecTable OBJECT-TYPE
+	SYNTAX SEQUENCE OF PortMacSecEntry
+	MAX-ACCESS not-accessible
+	STATUS current
+	DESCRIPTION 	"A table that contains all traps"
+	::= { bduMac 10 }
+
+portMacSecEntry OBJECT-TYPE
+	SYNTAX PortMacSecEntry
+	MAX-ACCESS not-accessible
+	STATUS current
+	DESCRIPTION 	" A trap entry to the trap table"
+	INDEX  { macPortIx  }
+	::= { portMacSecTable 1 }
+ 
+PortMacSecEntry ::=
+	SEQUENCE {
+	  macPortIx     		INTEGER,          
+	  macSecMode     		INTEGER,          	  
+	  detectMac1	   		PhysAddress,               
+	  detectMac2   			PhysAddress,               
+	  detectMac3	    	PhysAddress,               
+	  approvedMac	    	PhysAddress,               	  
+	  macPortStatus		 	INTEGER
+	}
+
+macPortIx OBJECT-TYPE
+	SYNTAX INTEGER 
+	MAX-ACCESS read-only
+	STATUS current
+	DESCRIPTION 	 "Port index in table."
+	::= { portMacSecEntry 1 }
+
+macSecMode OBJECT-TYPE
+		SYNTAX        INTEGER {
+                        na(1),                        
+                      	disable(2),       		
+                        lowSecLevel(3),
+                        highSecLevel(4)                        
+                      } 
+	MAX-ACCESS read-write
+	STATUS current
+	DESCRIPTION 	 "Security mode."
+	::= { portMacSecEntry 2 }
+
+detectMac1 OBJECT-TYPE
+    SYNTAX        PhysAddress 
+	MAX-ACCESS read-only
+	STATUS current
+	DESCRIPTION      "Detected MAC on port."
+	::= { portMacSecEntry 3 }
+
+detectMac2 OBJECT-TYPE
+    SYNTAX        PhysAddress 
+	MAX-ACCESS read-only
+	STATUS current
+	DESCRIPTION      "Detected MAC on port."
+	::= { portMacSecEntry 4 }
+
+detectMac3 OBJECT-TYPE
+    SYNTAX        PhysAddress 
+	MAX-ACCESS read-only
+	STATUS current
+	DESCRIPTION      "Detected MAC on port."
+	::= { portMacSecEntry 5 }
+
+approvedMac OBJECT-TYPE
+    SYNTAX        PhysAddress 
+	MAX-ACCESS read-write
+	STATUS current
+	DESCRIPTION      "Approved MAC on port."
+	::= { portMacSecEntry 10 }
+
+macPortStatus OBJECT-TYPE
+	SYNTAX INTEGER
+	{
+	  na(1), 
+	  secDisabled(2), 	  
+	  portBlocked(3),
+	  portForwarding(4)
+	} 
+	MAX-ACCESS read-only
+	STATUS current
+	DESCRIPTION      "Oper status of MAC security on port."
+	::= { portMacSecEntry 14 }
+
+END

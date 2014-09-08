@@ -1,0 +1,1208 @@
+--*****************************************************************
+-- MAIPU-SYS-MIB
+--
+-- lvjian 2006-10-25
+-- 
+-- *****************************************************************
+--
+
+
+
+
+MAIPU-SYS-MIB DEFINITIONS ::= BEGIN        
+
+IMPORTS            
+	TEXTUAL-CONVENTION, TruthValue, DisplayString
+  	FROM SNMPv2-TC
+  	mpMgmt FROM MAIPU-SMI;    
+
+
+mpSysMIB MODULE-IDENTITY
+	LAST-UPDATED "2012070500Z"
+	ORGANIZATION "Maipu Data Communication, Inc."
+	CONTACT-INFO
+		"E-mail: maipu2@mail.sc.cninfo.net"
+	DESCRIPTION
+		"The MIB module file system for Maipu."
+	REVISION      "0101010000Z"
+	DESCRIPTION
+		"Initial version of this MIB module."
+ ::= {mpMgmt 600}
+
+
+mpSysInfoMib								OBJECT IDENTIFIER ::= {mpSysMIB 1}
+mpSysMpuMib									OBJECT IDENTIFIER ::= {mpSysMIB 2}
+mpSysUnitMib									OBJECT IDENTIFIER ::= {mpSysMIB 3}
+mpSysSiuMib									OBJECT IDENTIFIER ::= {mpSysMIB 4}
+mpSysSubSlotMib							OBJECT IDENTIFIER ::= {mpSysMIB 5}
+mpSysPortMib    						OBJECT IDENTIFIER ::= {mpSysMIB 6}
+mpSysPowerMib 							OBJECT IDENTIFIER ::= {mpSysMIB 7}
+mpSysFanCardMib 						OBJECT IDENTIFIER ::= {mpSysMIB 8}
+mpSysCpuMib 								OBJECT IDENTIFIER ::= {mpSysMIB 9}
+mpSysMemoryMib 							OBJECT IDENTIFIER ::= {mpSysMIB 10}
+
+
+
+mpSysMpuInfoTable    OBJECT-TYPE
+    SYNTAX  SEQUENCE OF MpSysMpuInfoEntry
+    ACCESS  not-accessible
+    STATUS  current
+    DESCRIPTION
+            "mpu system information table"
+    ::= {mpSysMpuMib 1}
+
+mpSysMpuInfoEntry  OBJECT-TYPE
+    SYNTAX  MpSysMpuInfoEntry
+    ACCESS  not-accessible
+    STATUS  current
+    DESCRIPTION
+            "mpu system information table entry"
+    INDEX   {mpSysMpuIndex}
+    ::= {mpSysMpuInfoTable 1} 
+
+MpSysMpuInfoEntry ::= SEQUENCE 
+{ 
+	mpSysMpuIndex           INTEGER,
+	mpSysMpuType            INTEGER,
+	mpSysMpuDescription     DisplayString,
+	mpSysMpuSerialNumber    DisplayString,   
+	mpSysMpuSoftwareVersion DisplayString, 
+	mpSysMpuHardwareVersion DisplayString,    
+	mpSysMpuFPGAVersion     DisplayString,
+	mpSysMpuMonitorVersion  DisplayString,  
+	mpSysMpuCMMSoftwareVersion      DisplayString,  
+	mpSysMpuCMMHardwareVersion      DisplayString,
+	mpSysMpuCMMMonitorVersion       DisplayString,
+	mpSysMpuFlashTotalBytes         Gauge32, 
+	mpSysMpuFlashLeftBytes          Gauge32,
+    mpSysMpuWorkingMode             INTEGER,
+    mpSysMpuOnlineStatus            INTEGER, 
+    mpSysMpuWorkingStatus           INTEGER, 
+    mpSysMpuPowerStatus             INTEGER,   
+    mpSysMpuSynchronizationStatus   INTEGER,  
+    mpSysMpuCFStatus                INTEGER,   
+    mpSysMpuTemperature             INTEGER,
+    mpSysMpuSubSlotNumber           INTEGER   
+}
+
+mpSysMpuIndex  OBJECT-TYPE
+    SYNTAX  INTEGER
+    ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+            "mpu system information table index"
+    ::= {mpSysMpuInfoEntry 1}
+
+mpSysMpuType  OBJECT-TYPE
+    SYNTAX  INTEGER
+    ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+            "mpu card type"
+    ::= {mpSysMpuInfoEntry 2}
+    
+mpSysMpuDescription  OBJECT-TYPE
+    SYNTAX  DisplayString(SIZE (0..128))
+    ACCESS  read-write
+    STATUS  current
+    DESCRIPTION
+            "mpu description,the max length is 128bytes"
+    ::= {mpSysMpuInfoEntry 3}
+
+mpSysMpuSerialNumber  OBJECT-TYPE
+    SYNTAX  DisplayString(SIZE (0..31))
+    ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+            "mpu serialnumber,the max length is 32bytes"
+    ::= {mpSysMpuInfoEntry 4}
+
+mpSysMpuSoftwareVersion  OBJECT-TYPE
+    SYNTAX  DisplayString(SIZE (0..31))
+    ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+            "mpu software version,the max length is 32bytes"
+    ::= {mpSysMpuInfoEntry 5}
+
+mpSysMpuHardwareVersion  OBJECT-TYPE
+    SYNTAX  DisplayString(SIZE (0..255))
+    ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+            "mpu hardware version,the max length is 256bytes"
+    ::= {mpSysMpuInfoEntry 6}
+
+mpSysMpuFPGAVersion  OBJECT-TYPE
+    SYNTAX  DisplayString(SIZE (0..255))
+    ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+            "mpu fpga version,the max length is 256bytes"
+    ::= {mpSysMpuInfoEntry 7}
+
+           
+mpSysMpuMonitorVersion  OBJECT-TYPE
+    SYNTAX  DisplayString(SIZE (0..31))
+    ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+            "mpu monitor version,the max length is 32bytes"
+    ::= {mpSysMpuInfoEntry 8}    
+
+mpSysMpuCMMSoftwareVersion  OBJECT-TYPE
+    SYNTAX  DisplayString(SIZE (0..31))
+    ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+            "mpu cmm software version,the max length is 32bytes"
+    ::= {mpSysMpuInfoEntry 9}
+    
+mpSysMpuCMMHardwareVersion  OBJECT-TYPE
+    SYNTAX  DisplayString(SIZE (0..31))
+    ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+            "mpu cmm hardware version,the max length is 32bytes"
+    ::= {mpSysMpuInfoEntry 10}
+    
+mpSysMpuCMMMonitorVersion  OBJECT-TYPE
+    SYNTAX  DisplayString(SIZE (0..31))
+    ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+            "mpu cmm monitor version,the max length is 32bytes"
+    ::= {mpSysMpuInfoEntry 11}    
+    
+mpSysMpuFlashTotalBytes  OBJECT-TYPE
+    SYNTAX  Gauge32
+    ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+            "the total bytes of mpu flash"
+    ::= {mpSysMpuInfoEntry 12}    
+    
+mpSysMpuFlashLeftBytes  OBJECT-TYPE
+    SYNTAX  Gauge32
+    ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+            "the free bytes of mpu flash"
+    ::= {mpSysMpuInfoEntry 13}        
+    
+mpSysMpuWorkingMode OBJECT-TYPE
+    SYNTAX  INTEGER{
+    				master(1),
+    				slave(2),
+    				doubleRouter(3)
+    				}
+    ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+            "mpu wrok mode(1: mastrer 2:slave 3:double route)"
+    ::= {mpSysMpuInfoEntry 14}    
+
+mpSysMpuOnlineStatus OBJECT-TYPE
+    SYNTAX  INTEGER{
+    				online(1),
+    				offline(2)
+    				}
+    ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+            "mpu physical online(1:online 2:offline)"
+    ::= {mpSysMpuInfoEntry 15}    
+        
+mpSysMpuWorkingStatus  OBJECT-TYPE
+    SYNTAX  INTEGER{
+    				on(1),
+    				off(2)
+    				}
+    ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+            "mpu work status(1:working 2:not working )"
+    ::= {mpSysMpuInfoEntry 16}
+        
+mpSysMpuPowerStatus OBJECT-TYPE
+    SYNTAX  INTEGER{
+    				on(1),
+    				off(2)
+    				}
+    ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+            "mpu power status (1:on 2:off)"
+    ::= {mpSysMpuInfoEntry 17}        
+
+mpSysMpuSynchronizationStatus OBJECT-TYPE
+    SYNTAX  INTEGER{
+    				batchSync(1),
+    				realtimeSync(2),
+    				noSlave(3),
+    				abnormal(4)
+    				}
+    ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+            "mpu synchronize status(1:batch synchronize 2:real-time synchronize 3:no slave-mpu 4:abnormal)"
+    ::= {mpSysMpuInfoEntry 18}
+    
+mpSysMpuCFStatus OBJECT-TYPE
+    SYNTAX  INTEGER{
+    				online(1),
+    				offline(2)
+    				}
+    ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+            "mpu cf status(1:online 2:offline)"
+    ::= {mpSysMpuInfoEntry 19}
+    
+mpSysMpuTemperature  OBJECT-TYPE
+    SYNTAX  INTEGER
+    ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+            "mpu temperatue(.c)"
+    ::= {mpSysMpuInfoEntry 20}    
+    
+mpSysMpuSubSlotNumber OBJECT-TYPE
+    SYNTAX  INTEGER
+    ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+            "mpu sub-slot number "
+    ::= {mpSysMpuInfoEntry 21}    
+   
+
+mpSysUnitInfoTable    OBJECT-TYPE
+    SYNTAX  SEQUENCE OF MpSysUnitInfoEntry
+    ACCESS  not-accessible
+    STATUS  current
+    DESCRIPTION
+            "lpu system information"
+    ::= {mpSysUnitMib 1}
+
+mpSysUnitInfoEntry  OBJECT-TYPE
+    SYNTAX  MpSysUnitInfoEntry
+    ACCESS  not-accessible
+    STATUS  current
+    DESCRIPTION
+            "lpu system information entry"
+    INDEX   {mpSysUnitIndex}
+    ::= {mpSysUnitInfoTable 1}
+
+MpSysUnitInfoEntry ::= SEQUENCE 
+{ 
+	mpSysUnitIndex           INTEGER,
+	mpSysUnitType            INTEGER,
+	mpSysUnitDescription     DisplayString,
+	mpSysUnitSerialNumber    DisplayString,   
+	mpSysUnitSoftwareVersion DisplayString, 
+	mpSysUnitHardwareVersion DisplayString,    
+	mpSysUnitFPGAVersion     DisplayString,  
+	mpSysUnitCMMSoftwareVersion      DisplayString,  
+	mpSysUnitCMMHardwareVersion      DisplayString,
+	mpSysUnitCMMMonitorVersion       DisplayString,
+    mpSysUnitOnlineStatus            INTEGER, 
+    mpSysUnitWorkingStatus           INTEGER, 
+    mpSysUnitPowerStatus             INTEGER  
+}
+
+mpSysUnitIndex  OBJECT-TYPE
+    SYNTAX  INTEGER
+    ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+            "lpu system information table index"
+    ::= {mpSysUnitInfoEntry 1}
+
+mpSysUnitType  OBJECT-TYPE
+    SYNTAX  INTEGER
+    ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+            "lpu card type"
+    ::= {mpSysUnitInfoEntry 2}
+    
+mpSysUnitDescription  OBJECT-TYPE
+    SYNTAX  DisplayString(SIZE (0..128))
+    ACCESS  read-write
+    STATUS  current
+    DESCRIPTION
+            "lpu description, the max length is 128bytes"
+    ::= {mpSysUnitInfoEntry 3}
+
+mpSysUnitSerialNumber  OBJECT-TYPE
+    SYNTAX  DisplayString(SIZE (0..31))
+    ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+            "lpu serialnumber, the max length is 32bytes"
+    ::= {mpSysUnitInfoEntry 4}
+
+mpSysUnitSoftwareVersion  OBJECT-TYPE
+    SYNTAX  DisplayString(SIZE (0..31))
+    ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+            "lpu software version, the max length is 32bytes"
+    ::= {mpSysUnitInfoEntry 5}
+
+mpSysUnitHardwareVersion  OBJECT-TYPE
+    SYNTAX  DisplayString(SIZE (0..255))
+    ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+            "lpu hardware version, the max length is 256bytes"
+    ::= {mpSysUnitInfoEntry 6}
+
+mpSysUnitFPGAVersion  OBJECT-TYPE
+    SYNTAX  DisplayString(SIZE (0..255))
+    ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+            "lpu fpga version, the max length is 32bytes"
+    ::= {mpSysUnitInfoEntry 7}
+
+mpSysUnitCMMSoftwareVersion  OBJECT-TYPE
+    SYNTAX  DisplayString(SIZE (0..31))
+    ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+            "lpu cmm software version, the max length is 32bytes"
+    ::= {mpSysUnitInfoEntry 8}
+    
+mpSysUnitCMMHardwareVersion  OBJECT-TYPE
+    SYNTAX  DisplayString(SIZE (0..31))
+    ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+            "lpu cmm hardware version, the max length is 32bytes"
+    ::= {mpSysUnitInfoEntry 9}      
+         
+mpSysUnitCMMMonitorVersion  OBJECT-TYPE
+    SYNTAX  DisplayString(SIZE (0..31))
+    ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+            "lpu cmm monitor version, the max length is 32bytes"
+    ::= {mpSysUnitInfoEntry 10}
+    
+mpSysUnitOnlineStatus OBJECT-TYPE
+    SYNTAX  INTEGER{
+    				online(1),
+    				offline(2)
+    				}
+    ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+            "lpu physical status (1:online 2:offline)"
+    ::= {mpSysUnitInfoEntry 11}    
+        
+mpSysUnitWorkingStatus  OBJECT-TYPE
+    SYNTAX  INTEGER{
+    				on(1),
+    				off(2)
+    				}
+    ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+            "lpu work status (1:working 2:not working)"
+    ::= {mpSysUnitInfoEntry 12}
+    
+mpSysUnitPowerStatus OBJECT-TYPE
+    SYNTAX  INTEGER{
+    				on(1),
+    				off(2)
+    				}
+    ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+            "lpu power status (1:on 2:off)"
+    ::= {mpSysUnitInfoEntry 13}   
+             
+        
+-- lpuInfoTable end
+
+mpSysSiuInfoTable    OBJECT-TYPE
+    SYNTAX  SEQUENCE OF MpSysSiuInfoEntry
+    ACCESS  not-accessible
+    STATUS  current
+    DESCRIPTION
+            "siu system inforamtion table"
+    ::= {mpSysSiuMib 1}
+
+mpSysSiuInfoEntry  OBJECT-TYPE
+    SYNTAX  MpSysSiuInfoEntry
+    ACCESS  not-accessible
+    STATUS  current
+    DESCRIPTION
+            "siu system inforamtion table entry"
+    INDEX   {mpSysSiuIndex}
+    ::= {mpSysSiuInfoTable 1}
+
+MpSysSiuInfoEntry ::= SEQUENCE 
+{ 
+	mpSysSiuIndex           INTEGER,
+	mpSysSiuDescription     DisplayString,
+	mpSysSiuSerialNumber    DisplayString,    
+	mpSysSiuCMMSoftwareVersion      DisplayString,  
+	mpSysSiuCMMHardwareVersion      DisplayString,
+	mpSysSiuCMMMonitorVersion       DisplayString,
+    mpSysSiuWorkingStatus           INTEGER, 
+    mpSysSiuAlarmStatus             INTEGER 
+}
+
+mpSysSiuIndex  OBJECT-TYPE
+    SYNTAX  INTEGER
+    ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+            "siu system inforamtion table index"
+    ::= {mpSysSiuInfoEntry 1}
+
+mpSysSiuDescription  OBJECT-TYPE
+    SYNTAX  DisplayString(SIZE (0..128))
+    ACCESS  read-write
+    STATUS  current
+    DESCRIPTION
+            "siu description, the max length is 128bytes"
+    ::= {mpSysSiuInfoEntry 2}
+
+mpSysSiuSerialNumber  OBJECT-TYPE
+    SYNTAX  DisplayString(SIZE (0..31))
+    ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+            "siu description, the max length is 128bytes"
+    ::= {mpSysSiuInfoEntry 3}
+
+mpSysSiuCMMSoftwareVersion  OBJECT-TYPE
+    SYNTAX  DisplayString(SIZE (0..31))
+    ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+            "siu cmm software version, the max length is 32bytes"
+    ::= {mpSysSiuInfoEntry 4}
+
+mpSysSiuCMMHardwareVersion  OBJECT-TYPE
+    SYNTAX  DisplayString(SIZE (0..31))
+    ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+            "siu cmm hardware version, the max length is 32bytes"
+    ::= {mpSysSiuInfoEntry 5}
+
+mpSysSiuCMMMonitorVersion  OBJECT-TYPE
+    SYNTAX  DisplayString(SIZE (0..31))
+    ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+            "siu cmm monitor version, the max length is 32bytes"
+    ::= {mpSysSiuInfoEntry 6}    
+
+mpSysSiuWorkingStatus  OBJECT-TYPE
+    SYNTAX  INTEGER{
+    				on(1),
+    				off(2)
+    				}
+    ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+            "siu work status(1: working 2:not working)"
+    ::= {mpSysSiuInfoEntry 7}
+
+mpSysSiuAlarmStatus  OBJECT-TYPE
+    SYNTAX  TruthValue
+    ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+            "power alarm status (1:abnormal 2:normal)"
+    ::= {mpSysSiuInfoEntry 8}     
+    
+   
+-- siuInfoTable end
+
+mpSysSubSlotTable    OBJECT-TYPE
+    SYNTAX  SEQUENCE OF MpSysSubSlotEntry
+    ACCESS  not-accessible
+    STATUS  current
+    DESCRIPTION
+            "subslot system information table"
+    ::= {mpSysSubSlotMib 1}
+
+mpSysSubSlotEntry  OBJECT-TYPE
+    SYNTAX  MpSysSubSlotEntry
+    ACCESS  not-accessible
+    STATUS  current
+    DESCRIPTION
+            "subslot system information table entry"
+    INDEX   {mpSysSubSlotParentIndex,mpSysSubSlotIndex}
+    ::= {mpSysSubSlotTable 1}
+
+MpSysSubSlotEntry ::= SEQUENCE 
+{ 
+	mpSysSubSlotParentIndex      INTEGER,
+	mpSysSubSlotIndex            INTEGER, 
+	mpSysSubSlotCardType         INTEGER,
+	mpSysSubSlotPortNumber       INTEGER,
+	mpSysSubSlotOnlineStatus     INTEGER 
+}
+
+mpSysSubSlotParentIndex  OBJECT-TYPE
+    SYNTAX  INTEGER
+    ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+            "subslot parent index"
+    ::= {mpSysSubSlotEntry 1}
+    
+mpSysSubSlotIndex  OBJECT-TYPE
+    SYNTAX  INTEGER
+    ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+            "subslot index"
+    ::= {mpSysSubSlotEntry 2}
+    
+mpSysSubSlotCardType  OBJECT-TYPE
+    SYNTAX  INTEGER
+    ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+            "subslot card type"
+    ::= {mpSysSubSlotEntry 3}
+
+mpSysSubSlotPortNumber  OBJECT-TYPE
+    SYNTAX  INTEGER
+    ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+            "subslot port number"
+    ::= {mpSysSubSlotEntry 4}
+
+mpSysSubSlotOnlineStatus OBJECT-TYPE
+    SYNTAX  INTEGER{
+    				online(1),
+    				offline(2)
+    				}
+    ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+            "subslot physical status (1:online 2:offline)"
+    ::= {mpSysSubSlotEntry 5}
+    
+-- subSlotTable  end
+
+
+-- portInfoTable 
+mpSysPortInfoTable    OBJECT-TYPE
+    SYNTAX  SEQUENCE OF MpSysPortInfoEntry
+    ACCESS  not-accessible
+    STATUS  current
+    DESCRIPTION
+            "port system information table"
+    ::= {mpSysPortMib 1}
+
+mpSysPortInfoEntry  OBJECT-TYPE
+    SYNTAX  MpSysPortInfoEntry
+    ACCESS  not-accessible
+    STATUS  current
+    DESCRIPTION
+            "port system information table entry"
+    INDEX   {mpSysPortSlotIndex,mpSysPortSubSlotIndex,mpSysPortIndex}
+    ::= {mpSysPortInfoTable 1}
+
+MpSysPortInfoEntry ::= SEQUENCE 
+{ 
+	mpSysPortSlotIndex      INTEGER,
+	mpSysPortSubSlotIndex   INTEGER, 
+	mpSysPortIndex          INTEGER,
+	mpSysPortType           INTEGER,
+	mpSysPortLinkStatus     INTEGER,
+	mpSysPortOnlineStatus   INTEGER
+}
+
+mpSysPortSlotIndex  OBJECT-TYPE
+    SYNTAX  INTEGER
+    ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+            "port unit index"
+    ::= {mpSysPortInfoEntry 1}
+    
+mpSysPortSubSlotIndex  OBJECT-TYPE
+    SYNTAX  INTEGER
+    ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+            "port subslot index"
+    ::= {mpSysPortInfoEntry 2}
+    
+mpSysPortIndex  OBJECT-TYPE
+    SYNTAX  INTEGER
+    ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+            "port index"
+    ::= {mpSysPortInfoEntry 3}
+    
+mpSysPortType  OBJECT-TYPE
+    SYNTAX  INTEGER{
+    				copper(1),
+    				fiber(2)
+    				}
+    ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+            "port type (1:copper 2:fiber)"
+    ::= {mpSysPortInfoEntry 4}
+
+mpSysPortLinkStatus  OBJECT-TYPE
+    SYNTAX  INTEGER{
+    				up(1),
+    				down(2),
+    				loop(3)
+    				}
+    ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+            "port status(1:up 2:down 3:loop)"
+    ::= {mpSysPortInfoEntry 5}
+    
+mpSysPortOnlineStatus OBJECT-TYPE
+    SYNTAX  INTEGER{
+    				online(1),
+    				offline(2)
+    				}
+    ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+            "port physical status(1:online 2:offline)"
+    ::= {mpSysPortInfoEntry 6}
+
+-- portInfoTable  end
+
+
+-- powerInfoTable
+mpSysPowerInfoTable    OBJECT-TYPE
+    SYNTAX  SEQUENCE OF MpSysPowerInfoEntry
+    ACCESS  not-accessible
+    STATUS  current
+    DESCRIPTION
+            "power system information table"
+    ::= {mpSysPowerMib 1}
+
+mpSysPowerInfoEntry  OBJECT-TYPE
+    SYNTAX  MpSysPowerInfoEntry
+    ACCESS  not-accessible
+    STATUS  current
+    DESCRIPTION
+            "power system information table index"
+    INDEX   {mpSysPowerIndex}
+    ::= {mpSysPowerInfoTable 1}
+
+MpSysPowerInfoEntry ::= SEQUENCE 
+{ 
+	mpSysPowerIndex           INTEGER,
+	mpSysPowerType            INTEGER,
+	mpSysPowerDescription     DisplayString,
+	mpSysPowerSerialNumber    DisplayString,    
+	mpSysPowerCMMSoftwareVersion      DisplayString,  
+	mpSysPowerCMMHardwareVersion      DisplayString,
+	mpSysPowerCMMMonitorVersion       DisplayString,
+    mpSysPowerOnlineStatus           INTEGER, 
+    mpSysPowerWorkingStatus          INTEGER,
+    mpSysPowerAlarmStatus            INTEGER,  
+    mpSysPowerVoltageInput           INTEGER,  
+    mpSysPowerVoltageOutput          INTEGER, 
+    mpSysPowerCurrentInput           INTEGER,  
+    mpSysPowerCurrentOutput          INTEGER,
+}
+
+mpSysPowerIndex  OBJECT-TYPE
+    SYNTAX  INTEGER
+    ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+            "power system information table index"
+    ::= {mpSysPowerInfoEntry 1}
+
+mpSysPowerType  OBJECT-TYPE
+    SYNTAX  INTEGER{
+            alternating-non-intelligent(1),
+            direct-non-intelligent(2),
+            alternating-intelligent(3),
+            direct-intelligent(4)
+            }
+    ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+            "power type(1:alternating and non-intelligent 2:direct and non-intelligent 3:alternating and intelligent 4:direct and intelligent)"
+    ::= {mpSysPowerInfoEntry 2}
+
+mpSysPowerDescription  OBJECT-TYPE
+    SYNTAX  DisplayString(SIZE (0..128))
+    ACCESS  read-write
+    STATUS  current
+    DESCRIPTION
+            "power description, the max length is 128bytes"
+    ::= {mpSysPowerInfoEntry 3}
+
+mpSysPowerSerialNumber  OBJECT-TYPE
+    SYNTAX  DisplayString(SIZE (0..31))
+    ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+            "power serialnumber, the max length is 32bytes"
+    ::= {mpSysPowerInfoEntry 4}
+
+mpSysPowerCMMSoftwareVersion  OBJECT-TYPE
+    SYNTAX  DisplayString(SIZE (0..31))
+    ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+            "power cmm software version, the max length is 32bytes"
+    ::= {mpSysPowerInfoEntry 5}
+    
+mpSysPowerCMMHardwareVersion  OBJECT-TYPE
+    SYNTAX  DisplayString(SIZE (0..31))
+    ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+            "power cmm hardware version, the max length is 32bytes"
+    ::= {mpSysPowerInfoEntry 6}
+
+mpSysPowerCMMMonitorVersion  OBJECT-TYPE
+    SYNTAX  DisplayString(SIZE (0..31))
+    ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+            "power cmm monitor version, the max length is 32bytes"
+    ::= {mpSysPowerInfoEntry 7}    
+    
+mpSysPowerOnlineStatus  OBJECT-TYPE
+    SYNTAX  INTEGER{
+    				online(1),
+            offline(2)
+            }
+    ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+            "power physical status(1:online 2:offline)"
+    ::= {mpSysPowerInfoEntry 8}    
+
+mpSysPowerWorkingStatus  OBJECT-TYPE
+    SYNTAX  INTEGER{
+    				on(1),
+            off(2)
+            }
+    ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+            "power work status(1:working 2:not working)"
+    ::= {mpSysPowerInfoEntry 9}    
+    
+mpSysPowerAlarmStatus  OBJECT-TYPE
+    SYNTAX  INTEGER{
+						normal(1),
+						alarm(2)
+            }
+    ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+            "power alarm status(1:normal 2:abnormal)"
+    ::= {mpSysPowerInfoEntry 10}        
+    
+mpSysPowerVoltageInput  OBJECT-TYPE
+    SYNTAX  INTEGER
+    UNITS   "mV"
+    ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+            "power input voltage(mv)"
+    ::= {mpSysPowerInfoEntry 11}               
+    
+mpSysPowerVoltageOutput  OBJECT-TYPE
+    SYNTAX  INTEGER
+    UNITS   "mV"
+    ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+            "power output voltage(mv)"
+    ::= {mpSysPowerInfoEntry 12}     
+                 
+mpSysPowerCurrentInput  OBJECT-TYPE
+    SYNTAX  INTEGER
+    UNITS   "mA"
+    ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+            "power input current(mA)"
+    ::= {mpSysPowerInfoEntry 13}    
+                  
+mpSysPowerCurrentOutput OBJECT-TYPE
+    SYNTAX  INTEGER
+		UNITS   "mA"
+    ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+            "power output current(mA)"
+    ::= {mpSysPowerInfoEntry 14}               
+           
+-- powerInfoTable end
+
+-- fanCardInfoTable
+mpSysFanCardInfoTable    OBJECT-TYPE
+    SYNTAX  SEQUENCE OF MpSysFanCardInfoEntry
+    ACCESS  not-accessible
+    STATUS  current
+    DESCRIPTION
+            "fan card system information table"
+    ::= {mpSysFanCardMib 1}
+
+mpSysFanCardInfoEntry  OBJECT-TYPE
+    SYNTAX  MpSysFanCardInfoEntry
+    ACCESS  not-accessible
+    STATUS  current
+    DESCRIPTION
+            "fan card system information table entry"
+    INDEX   {mpSysFanCardIndex}
+    ::= {mpSysFanCardInfoTable 1}
+
+MpSysFanCardInfoEntry ::= SEQUENCE 
+{ 
+	mpSysFanCardIndex           INTEGER,
+	mpSysFanCardDescription     DisplayString,
+	mpSysFanCardSerialNumber    DisplayString,    
+	mpSysFanCardCMMSoftwareVersion      DisplayString,  
+	mpSysFanCardCMMHardwareVersion      DisplayString,
+	mpSysFanCardCMMMonitorVersion       DisplayString,
+  mpSysFanCardOnlineStatus           INTEGER, 
+  mpSysFanCardWorkingStatus          INTEGER,
+  mpSysFanCardAlarmStatus            INTEGER  
+ }
+
+mpSysFanCardIndex  OBJECT-TYPE
+    SYNTAX  INTEGER
+    ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+            "fan card system information table index"
+    ::= {mpSysFanCardInfoEntry 1}
+
+mpSysFanCardDescription  OBJECT-TYPE
+    SYNTAX  DisplayString(SIZE (0..128))
+    ACCESS  read-write
+    STATUS  current
+    DESCRIPTION
+            "fan description, the max length is 128bytes"
+    ::= {mpSysFanCardInfoEntry 2}
+
+mpSysFanCardSerialNumber  OBJECT-TYPE
+    SYNTAX  DisplayString(SIZE (0..31))
+    ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+            "fan serialnumber, the max length is 32bytes"
+    ::= {mpSysFanCardInfoEntry 3}
+
+mpSysFanCardCMMSoftwareVersion  OBJECT-TYPE
+    SYNTAX  DisplayString(SIZE (0..31))
+    ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+            "fan cmm software version, the max length is 32bytes"
+    ::= {mpSysFanCardInfoEntry 4}
+    
+mpSysFanCardCMMHardwareVersion  OBJECT-TYPE
+    SYNTAX  DisplayString(SIZE (0..31))
+    ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+            "fan cmm hardware version, the max length is 32bytes"
+    ::= {mpSysFanCardInfoEntry 5}
+
+mpSysFanCardCMMMonitorVersion  OBJECT-TYPE
+    SYNTAX  DisplayString(SIZE (0..31))
+    ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+            "fan cmm monitor version, the max length is 32bytes"
+    ::= {mpSysFanCardInfoEntry 6}       
+    
+mpSysFanCardOnlineStatus  OBJECT-TYPE
+    SYNTAX  INTEGER{
+    				online(1),
+            offline(2)
+            }
+    ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+            "fan physical status(1:online 2:offline)"
+    ::= {mpSysFanCardInfoEntry 7}    
+
+mpSysFanCardWorkingStatus  OBJECT-TYPE
+    SYNTAX  INTEGER{
+    				on(1),
+            off(2)
+            }
+    ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+            "fan work status(1:working 2:not working)"
+    ::= {mpSysFanCardInfoEntry 8}    
+    
+mpSysFanCardAlarmStatus  OBJECT-TYPE
+    SYNTAX  INTEGER{
+						normal(1),
+						alarm(2)
+            }
+    ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+            "fan alarm status(1:normal 2:abnormal)"
+    ::= {mpSysFanCardInfoEntry 9}   
+
+
+-- fanCardInfoTable  end
+
+-- cpuUtilizationTable
+mpSysCpuUtilizationTable    OBJECT-TYPE
+    SYNTAX  SEQUENCE OF MpSysCpuUtilizationEntry
+    ACCESS  not-accessible
+    STATUS  current
+    DESCRIPTION
+            "cpu utilization table"
+    ::= {mpSysCpuMib 1}
+
+mpSysCpuUtilizationEntry  OBJECT-TYPE
+    SYNTAX  MpSysCpuUtilizationEntry
+    ACCESS  not-accessible
+    STATUS  current
+    DESCRIPTION
+            "cpu utilization table entry"
+    INDEX   {mpSysCpuIndex,mpSysCpuCoreId}
+    ::= {mpSysCpuUtilizationTable 1}
+ 
+MpSysCpuUtilizationEntry ::= SEQUENCE 
+{ 
+	mpSysCpuIndex                      INTEGER,
+	mpSysCpuCoreId                     INTEGER,
+    mpSysCpuCoreUtilization            Gauge32 
+}
+
+mpSysCpuIndex  OBJECT-TYPE
+    SYNTAX  INTEGER
+    ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+            "cpu utilization table index"
+    ::= {mpSysCpuUtilizationEntry 1}
+    
+mpSysCpuCoreId  OBJECT-TYPE
+    SYNTAX  INTEGER
+    ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+            "cpu core id"
+    ::= {mpSysCpuUtilizationEntry 2}
+
+mpSysCpuCoreUtilization   OBJECT-TYPE
+    SYNTAX  Gauge32 (0..100)
+    UNITS   "%"
+    ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+            "cpu utilization(%)"
+    ::= {mpSysCpuUtilizationEntry 3}
+
+-- cpuUtilizationTable  end
+
+
+-- cpuTemperatureTable  
+mpSysCpuTemperatureTable    OBJECT-TYPE
+    SYNTAX  SEQUENCE OF MpSysCpuTemperatureEntry
+    ACCESS  not-accessible
+    STATUS  current
+    DESCRIPTION
+            "cpu temperature table"
+    ::= {mpSysCpuMib 2}
+
+mpSysCpuTemperatureEntry  OBJECT-TYPE
+    SYNTAX  MpSysCpuTemperatureEntry
+    ACCESS  not-accessible
+    STATUS  current
+    DESCRIPTION
+            "cpu temperature table entry"
+    INDEX   {mpSysCpuTemperatureIndex}
+    ::= {mpSysCpuTemperatureTable 1}
+
+MpSysCpuTemperatureEntry ::= SEQUENCE 
+{ 
+	mpSysCpuTemperatureIndex           INTEGER,
+	mpSysCpuTemperature                INTEGER
+}
+
+mpSysCpuTemperatureIndex  OBJECT-TYPE
+    SYNTAX  INTEGER
+    ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+            "cpu temperature table index"
+    ::= {mpSysCpuTemperatureEntry 1}
+    
+mpSysCpuTemperature  OBJECT-TYPE
+    SYNTAX  INTEGER
+    UNITS   "'C"
+    ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+            "cpu temperature(.c)"
+    ::= {mpSysCpuTemperatureEntry 2}
+    
+-- cpuTempTable  end
+
+
+-- memoryTable
+mpSysMemoryTable    OBJECT-TYPE
+    SYNTAX  SEQUENCE OF MpSysMemoryEntry
+    ACCESS  not-accessible
+    STATUS  current
+    DESCRIPTION
+            "memory system information table"
+    ::= {mpSysMemoryMib 1}
+
+mpSysMemoryEntry  OBJECT-TYPE
+    SYNTAX  MpSysMemoryEntry
+    ACCESS  not-accessible
+    STATUS  current
+    DESCRIPTION
+            "memory system information table entry"
+    INDEX   {mpSysMemIndex}
+    ::= {mpSysMemoryTable 1}
+
+MpSysMemoryEntry ::= SEQUENCE 
+{ 
+	mpSysMemIndex                INTEGER,
+	mpSysMemBytesFree            INTEGER,
+    mpSysMemBlocksFree           INTEGER, 
+    mpSysMemAvgBlockSizeFree     INTEGER,
+    mpSysMemMaxBlockSizeFree     INTEGER,  
+    mpSysMemBytesAlloc           INTEGER,  
+    mpSysMemBlocksAlloc          INTEGER, 
+    mpSysMemAvgBlockSizeAlloc    INTEGER,  
+    mpSysMemTotalBytes           INTEGER, 
+    mpSysMemUtilization          INTEGER
+}
+mpSysMemIndex  OBJECT-TYPE
+    SYNTAX  INTEGER
+    ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+            "memory system information table index"
+    ::= {mpSysMemoryEntry 1}
+
+
+mpSysMemBytesFree  OBJECT-TYPE
+    SYNTAX  INTEGER
+    ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+            "the free bytes of memory"
+    ::= {mpSysMemoryEntry 2}
+    
+mpSysMemBlocksFree  OBJECT-TYPE
+    SYNTAX  INTEGER
+    ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+            "the free blocks of memory"
+    ::= {mpSysMemoryEntry 3}
+
+mpSysMemAvgBlockSizeFree  OBJECT-TYPE
+    SYNTAX  INTEGER
+    ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+            "the free blocks on average of memory"
+    ::= {mpSysMemoryEntry 4}
+        
+mpSysMemMaxBlockSizeFree  OBJECT-TYPE
+    SYNTAX  INTEGER
+    ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+            "the max free blocks of memory"
+    ::= {mpSysMemoryEntry 5}
+
+mpSysMemBytesAlloc  OBJECT-TYPE
+    SYNTAX  INTEGER
+    ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+            "the allocate bytes of memory"
+    ::= {mpSysMemoryEntry 6}
+
+mpSysMemBlocksAlloc  OBJECT-TYPE
+    SYNTAX  INTEGER
+    ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+            "the allocate blocks of memory"
+    ::= {mpSysMemoryEntry 7}
+
+mpSysMemAvgBlockSizeAlloc  OBJECT-TYPE
+    SYNTAX  INTEGER
+    ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+            "the allocate blocks on average of memory"
+    ::= {mpSysMemoryEntry 8}
+
+mpSysMemTotalBytes  OBJECT-TYPE
+    SYNTAX  INTEGER
+    ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+            "the total bytes of memory"
+    ::= {mpSysMemoryEntry 9}
+
+mpSysMemUtilization  OBJECT-TYPE
+    SYNTAX  INTEGER(0..100)
+    UNITS   "%"
+    ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+            "memory utilization(%)"
+    ::= {mpSysMemoryEntry 10}
+    
+-- memoryTable  end
+
+
+--mpSysInfo
+mpSysSysVoltage  OBJECT-TYPE
+    SYNTAX  INTEGER
+    UNITS   "mV"
+    ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+            "system voltage(mV)"
+    ::= {mpSysInfoMib 1}
+
+mpSysSysCurrent  OBJECT-TYPE
+    SYNTAX  INTEGER
+    UNITS   "mA"
+    ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+            "system current(mA)"
+    ::= {mpSysInfoMib 2}
+	
+
+    
+--mpSysInfo end
+
+END

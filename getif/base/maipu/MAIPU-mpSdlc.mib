@@ -1,0 +1,594 @@
+-- *****************************************************************
+-- MAIPU-SDLC.mib:  Maipu enterprise device SDLC MIB file
+--
+--version 1.0.0.0, Feb 21, 2001 Huanglulu
+--
+-- Copyright (c)  by Maipu DataComm Inc.
+-- All rights reserved.
+-- 
+-- *****************************************************************
+--
+
+MAIPU-SDLC-MIB DEFINITIONS ::= BEGIN
+
+IMPORTS
+    RowStatus									FROM SNMPv2-TC
+    MODULE-IDENTITY, OBJECT-TYPE, Counter32 	FROM SNMPv2-SMI
+    mpMgmt                              		FROM MAIPU-SMI;
+
+mpSdlcMib MODULE-IDENTITY
+    LAST-UPDATED "0102210000Z"
+    ORGANIZATION "Maipu DataComm"
+    CONTACT-INFO
+	"   Maipu DataComm
+		Customer Service
+
+		Postal: Consulate Drive
+			Chengdu, Sichuan  610041
+			China
+
+		Tel: 86-028-5161006
+
+		E-mail: office@maipu.com"
+    DESCRIPTION
+		"The assignments for Maipu router's MIB of SDLC infomation!"
+    ::= {mpMgmt 8 }
+
+-- ***********************************
+sdlcConfTable OBJECT-TYPE
+    SYNTAX SEQUENCE OF SdlcConfEntry
+    MAX-ACCESS not-accessible
+    STATUS current
+    DESCRIPTION
+		"SDLC的配置表."
+    ::= { mpSdlcMib 1 }
+
+sdlcConfEntry OBJECT-TYPE
+    SYNTAX SdlcConfEntry
+    MAX-ACCESS not-accessible
+    STATUS current
+    DESCRIPTION
+		"SDLC配置表条目."
+    INDEX { sdlcIfIndex }    
+    ::= { sdlcConfTable 1 }
+
+SdlcConfEntry ::=
+	SEQUENCE {
+		sdlcIfIndex
+			INTEGER,
+		sdlcDlsw
+			OCTET STRING,
+		sdlcVmac
+			OCTET STRING,
+		sdlcPoll
+			INTEGER,
+		sdlcT1
+			INTEGER,
+		sdlcN2
+			INTEGER,
+		sdlcK
+			INTEGER
+				}
+				
+sdlcIfIndex	OBJECT-TYPE
+	SYNTAX	INTEGER
+	MAX-ACCESS	read-only
+	STATUS	current
+	DESCRIPTION
+		"SDLC配置表的索引,相应于接口的索引,与ifIndex相同."
+	::= { sdlcConfEntry 1 }
+	
+sdlcDlsw	OBJECT-TYPE
+	SYNTAX	OCTET STRING
+	MAX-ACCESS	read-write
+	STATUS	current
+	DESCRIPTION
+		"打开本地SDLC的地址,把256个以下的在1-FE之间的字符串以空格隔开."
+	::= { sdlcConfEntry 2 }
+				
+sdlcVmac	OBJECT-TYPE
+	SYNTAX	OCTET STRING (SIZE(14))
+	MAX-ACCESS	read-write
+	STATUS	current
+	DESCRIPTION
+		"接口的MAC地址.16进制的字符串,格式为XXXX.XXXX.XXXX."
+	::= { sdlcConfEntry 3 }
+	
+sdlcPoll	OBJECT-TYPE
+	SYNTAX	INTEGER (1..100)
+	MAX-ACCESS	read-write
+	STATUS	current
+	DESCRIPTION
+		"在SDLC从站之间轮询的间隔时间."
+	::= { sdlcConfEntry 4 }
+	
+sdlcT1	OBJECT-TYPE
+	SYNTAX	INTEGER (2..30)
+	MAX-ACCESS	read-write
+	STATUS	current
+	DESCRIPTION
+		"等待帧应答的时间."
+	::= { sdlcConfEntry 5 }
+
+sdlcN2	OBJECT-TYPE
+	SYNTAX	INTEGER (1..255)
+	MAX-ACCESS	read-write
+	STATUS	current
+	DESCRIPTION
+		"操作超时重发的次数."
+	::= { sdlcConfEntry 6 }
+	
+sdlcK	OBJECT-TYPE
+	SYNTAX	INTEGER (1..7)
+	MAX-ACCESS	read-write
+	STATUS	current
+	DESCRIPTION
+		"本地发送窗口大小."
+	::= { sdlcConfEntry 7 }
+	
+-- **************************************
+sdlcAddrTable	OBJECT-TYPE
+	SYNTAX	SEQUENCE OF SdlcAddrEntry
+	MAX-ACCESS not-accessible
+	STATUS	current
+	DESCRIPTION
+		"SDLC地址表."
+	::= { mpSdlcMib 2 }
+	
+sdlcAddrEntry	OBJECT-TYPE
+	SYNTAX	SdlcAddrEntry
+	MAX-ACCESS	not-accessible
+	STATUS	current
+	DESCRIPTION
+		"SDLC地址表条目."
+	INDEX { sdlcAddrIfIndex, sdlcAddr }
+	::= { sdlcAddrTable 1 }
+	
+SdlcAddrEntry ::=
+	SEQUENCE {
+		sdlcAddrIfIndex
+			INTEGER,
+		sdlcAddr
+			INTEGER,
+		sdlcAddrMode
+			INTEGER,
+		sdlcXid
+			OCTET STRING,
+		sdlcPartner
+			OCTET STRING,
+		sdlcAddrStatus
+			RowStatus
+				}
+
+sdlcAddrIfIndex	OBJECT-TYPE
+	SYNTAX	INTEGER
+	MAX-ACCESS	read-create
+	STATUS	current
+	DESCRIPTION
+		"SDLC地址所对应的接口的接口索引."
+	::= { sdlcAddrEntry 1 }
+	
+sdlcAddr	OBJECT-TYPE
+	SYNTAX	INTEGER (1..254)
+	MAX-ACCESS	read-create
+	STATUS	current
+	DESCRIPTION
+		"与接口相连的SDLC从站地址,在1-FE之间的字符串."
+	::= { sdlcAddrEntry 2 }
+	
+sdlcAddrMode	OBJECT-TYPE
+	SYNTAX	INTEGER {
+				none(1),
+				xidPoll(2),
+				xidPassthru(3),
+				xidPollEcho(4)
+					}
+	MAX-ACCESS	read-create
+	STATUS	current
+	DESCRIPTION
+		""
+	::= { sdlcAddrEntry 3 }
+	
+sdlcXid	OBJECT-TYPE
+	SYNTAX	OCTET STRING (SIZE(8))
+	MAX-ACCESS	read-create
+	STATUS	current
+	DESCRIPTION
+		"与接口相连的SDLC从站地址对应的XID值,为8位16进制字符串."
+	::= { sdlcAddrEntry 4 }
+	
+sdlcPartner	OBJECT-TYPE
+	SYNTAX	OCTET STRING (SIZE(14))
+	MAX-ACCESS	read-create
+	STATUS	current
+	DESCRIPTION
+		"与接口相连的SDLC从站地址对应的令牌环MAC地址,
+		 为16进制字符串XXXX.XXXX.XXXX."
+	::= { sdlcAddrEntry 5 }
+	
+sdlcAddrStatus	OBJECT-TYPE
+	SYNTAX	RowStatus
+	MAX-ACCESS	read-create
+	STATUS	current
+	DESCRIPTION
+		"SDLC地址表的行状态,用于增加,删除或修改一行的内容."
+	::= { sdlcAddrEntry 6 }
+
+-- *************************************
+sdlcStatTable	OBJECT-TYPE
+	SYNTAX	SEQUENCE OF SdlcStatEntry
+	MAX-ACCESS	not-accessible
+	STATUS	current
+	DESCRIPTION
+		"接口上的SDLC的统计表."
+	::= { mpSdlcMib 3 }
+	
+sdlcStatEntry	OBJECT-TYPE
+	SYNTAX	SdlcStatEntry
+	MAX-ACCESS	not-accessible
+	STATUS	current
+	DESCRIPTION
+		"接口上的SDLC的统计表入口."
+	INDEX { sdlcStatIfIndex, sdlcStatAddr }
+	::= { sdlcStatTable 1 }
+	
+SdlcStatEntry ::=
+	SEQUENCE {
+		sdlcStatIfIndex
+			INTEGER,
+		sdlcStatAddr
+			INTEGER,
+		sdlcMState
+			INTEGER,
+		sdlcCState
+			INTEGER,
+		sdlcFlags
+			INTEGER,
+		sdlcSend
+			Counter32,
+		sdlcSendInfo
+			Counter32,
+		sdlcSendRnr
+			Counter32,
+		sdlcSendTest
+			Counter32,
+		sdlcSendFrmr
+			Counter32,
+		sdlcSendSnrm
+			Counter32,
+		sdlcSendDm
+			Counter32,
+		sdlcSendDisc
+			Counter32,
+		sdlcSendRej
+			Counter32,
+		sdlcSendXid
+			Counter32,
+		sdlcTimeoutCmd
+			Counter32,
+		sdlcTimeoutInfo
+			Counter32,
+		sdlcSendError
+			Counter32,
+		sdlcRcv
+			Counter32,
+		sdlcRcvRemPuRnr
+			Counter32,
+		sdlcRcvTest
+			Counter32,
+		sdlcRcvFrmr
+			Counter32,
+		sdlcRcvUa
+			Counter32,
+		sdlcRcvDm
+			Counter32,
+		sdlcRcvRd
+			Counter32,
+		sdlcRcvPuRej
+			Counter32,
+		sdlcRcvPuXid
+			Counter32,
+		sdlcRcvInfo
+			Counter32,
+		sdlcRcvError
+			Counter32,
+		sdlcRcvNullNr
+			Counter32,
+		sdlcRcvNullNs
+			Counter32,
+		sdlcSendBuf
+			INTEGER,
+		sdlcRcvBuf
+			INTEGER
+				}
+
+sdlcStatIfIndex	OBJECT-TYPE
+	SYNTAX	INTEGER
+	MAX-ACCESS	read-only
+	STATUS	current
+	DESCRIPTION
+		"SDLC统计表的接口索引."
+	::= { sdlcStatEntry 1 }
+
+sdlcStatAddr	OBJECT-TYPE
+	SYNTAX	INTEGER (1..254)
+	MAX-ACCESS	read-only
+	STATUS	current
+	DESCRIPTION
+		"SDLC统计表的接口地址."
+	::= { sdlcStatEntry 2 }
+
+sdlcMState	OBJECT-TYPE
+	SYNTAX	INTEGER {
+			closed(1),
+    			testSent(2),
+    			disconnected(3),
+    			xidSent(4),
+    			snrmSent(5),
+    			connected(6),
+    			discSent(7),
+    			usBusy(8)
+    			}
+	MAX-ACCESS	read-only
+	STATUS	current
+	DESCRIPTION
+		"接口地址的SDLC主状态."
+	::= { sdlcStatEntry 3 }
+
+sdlcCState	OBJECT-TYPE
+	SYNTAX	INTEGER {
+				idle(1),
+				infoSent(2),
+				pollSent(3)
+					}
+	MAX-ACCESS	read-only
+	STATUS	current
+	DESCRIPTION
+		"接口地址的SDLC连接状态."
+	::= { sdlcStatEntry 4 }
+
+sdlcFlags	OBJECT-TYPE
+	SYNTAX	INTEGER
+	MAX-ACCESS	read-only
+	STATUS	current
+	DESCRIPTION
+		"接口地址的SDLC标志,每一标志位表示不同的意义: 
+			RemoteBusy	0x01
+			LocalBusy	0x02
+			CirInforMed	0x04
+			DlswCmd		0x08
+			Polled		0x10
+			Timeout		0x20
+			PollWait	0x40
+			SendBufFull	0x80
+			PollAck		0x100
+			Panic		0x8000 ."
+	::= { sdlcStatEntry 5 }
+
+sdlcSend	OBJECT-TYPE
+	SYNTAX	Counter32
+	MAX-ACCESS	read-only
+	STATUS	current
+	DESCRIPTION
+		"接口地址的SDLC发送帧数量."
+	::= { sdlcStatEntry 6 }
+
+sdlcSendInfo	OBJECT-TYPE
+	SYNTAX	Counter32
+	MAX-ACCESS	read-only
+	STATUS	current
+	DESCRIPTION
+		"接口地址的SDLC发送信息帧数量."
+	::= { sdlcStatEntry 7 }
+
+sdlcSendRnr	OBJECT-TYPE
+	SYNTAX	Counter32
+	MAX-ACCESS	read-only
+	STATUS	current
+	DESCRIPTION
+		"接口地址的SDLC发送RNR帧数量."
+	::= { sdlcStatEntry 8 }
+
+sdlcSendTest	OBJECT-TYPE
+	SYNTAX	Counter32
+	MAX-ACCESS	read-only
+	STATUS	current
+	DESCRIPTION
+		"接口地址的SDLC发送TEST帧数量."
+	::= { sdlcStatEntry 9 }
+
+sdlcSendFrmr	OBJECT-TYPE
+	SYNTAX	Counter32
+	MAX-ACCESS	read-only
+	STATUS	current
+	DESCRIPTION
+		"接口地址的SDLC发送FRMR帧数量."
+	::= { sdlcStatEntry 10 }
+
+sdlcSendSnrm	OBJECT-TYPE
+	SYNTAX	Counter32
+	MAX-ACCESS	read-only
+	STATUS	current
+	DESCRIPTION
+		"接口地址的SDLC发送SNRM帧数量."
+	::= { sdlcStatEntry 11 }
+
+sdlcSendDm	OBJECT-TYPE
+	SYNTAX	Counter32
+	MAX-ACCESS	read-only
+	STATUS	current
+	DESCRIPTION
+		"接口地址的SDLC发送DM帧数量."
+	::= { sdlcStatEntry 12 }
+
+sdlcSendDisc	OBJECT-TYPE
+	SYNTAX	Counter32
+	MAX-ACCESS	read-only
+	STATUS	current
+	DESCRIPTION
+		"接口地址的SDLC发送DISC帧数量."
+	::= { sdlcStatEntry 13 }
+
+sdlcSendRej	OBJECT-TYPE
+	SYNTAX	Counter32
+	MAX-ACCESS	read-only
+	STATUS	current
+	DESCRIPTION
+		"接口地址的SDLC发送拒绝帧数量."
+	::= { sdlcStatEntry 14 }
+
+sdlcSendXid	OBJECT-TYPE
+	SYNTAX	Counter32
+	MAX-ACCESS	read-only
+	STATUS	current
+	DESCRIPTION
+		"接口地址的SDLC发送XID帧数量."
+	::= { sdlcStatEntry 15 }
+
+sdlcTimeoutCmd	OBJECT-TYPE
+	SYNTAX	Counter32
+	MAX-ACCESS	read-only
+	STATUS	current
+	DESCRIPTION
+		"接口地址的SDLC命令帧超时数量."
+	::= { sdlcStatEntry 16 }
+
+sdlcTimeoutInfo	OBJECT-TYPE
+	SYNTAX	Counter32
+	MAX-ACCESS	read-only
+	STATUS	current
+	DESCRIPTION
+		"接口地址的SDLC信息帧超时数量."
+	::= { sdlcStatEntry 17 }
+
+sdlcSendError	OBJECT-TYPE
+	SYNTAX	Counter32
+	MAX-ACCESS	read-only
+	STATUS	current
+	DESCRIPTION
+		"接口地址的SDLC发送错误帧数量."
+	::= { sdlcStatEntry 18 }
+
+sdlcRcv	OBJECT-TYPE
+	SYNTAX	Counter32
+	MAX-ACCESS	read-only
+	STATUS	current
+	DESCRIPTION
+		"接口地址的SDLC接收帧数量."
+	::= { sdlcStatEntry 19 }
+
+sdlcRcvRemPuRnr	OBJECT-TYPE
+	SYNTAX	Counter32
+	MAX-ACCESS	read-only
+	STATUS	current
+	DESCRIPTION
+		"接口地址的SDLC接收远端PU RNR帧数量."
+	::= { sdlcStatEntry 20 }
+
+sdlcRcvTest	OBJECT-TYPE
+	SYNTAX	Counter32
+	MAX-ACCESS	read-only
+	STATUS	current
+	DESCRIPTION
+		"接口地址的SDLC接收TEST帧数量."
+	::= { sdlcStatEntry 21 }
+
+sdlcRcvFrmr	OBJECT-TYPE
+	SYNTAX	Counter32
+	MAX-ACCESS	read-only
+	STATUS	current
+	DESCRIPTION
+		"接口地址的SDLC接收FRMR帧数量."
+	::= { sdlcStatEntry 22 }
+
+sdlcRcvUa	OBJECT-TYPE
+	SYNTAX	Counter32
+	MAX-ACCESS	read-only
+	STATUS	current
+	DESCRIPTION
+		"接口地址的SDLC接收UA帧数量."
+	::= { sdlcStatEntry 23 }
+
+sdlcRcvDm	OBJECT-TYPE
+	SYNTAX	Counter32
+	MAX-ACCESS	read-only
+	STATUS	current
+	DESCRIPTION
+		"接口地址的SDLC接收DM帧数量."
+	::= { sdlcStatEntry 24 }
+
+sdlcRcvRd	OBJECT-TYPE
+	SYNTAX	Counter32
+	MAX-ACCESS	read-only
+	STATUS	current
+	DESCRIPTION
+		"接口地址的SDLC接收RD帧数量."
+	::= { sdlcStatEntry 25 }
+
+sdlcRcvPuRej	OBJECT-TYPE
+	SYNTAX	Counter32
+	MAX-ACCESS	read-only
+	STATUS	current
+	DESCRIPTION
+		"接口地址的SDLC接收拒绝帧数量."
+	::= { sdlcStatEntry 26 }
+
+sdlcRcvPuXid	OBJECT-TYPE
+	SYNTAX	Counter32
+	MAX-ACCESS	read-only
+	STATUS	current
+	DESCRIPTION
+		"接口地址的SDLC接收PU XID帧数量."
+	::= { sdlcStatEntry 27 }
+
+sdlcRcvInfo	OBJECT-TYPE
+	SYNTAX	Counter32
+	MAX-ACCESS	read-only
+	STATUS	current
+	DESCRIPTION
+		"接口地址的SDLC接收信息帧数量."
+	::= { sdlcStatEntry 28 }
+
+sdlcRcvError	OBJECT-TYPE
+	SYNTAX	Counter32
+	MAX-ACCESS	read-only
+	STATUS	current
+	DESCRIPTION
+		"接口地址的SDLC接收错误帧数量."
+	::= { sdlcStatEntry 29 }
+
+sdlcRcvNullNr	OBJECT-TYPE
+	SYNTAX	Counter32
+	MAX-ACCESS	read-only
+	STATUS	current
+	DESCRIPTION
+		"接口地址的SDLC接收无效NR帧数量."
+	::= { sdlcStatEntry 30 }
+
+sdlcRcvNullNs	OBJECT-TYPE
+	SYNTAX	Counter32
+	MAX-ACCESS	read-only
+	STATUS	current
+	DESCRIPTION
+		"接口地址的SDLC接收无效NS帧数量."
+	::= { sdlcStatEntry 31 }
+
+sdlcSendBuf	OBJECT-TYPE
+	SYNTAX	INTEGER
+	MAX-ACCESS	read-only
+	STATUS	current
+	DESCRIPTION
+		"接口地址的SDLC接收缓冲区中的包数."
+	::= { sdlcStatEntry 32 }
+
+sdlcRcvBuf	OBJECT-TYPE
+	SYNTAX	INTEGER
+	MAX-ACCESS	read-only
+	STATUS	current
+	DESCRIPTION
+		"接口地址的SDLC发送缓冲区中的包数."
+	::= { sdlcStatEntry 33 }
+
+
+END
+ 

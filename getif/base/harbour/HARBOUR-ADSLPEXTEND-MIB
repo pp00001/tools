@@ -1,0 +1,1069 @@
+-- =======================================================================
+-- Version info
+--
+-- Version 0.1 Created 2001.07.22 by Yaoliyong
+-- This version of MIB is created just for the use of Network Management Systems
+-- display and config the HammerSeries Switch 's connection control.
+--
+-- Copyright(c) 2000-2001 by Harbour Networks Limited
+-- =======================================================================
+
+SAGEM-ADSLPEXTEND-MIB DEFINITIONS ::= BEGIN
+
+	IMPORTS
+                MODULE-IDENTITY FROM SNMPv2-SMI
+		DisplayString   FROM RFC1213-MIB
+		OBJECT-TYPE     FROM SNMPv2-SMI
+                DSLAMSeries     FROM HARBOUR-BASE-MIB
+                Unsigned32	FROM SNMPv2-SMI;
+                
+                
+           
+    	
+                harbourAdslPortExtend MODULE-IDENTITY
+                LAST-UPDATED "20020722"
+    		ORGANIZATION    "HARBOUR NETWORKS LIMITED"
+   		CONTACT-INFO    "www.harbournetworks.com"
+                DESCRIPTION "harbour ADSL port extend objects"
+        ::= { DSLAMSeries 4 }
+        
+        
+--        adslCurrentStateTable           OBJECT IDENTIFIER ::= { harbourAdslPortExtend 1 }
+
+	adslCurrentStateTable OBJECT-TYPE
+	    SYNTAX      SEQUENCE OF AdslCurrentStateEntry
+	    MAX-ACCESS  not-accessible
+	    STATUS      current
+	    DESCRIPTION
+        "A table use for show ADSL port 
+         current state."
+    	::= { harbourAdslPortExtend 1 }
+
+     	adslCurrentStateEntry OBJECT-TYPE
+	    SYNTAX      AdslCurrentStateEntry
+	    MAX-ACCESS  not-accessible
+	    STATUS      current
+ 	    DESCRIPTION
+	        ""
+    	    INDEX   { adslPortIndex }
+	    ::= { adslCurrentStateTable 1 }
+	    
+	    
+
+	AdslCurrentStateEntry ::=
+    		SEQUENCE {
+               		    adslPortIndex            INTEGER,
+            	            serviceModel	     INTEGER,
+            	            lossOfFrame              INTEGER,
+            	            lossOfSignal             INTEGER,
+            	            lossOfLink               INTEGER,
+            	            lossOfPower              INTEGER,
+            	            unableInitialization     INTEGER,
+            	            atucCurrentRate	     INTEGER,  		--(Kbit/s)
+            	            atucNoiseMargin	     INTEGER,		--(dB)
+            	            atucAttenuation	     INTEGER,		--(dB)
+            	            atucOutPower	     INTEGER,		--(dB)
+            	            atucInterleavedDelay     INTEGER,		--(ms)
+            	            atucDataBlockLength      INTEGER,
+            	            aturCurrentRate	     INTEGER,		--(Kbit/s)
+            	            aturNoiseMargin	     INTEGER,		--(dB)
+            	            aturAttenuation	     INTEGER,		--(dB)
+            	            aturOutPower	     INTEGER,		--(dB)
+            	            aturInterleavedDelay     INTEGER,		--(ms)
+            	            aturDataBlockLength	     INTEGER,
+            	            rxRecombineErrors	Counter32,		
+		            rxCellCount		Counter32,
+		            rxLenErrors		Counter32,
+		            rxCrcErrors		Counter32,
+		            rxCorrectCount	Counter32,
+		            tranCount		Counter32,
+		            receCount		Counter32,
+		            aturMaxAttainable        INTEGER,
+		            atucMaxAttainable        INTEGER
+           	            	
+                         }
+    
+              adslPortIndex OBJECT-TYPE
+              SYNTAX  INTEGER
+              ACCESS  read-only
+              STATUS  mandatory
+              DESCRIPTION
+                      "ADSL PORT index."
+              ::= { adslCurrentStateEntry 1 }
+              
+              serviceModel OBJECT-TYPE
+              SYNTAX  INTEGER{
+              			adsl_multimode(1),
+              			adsl_glite(2),
+        			adsl_gdmt(3),					
+				adsl_t1413(4),
+				adsl_gdmt_bis(5), 
+				adsl_gdmt_bis_plus(6),
+				adsl_automode(7),
+				adsl_readsl2(8)
+              			}
+              ACCESS  read-only
+              STATUS  mandatory
+              
+              DESCRIPTION
+                      "ADSL line service mode."
+              ::= { adslCurrentStateEntry 2 }
+              
+              lossOfFrame OBJECT-TYPE
+              SYNTAX  INTEGER
+              ACCESS  read-only
+              STATUS  mandatory
+              
+              DESCRIPTION
+                      "ADSL line loss of frame."
+              ::= { adslCurrentStateEntry 3 }
+              
+              lossOfSignal OBJECT-TYPE
+              SYNTAX  INTEGER
+              ACCESS  read-only
+              STATUS  mandatory
+              
+              DESCRIPTION
+                      "ADSL line loss of signal."
+              ::= { adslCurrentStateEntry 4 }
+              
+              lossOfLink OBJECT-TYPE
+              SYNTAX  INTEGER
+              ACCESS  read-only
+              STATUS  mandatory
+              
+              DESCRIPTION
+                      "ADSL line loss of link."
+              ::= { adslCurrentStateEntry 5 }
+              
+              lossOfPower OBJECT-TYPE
+              SYNTAX  INTEGER
+              ACCESS  read-only
+              STATUS  mandatory
+              
+              DESCRIPTION
+                      "ADSL line loss of power."
+              ::= { adslCurrentStateEntry 6 }
+              
+              unableInitialization OBJECT-TYPE
+              SYNTAX  INTEGER
+              ACCESS  read-only
+              STATUS  mandatory
+              
+              DESCRIPTION
+                      "ADSL line unable initalization."
+              ::= { adslCurrentStateEntry 7 }
+              
+              atucCurrentRate OBJECT-TYPE              ---------------atuc
+              SYNTAX  INTEGER
+              ACCESS  read-only
+              STATUS  mandatory
+              
+              DESCRIPTION
+                      "ADSL line current downstream rate."
+              ::= { adslCurrentStateEntry 8 }
+              
+              atucNoiseMargin OBJECT-TYPE
+              SYNTAX  INTEGER
+              ACCESS  read-only
+              STATUS  mandatory
+              
+              DESCRIPTION
+                      "ADSL line current downstream noise margin."
+              ::= { adslCurrentStateEntry 9 }
+              
+              atucAttenuation OBJECT-TYPE
+              SYNTAX  INTEGER
+              ACCESS  read-only
+              STATUS  mandatory
+              
+              DESCRIPTION
+                      "ADSL line current downstream Attenuation."
+              ::= { adslCurrentStateEntry 10 }
+              
+              atucOutPower OBJECT-TYPE
+              SYNTAX  INTEGER
+              ACCESS  read-only
+              STATUS  mandatory
+              
+              DESCRIPTION
+                      "ADSL line current downstream out power."
+              ::= { adslCurrentStateEntry 11 }
+              
+              atucInterleavedDelay OBJECT-TYPE
+              SYNTAX  INTEGER
+              ACCESS  read-only
+              STATUS  mandatory
+              
+              DESCRIPTION
+                      "ADSL line current downstream interleaveddelay."
+              ::= { adslCurrentStateEntry 12 }
+              
+              atucDataBlockLength OBJECT-TYPE
+              SYNTAX  INTEGER
+              ACCESS  read-only
+              STATUS  mandatory
+              
+              DESCRIPTION
+                      "ADSL line current downstream data block length."
+              ::= { adslCurrentStateEntry 13 }
+              
+              aturCurrentRate OBJECT-TYPE           ------------------atur
+              SYNTAX  INTEGER
+              ACCESS  read-only
+              STATUS  mandatory
+              
+              DESCRIPTION
+                      "ADSL line current upstream rate."
+              ::= { adslCurrentStateEntry 14 }
+              
+              aturNoiseMargin OBJECT-TYPE
+              SYNTAX  INTEGER
+              ACCESS  read-only
+              STATUS  mandatory
+              
+              DESCRIPTION
+                      "ADSL line current upstream noise margin."
+              ::= { adslCurrentStateEntry 15 }
+              
+              aturAttenuation OBJECT-TYPE
+              SYNTAX  INTEGER
+              ACCESS  read-only
+              STATUS  mandatory
+              
+              DESCRIPTION
+                      "ADSL line current upstream attenuation."
+              ::= { adslCurrentStateEntry 16 }
+              
+              aturOutPower OBJECT-TYPE
+              SYNTAX  INTEGER
+              ACCESS  read-only
+              STATUS  mandatory
+              
+              DESCRIPTION
+                      "ADSL line current upstream out power."
+              ::= { adslCurrentStateEntry 17 }
+              
+              aturInterleavedDelay OBJECT-TYPE
+              SYNTAX  INTEGER
+              ACCESS  read-only
+              STATUS  mandatory
+              
+              DESCRIPTION
+                      "ADSL line current upstream interleavedDelay."
+              ::= { adslCurrentStateEntry 18 }
+              
+              aturDataBlockLength OBJECT-TYPE
+              SYNTAX  INTEGER
+              ACCESS  read-only
+              STATUS  mandatory
+              
+              DESCRIPTION
+                      "ADSL line current upstream data block length."
+              ::= { adslCurrentStateEntry 19 }
+              
+              
+              rxRecombineErrors OBJECT-TYPE
+              SYNTAX  Counter32
+              ACCESS  read-only
+              STATUS  mandatory
+              
+              DESCRIPTION
+	            "A count of packages that are fail recombined."
+              ::= { adslCurrentStateEntry 20 }
+              
+              
+              rxCellCount OBJECT-TYPE
+              SYNTAX  Counter32
+              ACCESS  read-only
+              STATUS  mandatory
+              
+              DESCRIPTION
+                      "A count of cells that are received."
+              ::= { adslCurrentStateEntry 21 }
+              
+                      
+              rxLenErrors OBJECT-TYPE
+              SYNTAX  Counter32
+              ACCESS  read-only
+              STATUS  mandatory
+              
+              DESCRIPTION
+	            "This counter contains the number of frames received with
+	             more than maximum length(configured in BPCNTL). These frames
+	             are discarded"
+              ::= { adslCurrentStateEntry 22 } 
+              
+              
+              rxCrcErrors OBJECT-TYPE
+              SYNTAX  Counter32
+              ACCESS  read-only
+              STATUS  mandatory
+              
+              DESCRIPTION
+	            "the number of Frame crc Errors."
+              ::= { adslCurrentStateEntry 23 }
+              
+              
+              rxCorrectCount OBJECT-TYPE
+              SYNTAX  Counter32
+              ACCESS  read-only
+              STATUS  mandatory
+              
+              DESCRIPTION
+	            "A count of packages that are Correct received."
+              ::= { adslCurrentStateEntry 24 }
+              
+              
+              tranCount OBJECT-TYPE
+              SYNTAX  Counter32
+              ACCESS  read-only
+              STATUS  mandatory
+              
+              DESCRIPTION
+	            "A count of packages that are successfully transmitted."
+              ::= { adslCurrentStateEntry 25 }
+              
+
+              receCount OBJECT-TYPE
+              SYNTAX  Counter32
+              ACCESS  read-only
+              STATUS  mandatory
+              
+              DESCRIPTION
+	            "A count of packages that are successfully received."
+              ::= { adslCurrentStateEntry 26 }
+              
+              atucMaxAttainable OBJECT-TYPE
+              SYNTAX  INTEGER
+              ACCESS  read-only
+              STATUS  mandatory
+              
+              DESCRIPTION
+	            "ADSL line max downstream attainable rate."
+              ::= { adslCurrentStateEntry 27 }
+              
+              aturMaxAttainable OBJECT-TYPE
+              SYNTAX  INTEGER
+              ACCESS  read-only
+              STATUS  mandatory
+              
+              DESCRIPTION
+	            "ADSL line max upstream attainable rate."
+              ::= { adslCurrentStateEntry 28 }
+              
+
+              HammerDslamConfPvcVpi OBJECT-TYPE
+	      SYNTAX      INTEGER
+	      MAX-ACCESS  read-write
+	      STATUS      current
+	      DESCRIPTION
+              "Config Dslam pvc'vpi value"
+    	      ::= { harbourAdslPortExtend 2 }
+    	      
+    	      HammerDslamConfPvcVci OBJECT-TYPE
+	      SYNTAX      INTEGER
+	      MAX-ACCESS  read-write
+	      STATUS      current
+	      DESCRIPTION
+              "Config Dslam pvc'vci value"
+    	      ::= { harbourAdslPortExtend 3 }
+    	      
+    	      adslProfileFlushtoPort  OBJECT-TYPE
+    	       SYNTAX           DisplayString(SIZE (1..32))
+               MAX-ACCESS 	read-write
+               STATUS     	current
+               DESCRIPTION
+               "If Profile changed ,it will flush to ports."
+               ::= { harbourAdslPortExtend 4 }
+    	      
+    	    
+    	    adslPortConfigTable OBJECT-TYPE
+	    SYNTAX      SEQUENCE OF AdslPortConfigEntry
+	    MAX-ACCESS  not-accessible
+	    STATUS      current
+	    DESCRIPTION
+       		 "A table use for config ADSL port 
+         	  not attached to profile."
+    		::= { harbourAdslPortExtend 5 }
+
+     	   adslPortConfigEntry OBJECT-TYPE
+	   SYNTAX      AdslPortConfigEntry
+	   MAX-ACCESS  not-accessible
+	   STATUS      current
+ 	   DESCRIPTION
+	     ""
+    	   INDEX   { adslPortIndex2 }
+	    ::= { adslPortConfigTable 1 }   
+    	      
+    	    AdslPortConfigEntry ::=
+    		SEQUENCE {
+               		    adslPortIndex2                  INTEGER,
+            	            adslServiceModel	           INTEGER,
+            	            fastorinterleaved              INTEGER,   	        
+            	            atucMaxTxRate                  INTEGER,
+            	            atucMinTxRate                  INTEGER,
+            	            aturMaxTxRate                  INTEGER,
+            	            aturMinTxRate                  INTEGER,
+            	            atucInterleaveMaxDelay         INTEGER,            	       
+            	            aturInterleaveMaxDelay         INTEGER,            	         
+            	            atucMaxSnrMgn                  INTEGER,
+            	            atucTargetSnrMgn               INTEGER,
+            	            aturMinSnrMgn                  INTEGER,
+            	            aturTargetSnrMgn               INTEGER,
+            	            atucThresh15MinLofs            INTEGER,
+            	            atucThresh15Minloss            INTEGER,
+            	            atucThresh15MinLols            INTEGER,
+            	            atucThresh15MinLprs            INTEGER,
+            	            atucThresh15MinEss             INTEGER
+           	                      	            	
+                         } 
+                                                 
+              adslPortIndex2 OBJECT-TYPE
+              SYNTAX  INTEGER
+              ACCESS  read-only
+              STATUS  current
+              DESCRIPTION
+                      "ADSL port index."
+              ::= { adslPortConfigEntry 1 } 
+              
+              adslServiceModel OBJECT-TYPE
+              SYNTAX  INTEGER {
+              			adsl_multimode(1),
+              			adsl_glite(2),
+        			adsl_gdmt(3),					
+				adsl_t1413(4),
+				adsl_gdmt_bis(5), 
+				adsl_gdmt_bis_plus(6),
+				adsl_automode(7),
+				adsl_readsl2(8)
+              			}
+              ACCESS  read-write
+              STATUS  current             
+              DESCRIPTION
+                      "ADSL line service mode."
+              ::= { adslPortConfigEntry 2 }
+              
+              fastorinterleaved OBJECT-TYPE
+              SYNTAX  INTEGER {fast(1),interleave(2)}
+              ACCESS  read-write
+              STATUS  current              
+              DESCRIPTION
+                      "ADSL line channel path mode."
+              ::= { adslPortConfigEntry 3 }
+              
+              atucMaxTxRate OBJECT-TYPE
+              SYNTAX  INTEGER
+              UNITS    "32Kbps"
+              ACCESS  read-write
+              STATUS  current              
+              DESCRIPTION
+                      "ADSL line downstream rate .
+                      Downstream range is 1~255(1~48 in g.lite)."
+              ::= { adslPortConfigEntry 4 }
+              
+              atucMinTxRate  OBJECT-TYPE
+              SYNTAX  INTEGER
+              UNITS   "32Kbps"
+              ACCESS  read-write
+              STATUS  current             
+              DESCRIPTION
+                      "ADSL line  downstream rate.
+                      Downstream range is 1~255(1~48 in g.lite)."
+              ::= { adslPortConfigEntry 5 }
+              
+              
+              aturMaxTxRate OBJECT-TYPE
+              SYNTAX  INTEGER
+              UNITS   "32Kbps"
+              ACCESS  read-write
+              STATUS  current             
+              DESCRIPTION
+                      "ADSL line upstream rate.
+                      upstream range is 1~32(1~16 in g.lite)."
+              ::= { adslPortConfigEntry 6 }
+              
+              aturMinTxRate OBJECT-TYPE
+              SYNTAX  INTEGER
+              UNITS    "32Kbps"
+              ACCESS  read-write
+              STATUS  current              
+              DESCRIPTION
+                      "ADSL line upstream rate.
+                      upstream range is 1~32(1~16 in g.lite)."
+              ::= { adslPortConfigEntry 7 }
+              
+              atucInterleaveMaxDelay  OBJECT-TYPE
+              SYNTAX  INTEGER
+              UNITS    "32Kbps"
+              ACCESS  read-write
+              STATUS  current              
+              DESCRIPTION
+                      "ADSL line  downstream interleaveddelay.
+                      InterleaveMaxDelay Range is either 8, 16, 32, 64 ."
+              ::= { adslPortConfigEntry 8 }
+              
+              
+              aturInterleaveMaxDelay OBJECT-TYPE
+              SYNTAX  INTEGER
+              UNITS    "ms"
+              ACCESS  read-write
+              STATUS  current              
+              DESCRIPTION
+                      "ADSL line  upstream interleaveddelay.
+                      InterleaveMaxDelay Range is either 8, 16, 32, 64 ."
+              ::= { adslPortConfigEntry  9 }
+              
+              
+              atucMaxSnrMgn   OBJECT-TYPE
+              SYNTAX  INTEGER(0..31)
+              UNITS    "db"
+              ACCESS  read-write
+              STATUS  current              
+              DESCRIPTION
+                      "ADSL line downstream noise margin.
+                      Maximum range is 0~31 ."
+              ::= { adslPortConfigEntry 10 }
+             
+              atucTargetSnrMgn   OBJECT-TYPE
+              SYNTAX  INTEGER(0..15)
+              UNITS    "db"
+              ACCESS  read-write
+              STATUS  current              
+              DESCRIPTION
+                      "ADSL line downstream noise margin.
+                      Maximum range is 0~31 ."
+              ::= { adslPortConfigEntry 11 }
+              
+              aturMinSnrMgn   OBJECT-TYPE
+              SYNTAX  INTEGER(0..31)
+              UNITS    "db"
+              ACCESS  read-write
+              STATUS  current              
+              DESCRIPTION
+                      "ADSL line upstream noise margin.
+                       Maximum range is 0~31 ."
+              ::= { adslPortConfigEntry 12 }
+              
+              aturTargetSnrMgn   OBJECT-TYPE
+              SYNTAX  INTEGER(0..15)
+              UNITS    "db"
+              ACCESS  read-write
+              STATUS  current              
+              DESCRIPTION
+                      "ADSL line upstream noise margin.
+                       Maximum range is 0~15 ."
+              ::= { adslPortConfigEntry 13 }
+               
+              atucThresh15MinLofs   OBJECT-TYPE
+              SYNTAX  INTEGER(0..255)
+              ACCESS  read-write
+              STATUS  current              
+              DESCRIPTION
+                      "The number of loss of Frame Seconds encountered
+                       by an ADSL interface within any given 15
+                 minutes performance data collection period."
+              ::= { adslPortConfigEntry 14 }
+              
+              atucThresh15Minloss   OBJECT-TYPE
+              SYNTAX  INTEGER(0..255)
+              ACCESS  read-write
+              STATUS  current              
+              DESCRIPTION
+                      "The number of loss of Signal Seconds
+                 encountered by an ADSL interface within any given 15
+                 minutes performance data collection period."
+              ::= { adslPortConfigEntry 15 }
+              
+              atucThresh15MinLols   OBJECT-TYPE
+              SYNTAX  INTEGER(0..255)
+              ACCESS  read-write
+              STATUS  current              
+              DESCRIPTION
+                      "The number of loss of Link Seconds
+                 encountered by an ADSL interface within any given 15
+                 minutes performance data collection period."
+              ::= { adslPortConfigEntry 16 }
+           
+              atucThresh15MinLprs   OBJECT-TYPE
+              SYNTAX  INTEGER(0..255)
+              ACCESS  read-write
+              STATUS  current              
+              DESCRIPTION
+                      "The number of loss of Power Seconds
+                 encountered by an ADSL interface within any given 15
+                 minutes performance data collection period."
+              ::= { adslPortConfigEntry 17 }
+              
+              atucThresh15MinEss   OBJECT-TYPE
+              SYNTAX  INTEGER(0..255)
+              ACCESS  read-write
+              STATUS  current             
+              DESCRIPTION
+                      "The number of Errored Seconds
+                 encountered by an ADSL interface within any given 15
+                 minutes performance data collection period."
+              ::= { adslPortConfigEntry 18 }
+              
+           
+           
+               	     
+    	      ---------added for delt
+    
+          adsl2PortDelt         OBJECT IDENTIFIER ::= { harbourAdslPortExtend 6 }        
+          
+          adsl2PortDeltConfig   OBJECT IDENTIFIER ::= { adsl2PortDelt 1 }
+          
+          adsl2DeltPort OBJECT-TYPE
+              SYNTAX  INTEGER
+              ACCESS  read-write
+              STATUS  current
+              DESCRIPTION
+                      "You must config portno first."
+              ::= { adsl2PortDeltConfig 1 }  
+              
+          adsl2PortServiceMode  OBJECT-TYPE
+              SYNTAX  INTEGER { gdmtbis(1)}
+              ACCESS  read-write
+              STATUS  current
+              DESCRIPTION
+                      "For Delt ,you should config port service mode is g.dmt.bis ."
+              ::= { adsl2PortDeltConfig 2 }  
+              
+            adsl2PortDeltStart  OBJECT-TYPE
+              SYNTAX  INTEGER {start(1),abort(2)}
+              ACCESS  read-write
+              STATUS  current
+              DESCRIPTION
+                      "If port is up ,you can config delt start."
+              ::= { adsl2PortDeltConfig 3 } 
+              
+             adsl2PortDeltState  OBJECT-TYPE
+              SYNTAX  INTEGER {idle(1),data(2),handshake(3),training(4),discovery(5),ll_test(6),
+                                dl_test(7),training_delt(8),delt(9),unknown(10)}
+              ACCESS  read-only
+              STATUS  current
+              DESCRIPTION
+                      "When state is delt ,you can read datas."
+              ::= { adsl2PortDeltConfig 4 } 
+          	
+          
+        
+          adsl2PortDeltStats    OBJECT IDENTIFIER ::= { adsl2PortDelt 2 }
+                       
+        
+        adslaturDeltHLOGpsdsArrayTable     OBJECT IDENTIFIER ::= { adsl2PortDeltStats 1 }  --通道特性函数 H(f)
+        
+            	
+	adslaturDeltHLOGpsdsArrayTable  OBJECT-TYPE
+	    SYNTAX      SEQUENCE OF   AdslaturDeltHLOGpsdsArrayEntry
+	    MAX-ACCESS  not-accessible
+	    STATUS      current
+	    DESCRIPTION
+        "A table use for show ADSL port 
+         current state."
+    	::= { adsl2PortDeltStats 1 }
+
+     	adslaturDeltHLOGpsdsArrayEntry OBJECT-TYPE
+	    SYNTAX      AdslaturDeltHLOGpsdsArrayEntry
+	    MAX-ACCESS  not-accessible
+	    STATUS      current
+ 	    DESCRIPTION
+	        ""
+    	    INDEX   { deltIndex }
+	    ::= { adslaturDeltHLOGpsdsArrayTable 1 }
+	    	    
+	    	    
+	AdslaturDeltHLOGpsdsArrayEntry ::=
+    		SEQUENCE {
+               		    deltIndex                     INTEGER,
+            	            adslaturDeltHLOGpsds	  INTEGER
+            	          }
+            	                     	          
+        deltIndex OBJECT-TYPE
+              SYNTAX  INTEGER
+              ACCESS  read-only
+              STATUS  current
+              DESCRIPTION
+                      "ADSL PORT index."
+              ::= { adslaturDeltHLOGpsdsArrayEntry 1 }  	          
+            	          
+        adslaturDeltHLOGpsds  OBJECT-TYPE
+	SYNTAX         	      INTEGER   
+	MAX-ACCESS     	      read-only
+	STATUS         	      current
+	DESCRIPTION
+	    "  HLOG(i) = 6-(m(i)/10 )
+               Array of real downstream Hlog(f) values in dB."
+	::= { adslaturDeltHLOGpsdsArrayEntry 2 }	
+		
+	
+	 adslatucDeltHLOGpsusArrayTable     OBJECT IDENTIFIER ::= { adsl2PortDeltStats 2 }   ---通道特性函数 H(f)
+        
+            	
+	adslatucDeltHLOGpsusArrayTable  OBJECT-TYPE
+	    SYNTAX      SEQUENCE OF   AdslatucDeltHLOGpsusArrayEntry
+	    MAX-ACCESS  not-accessible
+	    STATUS      current
+	    DESCRIPTION
+        "A table use for show ADSL port 
+         current state."
+    	::= { adsl2PortDeltStats 2 }
+
+     	adslatucDeltHLOGpsusArrayEntry OBJECT-TYPE
+	    SYNTAX      AdslatucDeltHLOGpsusArrayEntry
+	    MAX-ACCESS  not-accessible
+	    STATUS      current
+ 	    DESCRIPTION
+	        ""
+    	    INDEX   { deltIndex }
+	    ::= { adslatucDeltHLOGpsusArrayTable 1 }
+	    	    
+	    	    
+	AdslatucDeltHLOGpsusArrayEntry ::=
+    		SEQUENCE {
+               		    deltIndex                     INTEGER,
+            	            adslatucDeltHLOGpsus	  INTEGER
+            	          }
+            	                     	          
+        deltIndex OBJECT-TYPE
+              SYNTAX  INTEGER
+              ACCESS  read-only
+              STATUS  mandatory
+              DESCRIPTION
+                      "ADSL PORT index."
+              ::= { adslatucDeltHLOGpsusArrayEntry 1 }  	          
+            	          
+        adslatucDeltHLOGpsus  OBJECT-TYPE
+	SYNTAX         	      INTEGER   
+	MAX-ACCESS     	      read-only
+	STATUS         	      current
+	DESCRIPTION
+	    "   HLOG(i) = 6-(m(i)/10 )
+   		Array of real upstream Hlog(f) values in dB"
+	::= { adslatucDeltHLOGpsusArrayEntry 2 }
+	
+	 adslaturDeltQLNpsdsArrayTable     OBJECT IDENTIFIER ::= { adsl2PortDeltStats 3 }  ---静态线路噪声PSD QLN(f)
+        
+            	
+	adslaturDeltQLNpsdsArrayTable  OBJECT-TYPE
+	    SYNTAX      SEQUENCE OF   AdslaturDeltQLNpsdsArrayEntry
+	    MAX-ACCESS  not-accessible
+	    STATUS      current
+	    DESCRIPTION
+        "A table use for show ADSL port 
+         current state."
+    	::= { adsl2PortDeltStats 3 }
+
+     	adslaturDeltQLNpsdsArrayEntry OBJECT-TYPE
+	    SYNTAX      AdslaturDeltQLNpsdsArrayEntry
+	    MAX-ACCESS  not-accessible
+	    STATUS      current
+ 	    DESCRIPTION
+	        ""
+    	    INDEX   { deltIndex }
+	    ::= { adslaturDeltQLNpsdsArrayTable 1 }
+	    	    
+	    	    
+	AdslaturDeltQLNpsdsArrayEntry ::=
+    		SEQUENCE {
+               		    deltIndex                     INTEGER,
+            	            adslaturDeltQLNpsds	  	  INTEGER
+            	          }
+            	                     	          
+        deltIndex OBJECT-TYPE
+              SYNTAX  INTEGER
+              ACCESS  read-only
+              STATUS  mandatory
+              DESCRIPTION
+                      "ADSL PORT index."
+              ::= { adslaturDeltQLNpsdsArrayEntry 1 }  	          
+            	          
+        adslaturDeltQLNpsds  OBJECT-TYPE
+	SYNTAX         	      INTEGER   
+	MAX-ACCESS     	      read-only
+	STATUS         	      current
+	DESCRIPTION
+	    "  QLN(i) = -23 - n(i)/2
+    	   DELT-related parameter that provides an array of
+    	   real downstream QLN(f)  values in dB."
+	::= { adslaturDeltQLNpsdsArrayEntry 2 }
+	
+	
+        adslatucDeltQLNpsusArrayTable     OBJECT IDENTIFIER ::= { adsl2PortDeltStats 4 }   ---通道特性函数 H(f)
+               	
+        adslatucDeltQLNpsusArrayTable  OBJECT-TYPE
+	    SYNTAX      SEQUENCE OF   AdslatucDeltQLNpsusArrayEntry
+	    MAX-ACCESS  not-accessible
+	    STATUS      current
+	    DESCRIPTION
+            "A table use for show ADSL port current state."
+    	::= { adsl2PortDeltStats 4 }
+
+     	adslatucDeltQLNpsusArrayEntry OBJECT-TYPE
+	    SYNTAX      AdslatucDeltQLNpsusArrayEntry
+	    MAX-ACCESS  not-accessible
+	    STATUS      current
+ 	    DESCRIPTION
+	        ""
+    	    INDEX   { deltIndex }
+	    ::= { adslatucDeltQLNpsusArrayTable 1 }
+	    	    
+	    	    
+	AdslatucDeltQLNpsusArrayEntry ::=
+    		SEQUENCE {
+               		    deltIndex                     INTEGER,
+            	            adslatucDeltQLNpsus	  	  INTEGER
+            	          }
+            	                     	          
+        deltIndex OBJECT-TYPE
+              SYNTAX  INTEGER
+              ACCESS  read-only
+              STATUS  mandatory
+              DESCRIPTION
+                      "ADSL PORT index."
+              ::= { adslatucDeltQLNpsusArrayEntry 1 }  	          
+            	          
+        adslatucDeltQLNpsus  OBJECT-TYPE
+	SYNTAX         	      INTEGER   
+	MAX-ACCESS     	      read-only
+	STATUS         	      current
+	DESCRIPTION
+	    "  QLN(i) = -23 - n(i)/2
+   	      DELT-related parameter that provides an array of
+              real upstream QLN(f) values in dB."
+	::= { adslatucDeltQLNpsusArrayEntry 2 }
+	
+	
+	 adslaturDMTBinSNRArrayTable     OBJECT IDENTIFIER ::= { adsl2PortDeltStats 5 }  ---信噪比 SNR
+        
+            	
+	adslaturDMTBinSNRArrayTable  OBJECT-TYPE
+	    SYNTAX      SEQUENCE OF   AdslaturDMTBinSNRArrayEntry
+	    MAX-ACCESS  not-accessible
+	    STATUS      current
+	    DESCRIPTION
+        "A table use for show ADSL port 
+         current state."
+    	::= { adsl2PortDeltStats 5 }
+
+     	adslaturDMTBinSNRArrayEntry OBJECT-TYPE
+	    SYNTAX      AdslaturDMTBinSNRArrayEntry
+	    MAX-ACCESS  not-accessible
+	    STATUS      current
+ 	    DESCRIPTION
+	        ""
+    	    INDEX   { deltIndex }
+	    ::= { adslaturDMTBinSNRArrayTable 1 }
+	    	    
+	    	    
+	AdslaturDMTBinSNRArrayEntry ::=
+    		SEQUENCE {
+               		    deltIndex                     INTEGER,
+            	            adslaturDMTBinSNR	  	  INTEGER
+            	          }
+            	                     	          
+        deltIndex OBJECT-TYPE
+              SYNTAX  INTEGER
+              ACCESS  read-only
+              STATUS  mandatory
+              DESCRIPTION
+                      "ADSL PORT index."
+              ::= { adslaturDMTBinSNRArrayEntry 1 }  	          
+            	          
+        adslaturDMTBinSNR  OBJECT-TYPE
+	SYNTAX         	      INTEGER   
+	MAX-ACCESS     	      read-only
+	STATUS         	      current
+	DESCRIPTION
+	    "  SNR(i) = -32 + snr(i)/2
+    	       DELT-related parameter that provides an array of 
+                real downstream SNR(f)  values in dB."
+	::= { adslaturDMTBinSNRArrayEntry 2 }
+	
+	
+	 adslatucDMTBinSNRArrayTable     OBJECT IDENTIFIER ::= { adsl2PortDeltStats 6 }  ---信噪比 SNR
+        
+            	
+	adslatucDMTBinSNRArrayTable  OBJECT-TYPE
+	    SYNTAX      SEQUENCE OF   AdslatucDMTBinSNRArrayEntry
+	    MAX-ACCESS  not-accessible
+	    STATUS      current
+	    DESCRIPTION
+        "A table use for show ADSL port 
+         current state."
+    	::= { adsl2PortDeltStats 6 }
+
+     	adslatucDMTBinSNRArrayEntry OBJECT-TYPE
+	    SYNTAX      AdslaturDMTBinSNRArrayEntry
+	    MAX-ACCESS  not-accessible
+	    STATUS      current
+ 	    DESCRIPTION
+	        ""
+    	    INDEX   { deltIndex }
+	    ::= { adslatucDMTBinSNRArrayTable 1 }
+	    	    
+	    	    
+	AdslatucDMTBinSNRArrayEntry ::=
+    		SEQUENCE {
+               		    deltIndex                     INTEGER,
+            	            adslatucDMTBinSNR	  	  INTEGER
+            	          }
+            	                     	          
+        deltIndex OBJECT-TYPE
+              SYNTAX  INTEGER
+              ACCESS  read-only
+              STATUS  mandatory
+              DESCRIPTION
+                      "ADSL PORT index."
+              ::= { adslatucDMTBinSNRArrayEntry 1 }  	          
+            	          
+        adslatucDMTBinSNR  OBJECT-TYPE    
+	SYNTAX         	      INTEGER   
+	MAX-ACCESS     	      read-only
+	STATUS         	      current
+	DESCRIPTION
+	    "  SNR(i) = -32 + snr(i)/2
+   	       DELT-related parameter that provides an array of real upstream ."
+	::= { adslatucDMTBinSNRArrayEntry 2 }
+		
+	
+	adslaturCurrAtn  OBJECT-TYPE        ---线路衰减
+	SYNTAX         	      INTEGER   
+	MAX-ACCESS     	      read-only
+	STATUS         	      current
+	DESCRIPTION
+	    "  dB."
+	::= { adsl2PortDeltStats 7 }
+		
+		
+	adslatucCurrAtn  OBJECT-TYPE
+	SYNTAX         	      INTEGER   
+	MAX-ACCESS     	      read-only
+	STATUS         	      current
+	DESCRIPTION
+	    " dB "
+	 ::= { adsl2PortDeltStats 8 }
+
+
+	adslaturCurrAttainableRate   OBJECT-TYPE     ---可达速率
+	SYNTAX         	      INTEGER   
+	MAX-ACCESS     	      read-only
+	STATUS         	      current
+	DESCRIPTION
+	    " Kbps ."
+	::= { adsl2PortDeltStats 9}
+		
+	adslatucCurrAttainableRate    OBJECT-TYPE
+	SYNTAX         	      INTEGER   
+	MAX-ACCESS     	      read-only
+	STATUS         	      current
+	DESCRIPTION
+	    "  Kbps  ."
+	::= { adsl2PortDeltStats 10 }
+	
+	adslatucDeltLastTxState     OBJECT-TYPE 
+	SYNTAX         	      DisplayString   
+	MAX-ACCESS     	      read-only
+	STATUS         	      current
+	DESCRIPTION
+	    " It is only a string ."
+	::= { adsl2PortDeltStats 11 }
+	
+	adslaturDeltLastTxState     OBJECT-TYPE
+	SYNTAX         	      DisplayString   
+	MAX-ACCESS     	      read-only
+	STATUS         	      current
+	DESCRIPTION
+	    " It is a string  ."
+	::= { adsl2PortDeltStats 12 }
+	
+	adsl2PortBitLoading    OBJECT IDENTIFIER ::= { adsl2PortDelt 3 }
+		
+	adsl2atucBinBitsArrayTable     OBJECT IDENTIFIER ::= { adsl2PortBitLoading 1 }  
+        
+            	
+	adsl2atucBinBitsArrayTable  OBJECT-TYPE
+	    SYNTAX      SEQUENCE OF   Adsl2atucBinBitsArrayEntry
+	    MAX-ACCESS  not-accessible
+	    STATUS      current
+	    DESCRIPTION
+        "A table use for bit loading."
+    	::= { adsl2PortBitLoading 1 }
+
+     	adsl2atucBinBitsArrayEntry OBJECT-TYPE
+	    SYNTAX      Adsl2atucBinBitsArrayEntry
+	    MAX-ACCESS  not-accessible
+	    STATUS      current
+ 	    DESCRIPTION
+	        ""
+    	    INDEX   { binIndex }
+	    ::= { adsl2atucBinBitsArrayTable 1 }
+	    	    
+	    	    
+	Adsl2atucBinBitsArrayEntry ::=
+    		SEQUENCE {
+               		    binIndex                    INTEGER,
+            	            adsl2atucbinbits	       	INTEGER
+            	          }
+            	                     	          
+              binIndex OBJECT-TYPE
+              SYNTAX  INTEGER
+              ACCESS  read-only
+              STATUS  current
+              DESCRIPTION
+                      "ADSL PORT index."
+              ::= { adsl2atucBinBitsArrayEntry 1 }  	          
+            	          
+        adsl2atucbinbits       OBJECT-TYPE
+	SYNTAX         	      INTEGER   
+	MAX-ACCESS     	      read-only
+	STATUS         	      current
+	DESCRIPTION
+	    " ."
+	::= { adsl2atucBinBitsArrayEntry 2 }	
+	
+	adsl2aturBinBitsArrayTable     OBJECT IDENTIFIER ::= { adsl2PortBitLoading 2 }  
+        
+            	
+	adsl2aturBinBitsArrayTable  OBJECT-TYPE
+	    SYNTAX      SEQUENCE OF   Adsl2aturBinBitsArrayEntry
+	    MAX-ACCESS  not-accessible
+	    STATUS      current
+	    DESCRIPTION
+        "A table use for bit loading."
+    	::= { adsl2PortBitLoading 2 }
+
+     	adsl2aturBinBitsArrayEntry OBJECT-TYPE
+	    SYNTAX      Adsl2aturBinBitsArrayEntry
+	    MAX-ACCESS  not-accessible
+	    STATUS      current
+ 	    DESCRIPTION
+	        ""
+    	    INDEX   { binIndex }
+	    ::= { adsl2aturBinBitsArrayTable 1 }
+	    	    
+	    	    
+	Adsl2aturBinBitsArrayEntry ::=
+    		SEQUENCE {
+               		    binIndex                    INTEGER,
+            	            adsl2aturbinbits	       	INTEGER
+            	          }
+            	                     	          
+              binIndex OBJECT-TYPE
+              SYNTAX  INTEGER
+              ACCESS  read-only
+              STATUS  current
+              DESCRIPTION
+                      "ADSL PORT index."
+              ::= { adsl2aturBinBitsArrayEntry 1 }  	          
+            	          
+        adsl2aturbinbits       OBJECT-TYPE
+	SYNTAX         	      INTEGER   
+	MAX-ACCESS     	      read-only
+	STATUS         	      current
+	DESCRIPTION
+	    " ."
+	::= { adsl2aturBinBitsArrayEntry 2 }		
+	  
+              END

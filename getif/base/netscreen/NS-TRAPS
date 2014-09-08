@@ -1,0 +1,121 @@
+-- These MIBs were created on 08/02/2000
+--
+-- Copyright (c) 1999 - 2000 by NetScreen Technologies, Inc.
+-- All rights reserved.
+--
+--  Last modified date: 09/28/2001
+-- 
+
+NETSCREEN-TRAP-MIB DEFINITIONS ::= BEGIN
+IMPORTS
+    IpAddress, enterprises FROM RFC1155-SMI
+    DisplayString FROM RFC1213-MIB
+    netscreenTrapInfo FROM NETSCREEN-SMI;
+    
+netscreenTrapType OBJECT-TYPE 
+	SYNTAX  INTEGER {
+		user-auth-fail(3),    -- User Authentication Fail
+		winnuke(4), 		-- Winnuke pak
+		syn-attack(5), 	-- Syn attack
+		tear-drop(6),		-- tear-drop attack
+		ping-death(7), 	-- Ping of Death attack
+		ip-spoofing(8),	-- IP spoofing attack
+		ip-src-route(9),	-- IP source routing attack
+		land(10),		-- land attack
+		icmp-flood(11),	-- ICMP flooding attack
+		udp-flood(12),	-- UDP flooding attack	
+	
+		illegal-cms-svr(13),	-- Illegal server IP to connect to CMS port		
+		url-block-srv(14),	-- URL blocking server connection alarm
+		high-availibility(15),-- HA alarm
+	 
+		port-scan(16),	-- Port Scan attack
+		addr-sweep(17),	-- address sweep attack
+		policy-deny(18),	-- Deny by policy attack
+				  
+		device-dead(19),	-- device not working
+		low-memory(20),	-- memory low
+				  
+		dns-srv-down(21),	-- DNS server unreachable
+		generic-HW-fail(22),	-- Fan, Power Supply failure
+		lb-srv-down(23),	-- Load balance server unreachable
+		log-full(24),		-- log buffer overflow
+		x509(25),		-- X509 related	
+		vpn-ike(26),		-- VPN and IKE related
+		admin(27),		-- admin realted
+		sme(28),		-- Illegal src ip to connect to sme port
+		dhcp(29),		-- DHCP related 
+		cpu-usage-high(30),	-- CPU usage is high
+		vpn-tunnel-up(40),	-- VPN tunnel from down to up	
+		vpn-tunnel-down(41),	-- VPN tunnel from up to down	
+		nsrp-rto-up(60),      -- NSRP rto self unit status change from up to down     
+		nsrp-rto-down(61),      -- NSRP rto self unit status change from down to up     
+		nsrp-trackip-success(62),     -- NSRP track ip successed      
+		nsrp-trackip-failed(63),      -- NSRP track ip failed 
+		nsrp-trackip-failover(64),    -- NSRP track ip fail over
+		nsrp-vsd-init(70),    -- NSRP vsd  group status change to elect
+		nsrp-vsd-master(71),  -- NSRP vsd  group status change to master
+		nsrp-vsd-pbackup(72), -- NSRP vsd  group status change to primary backup
+		nsrp-vsd-backup(73),  -- NSRP vsd  group status change to backup
+		nsrp-vsd-ineligible(74),       -- NSRP vsd  group status change to ineligible
+		link-statechange(1000)   -- link state change	              
+	}
+	ACCESS  not-accessible
+	STATUS  mandatory
+	DESCRIPTION
+		"The integer value of the raised alarm type.
+		Note that the type should be interpreted within a specific trap"
+	::= { netscreenTrapInfo 1 }
+
+netscreenTrapDesc OBJECT-TYPE 
+	SYNTAX  DisplayString (SIZE (0..255))
+	ACCESS  not-accessible
+	STATUS  mandatory
+	DESCRIPTION
+		"The textual description of the alarm"
+	::= { netscreenTrapInfo 3 }
+
+netscreenTrapHw TRAP-TYPE
+	ENTERPRISE netscreen
+	VARIABLES  { netscreenTrapType, netscreenTrapDesc  }
+	DESCRIPTION
+		"This trap indicates that some kind of hardware problem has occured."
+	::= 100
+
+netscreenTrapFw TRAP-TYPE
+	ENTERPRISE netscreen
+	VARIABLES  { netscreenTrapType, netscreenTrapDesc  }
+	DESCRIPTION
+                "This trap indicates that some kind of firewall functions has been triggered."
+             ::= 200
+
+netscreenTrapSw TRAP-TYPE
+             ENTERPRISE netscreen
+             VARIABLES  { netscreenTrapType, netscreenTrapDesc  }
+             DESCRIPTION
+                "This trap indicates that some kind of software problem has occured."
+             ::= 300
+
+netscreenTrapTrf TRAP-TYPE
+             ENTERPRISE netscreen
+             VARIABLES  { netscreenTrapType, netscreenTrapDesc  }
+             DESCRIPTION
+                "This trap indicates that some kind of traffic conditions has been triggered."
+             ::= 400
+
+netscreenTrapVpn TRAP-TYPE
+             ENTERPRISE netscreen
+             VARIABLES  { netscreenTrapType, netscreenTrapDesc  }
+             DESCRIPTION
+                "This trap indicates that VPN tunnel status has occured."
+             ::= 500
+
+netscreenTrapNsrp TRAP-TYPE
+             ENTERPRISE netscreen
+             VARIABLES  { netscreenTrapType, netscreenTrapDesc  }
+             DESCRIPTION
+                "This trap indicates that NSRP status has occured."
+             ::= 600
+END
+
+

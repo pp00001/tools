@@ -1,0 +1,328 @@
+-- =========================================================
+-- Copyright (c) 2001-2003, Harbour Networks Limited
+-- All rights reserved.
+--
+-- Name     : HARBOUR-NMS-ACC-MIB
+-- Intro    : The MIB definition for access control management.
+-- History  : When          Who         What & Why
+--            2003.11.13    Liaoyuxia   Clean up for Hos
+-- =========================================================
+
+HARBOUR-NMS-ACC-MIB DEFINITIONS ::= BEGIN
+
+IMPORTS
+    MODULE-IDENTITY,
+    OBJECT-TYPE,
+    IpAddress         FROM SNMPv2-SMI
+    DisplayString,
+    RowStatus         FROM SNMPv2-TC
+    harbourAgent      FROM HARBOUR-BASE-MIB;
+
+harbourNMSAccessControl MODULE-IDENTITY
+    LAST-UPDATED 	"200311130000Z"
+    ORGANIZATION 	"Harbour Networks Limited"
+    CONTACT-INFO 	"www.harbournetworks.com"
+    DESCRIPTION  	"harbour NMS-Access-Control objects"
+    ::= { harbourAgent 9 }
+
+
+-- The objects are arranged into the following groups:
+
+harbourNMSAccessProfileGroup  OBJECT IDENTIFIER ::= { harbourNMSAccessControl 1 }
+
+harbourNMSAccessConfigGroup   OBJECT IDENTIFIER ::= { harbourNMSAccessControl 2 }
+
+
+-- Harbour NMS Access Profile Group
+
+-- Harbour NMSACP Table
+
+harbourNMSACPTable OBJECT-TYPE
+    SYNTAX     	SEQUENCE OF HarbourNMSACPentry
+    MAX-ACCESS 	not-accessible
+    STATUS     	current
+    DESCRIPTION
+            "This table lists NMS Access Profile Names."
+    ::= { harbourNMSAccessProfileGroup 1 }
+
+harbourNMSACPEntry OBJECT-TYPE
+    SYNTAX     	HarbourNMSACPentry
+    MAX-ACCESS 	not-accessible
+    STATUS     	current
+    DESCRIPTION
+            "NMS Access Profile name entry."
+    INDEX      	{ harbourNMSACPIndex }
+    ::= { harbourNMSACPTable 1 }
+
+HarbourNMSACPentry ::= SEQUENCE {
+    harbourNMSACPIndex   INTEGER (0..9),
+    harbourNMSACPName    DisplayString,
+    harbourNMSACPstatus  RowStatus
+}
+
+harbourNMSACPIndex OBJECT-TYPE
+    SYNTAX     	INTEGER (0..10)
+    MAX-ACCESS 	read-create
+    STATUS     	current
+    DESCRIPTION
+            "The index of the harbour NMS Access Profile."
+    ::= {harbourNMSACPEntry 1 }
+
+harbourNMSACPName OBJECT-TYPE
+    SYNTAX     	DisplayString
+    MAX-ACCESS 	read-create
+    STATUS     	current
+    DESCRIPTION
+            "The name of the harbour NMS Access Profile."
+    ::= {harbourNMSACPEntry 2 }
+
+harbourNMSACPstatus OBJECT-TYPE
+    SYNTAX     	RowStatus
+    MAX-ACCESS 	read-create
+    STATUS     	current
+    DESCRIPTION
+            "The status column for NMS Access Profile entry."
+    ::= { harbourNMSACPEntry 3 }
+
+-- The harbour NMS Access Profile Address Table.
+
+harbourNMSACPAddressTable OBJECT-TYPE
+    SYNTAX     	SEQUENCE OF HarbourNMSACPAddressentry
+    MAX-ACCESS 	not-accessible
+    STATUS     	current
+    DESCRIPTION
+            "This table lists all addresses in access profile."
+    ::= { harbourNMSAccessProfileGroup 2 }
+
+harbourNMSACPAddressEntry OBJECT-TYPE
+    SYNTAX     	HarbourNMSACPAddressentry
+    MAX-ACCESS 	not-accessible
+    STATUS     	current
+    DESCRIPTION
+            "A  harbourNMSACPAddressentry contains address info
+            of NMS Access profile."
+    INDEX      	{  harbourNMSACPIndex,
+                  harbourNMSACPAddrIndex }
+    ::= {  harbourNMSACPAddressTable 1 }
+
+HarbourNMSACPAddressentry ::= SEQUENCE {
+    harbourNMSACPAddrIndex      INTEGER (0..99),
+    harbourNMSACPAddrIPAddress  IpAddress,
+    harbourNMSACPAddrNetMask    IpAddress,
+    harbourNMSACPAddrStatus     RowStatus
+}
+
+harbourNMSACPAddrIndex OBJECT-TYPE
+    SYNTAX     	INTEGER (0..99)
+    MAX-ACCESS 	read-create
+    STATUS     	current
+    DESCRIPTION
+      "The index of the harbour NMS Access Profile Address Entry."
+    ::= { harbourNMSACPAddressEntry 1 }
+
+
+harbourNMSACPAddrIPAddress OBJECT-TYPE
+    SYNTAX     	IpAddress
+    MAX-ACCESS 	read-create
+    STATUS     	current
+    DESCRIPTION
+        "The IP network number for the harbour NMS
+         Access Profile Address Entry."
+    ::= {  harbourNMSACPAddressEntry 2 }
+
+harbourNMSACPAddrNetMask OBJECT-TYPE
+    SYNTAX     	IpAddress
+    MAX-ACCESS 	read-create
+    STATUS     	current
+    DESCRIPTION
+            "The IP network mask corresponding to the IP Network
+            address defined by  harbourNMSACPAddrIPAddress."
+    ::= {  harbourNMSACPAddressEntry 3 }
+
+harbourNMSACPAddrStatus OBJECT-TYPE
+    SYNTAX     	RowStatus
+    MAX-ACCESS 	read-create
+    STATUS     	current
+    DESCRIPTION
+    "The status column for this NMS Access Profile Address Entry."
+    ::= {  harbourNMSACPAddressEntry 4 }
+
+
+-- Harbour NMS Access Config Group
+
+harbourTelnetAccessControlStatus OBJECT-TYPE
+    SYNTAX     	INTEGER {
+               		enable(1),
+               		disable(0)
+               	}
+    MAX-ACCESS 	read-write
+    STATUS     	current
+    DESCRIPTION
+            "This object is to open or close the function of telnet
+             accesscontrol."
+    ::= { harbourNMSAccessConfigGroup 1 }
+
+harbourWebAccessControlStatus OBJECT-TYPE
+    SYNTAX     	INTEGER {
+               		enable(1),
+               		disable(0)
+               	}
+    MAX-ACCESS 	read-write
+    STATUS     	current
+    DESCRIPTION
+            "This object is to open or close the function of web
+             accesscontrol."
+    ::= { harbourNMSAccessConfigGroup 2 }
+
+harbourSnmpAccessControlStatus OBJECT-TYPE
+    SYNTAX     	INTEGER {
+               		enable(1),
+               		disable(0)
+               	}
+    MAX-ACCESS 	read-write
+    STATUS     	current
+    DESCRIPTION
+            "This object is to open or close the function of snmp
+             accesscontrol."
+    ::= { harbourNMSAccessConfigGroup 3 }
+
+-- Harbour Telnet Access Config Table
+
+harbourTelnetAccessConfigTable OBJECT-TYPE
+    SYNTAX     	SEQUENCE OF HarbourTelnetAccessentry
+    MAX-ACCESS 	not-accessible
+    STATUS     	current
+    DESCRIPTION
+            "This table lists all telnet access config of access profile."
+    ::= { harbourNMSAccessConfigGroup 4 }
+
+harbourTelnetAccessEntry OBJECT-TYPE
+    SYNTAX      HarbourTelnetAccessentry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+            "A  harbourTelnetAccessEntry contains Telnet access
+            config info for access profile."
+    INDEX       {  harbourNMSACPIndex }
+    ::= {  harbourTelnetAccessConfigTable 1 }
+
+HarbourTelnetAccessentry ::= SEQUENCE {
+    harbourTelnetAccessTCPPortNumber  INTEGER,
+    harbourTelnetAccessStatus         INTEGER
+}
+
+harbourTelnetAccessTCPPortNumber OBJECT-TYPE
+    SYNTAX     	INTEGER (1..512)
+    MAX-ACCESS 	read-write
+    STATUS     	current
+    DESCRIPTION
+        "The TCP port number of the telnet access for harbour NMS
+         Access Profile ."
+    ::= {  harbourTelnetAccessEntry 1 }
+
+harbourTelnetAccessStatus OBJECT-TYPE
+    SYNTAX     	INTEGER {
+               	    enable(1),
+               	    disable(0)
+               	}
+    MAX-ACCESS 	read-write
+    STATUS     	current
+    DESCRIPTION
+            "The status of the telnet access for harbour NMS
+             Access Profile ."
+    ::= {  harbourTelnetAccessEntry 2 }
+
+-- Harbour Web NMS Access Config Table.
+
+harbourWebAccessConfigTable OBJECT-TYPE
+    SYNTAX     	SEQUENCE OF HarbourWebAccessentry
+    MAX-ACCESS 	not-accessible
+    STATUS     	current
+    DESCRIPTION
+            "This table lists all Web access config of access profile."
+    ::= { harbourNMSAccessConfigGroup 5 }
+
+harbourWebAccessEntry OBJECT-TYPE
+    SYNTAX     	HarbourWebAccessentry
+    MAX-ACCESS 	not-accessible
+    STATUS     	current
+    DESCRIPTION
+            "A  harbourWebAccessEntry contains Web access
+            config info for access profile."
+    INDEX      {  harbourNMSACPIndex }
+    ::= {  harbourWebAccessConfigTable 1 }
+
+HarbourWebAccessentry ::= SEQUENCE {
+    harbourWebAccessTCPPortNumber  INTEGER,
+    harbourWebAccessStatus         INTEGER
+       }
+
+harbourWebAccessTCPPortNumber OBJECT-TYPE
+    SYNTAX     	INTEGER (1..512)
+    MAX-ACCESS 	read-write
+    STATUS     	current
+    DESCRIPTION
+        "The TCP port number of the Web access for harbour NMS
+         Access Profile ."
+    ::= {  harbourWebAccessEntry 1 }
+
+harbourWebAccessStatus OBJECT-TYPE
+    SYNTAX     	INTEGER {
+               	    enable(1),
+               	    disable(0)
+               	}
+    MAX-ACCESS 	read-write
+    STATUS     	current
+    DESCRIPTION
+            "The status of the Web access for harbour NMS
+             Access Profile ."
+    ::= {  harbourWebAccessEntry 2 }
+
+-- Harbour SNMP NMS Access Config Table.
+
+harbourSNMPAccessConfigTable OBJECT-TYPE
+    SYNTAX     	SEQUENCE OF HarbourSNMPAccessentry
+    MAX-ACCESS 	not-accessible
+    STATUS     	current
+    DESCRIPTION
+            "This table lists all SNMP access config of access profile."
+    ::= { harbourNMSAccessConfigGroup 6 }
+
+harbourSNMPAccessEntry OBJECT-TYPE
+    SYNTAX     	HarbourSNMPAccessentry
+    MAX-ACCESS 	not-accessible
+    STATUS     	current
+    DESCRIPTION
+            "A  harbourSNMPAccessEntry contains SNMP access
+            config info for access profile."
+    INDEX      	{  harbourNMSACPIndex }
+    ::= {  harbourSNMPAccessConfigTable 1 }
+
+HarbourSNMPAccessentry ::= SEQUENCE {
+    harbourSNMPAccessTCPPortNumber    INTEGER,
+    harbourSNMPAccessStatus           INTEGER
+       }
+
+harbourSNMPAccessTCPPortNumber OBJECT-TYPE
+    SYNTAX     	INTEGER (1..512)
+    MAX-ACCESS 	read-write
+    STATUS     	current
+    DESCRIPTION
+        "The TCP port number of the SNMP access for harbour NMS
+         Access Profile ."
+    ::= {  harbourSNMPAccessEntry 1 }
+
+harbourSNMPAccessStatus OBJECT-TYPE
+    SYNTAX     	INTEGER {
+                    enable(1),
+                    disable(0)
+                }
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "The status of the SNMP access for harbour NMS
+             Access Profile ."
+    ::= {  harbourSNMPAccessEntry 2 }
+
+
+END

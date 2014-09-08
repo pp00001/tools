@@ -1,0 +1,1136 @@
+-- ********************************************************************
+
+--  UnitransMib-MS-trap
+
+--  Copyright (c) 2008 ZTE CORPORATION.All rights reserved.
+
+--  Description: This mib defines the trap format which is used for transfering information
+--               between external application and SNMP agent.
+
+--  Version     v1.0
+
+--  Modification Record:
+
+--********************************************************************
+UnitransMib-MS-trap  
+DEFINITIONS ::= BEGIN
+IMPORTS
+    MODULE-IDENTITY, OBJECT-TYPE, NOTIFICATION-TYPE,
+    enterprises, Integer32, Unsigned32, IpAddress
+        FROM SNMPv2-SMI
+    TEXTUAL-CONVENTION, DisplayString, TimeStamp, DateAndTime
+        FROM SNMPv2-TC  
+    MODULE-COMPLIANCE, OBJECT-GROUP, NOTIFICATION-GROUP
+        FROM SNMPv2-CONF
+        zteUnitransMS
+        FROM 
+        UnitransMib-MS-root
+        BOOL-TC,Time-TC,Unit-TC,   
+        ObjectNVSList-T,NamingAttributes-T,LayerRate-TC,LayerRate-TC
+        FROM 
+        UnitransMib-MS-common          
+        
+        PMParameterName-TC,PMLocation-TC,PMValue-TC,Granularity-TC,PMThresholdType-TC,PMValue-TC
+        FROM 
+        UnitransMib-MS-performance    
+        PerceivedSeverity-TC,AlarmType-TC,ProbableCause-TC
+        FROM 
+        UnitransMib-MS-alarm;
+
+zteuTrap MODULE-IDENTITY
+        LAST-UPDATED   "0602130000Z"
+        ORGANIZATION   "ZTE"
+        CONTACT-INFO   "
+           ZTE Corporation
+           
+           Postal: 518057      
+           
+           via the WEB:  http://www.zte.com.cn                           
+            
+           via phone:    86-755-26773000"
+   DESCRIPTION
+      "This module describes ZTE Unitrans MIB."
+::= { zteUnitransMS 16 }       
+
+
+-- ********************************************************************
+-- Trap Object Type Definition
+-- ********************************************************************
+ObjectType-TC ::=  TEXTUAL-CONVENTION
+STATUS current
+DESCRIPTION "
+This textual convention presents unit of object value
+'EMS'
+'ManagedElement'
+'TopologicalLink'
+'PTP'
+'CTP'
+'EquipmentHolder'
+'Equipment'
+'CrossConnection'
+'SNC'
+"
+SYNTAX OCTET STRING(SIZE (32))    
+-- ********************************************************************
+
+zteuSyncTrapAndInfo      OBJECT IDENTIFIER ::= { zteuTrap 1 }
+zteuSystemTrapAndInfo    OBJECT IDENTIFIER ::= { zteuTrap 2 }
+zteuAlarmTrapAndInfo     OBJECT IDENTIFIER ::= { zteuTrap 3 }
+zteuMECommTrapAndInfo       OBJECT IDENTIFIER ::= { zteuTrap 6 }
+zteuHeartBeatTrapAndInfo       OBJECT IDENTIFIER ::= { zteuTrap 7 }
+
+zteuAlarmSyncInfo     OBJECT IDENTIFIER ::= { zteuAlarmTrapAndInfo 6 }
+zteuAlarmInfo     OBJECT IDENTIFIER ::= { zteuAlarmTrapAndInfo 8 }
+zteuSyncInfo      OBJECT IDENTIFIER ::= { zteuSyncTrapAndInfo 5 }
+zteuSystemInfo    OBJECT IDENTIFIER ::= { zteuSystemTrapAndInfo 2 }
+zteuMECommInfo       OBJECT IDENTIFIER ::= { zteuMECommTrapAndInfo 2 }
+zteuHeartBeartInfo       OBJECT IDENTIFIER ::= { zteuHeartBeatTrapAndInfo 2 }
+-- ********************************************************************
+                   
+
+-- ********************************************************************
+-- TEXTUAL-CONVENTION Definition
+-- ********************************************************************
+   SystemNotifyType-TC ::= TEXTUAL-CONVENTION
+   STATUS current
+   DESCRIPTION " 
+    This textual convention presents system notification
+   "
+   SYNTAX  OCTET STRING                   
+
+   AlarmSyncTrapType-TC ::= TEXTUAL-CONVENTION
+	   STATUS current
+	   DESCRIPTION "
+		   This textual convention presents AlarmSyncTrap Type
+		   ast-SYNCSTART(1)        Start sync state
+		   ast-SYNCCOMPLETE(2)      complete
+		   ast-SYNCTERMINATE(3)		terminate by user
+		   ast-UNKNOWN(4)        unknown
+		  " 
+	   SYNTAX INTEGER 
+	   {
+		  ast-SYNCSTART(1),
+		  ast-SYNCCOMPLETE(2),
+		  ast-SYNCTERMINATE(3),
+		  ast-UNKNOWN(4)
+	   }
+
+-- ********************************************************************
+-- Trap Definition
+-- ********************************************************************
+zteuObjectCreationTrap  NOTIFICATION-TYPE
+        OBJECTS
+        {
+                creationTrapID,        
+                creationObjectName,
+                creationObjectType,
+                creationTime,           
+                creationObjectInfo,
+                creationAdditionalInfo
+        }
+        STATUS  current
+        DESCRIPTION
+                " This trap presents Object Creation Trap "
+        ::= { zteuSyncTrapAndInfo 1 }
+
+creationTrapID  OBJECT-TYPE
+        SYNTAX          OCTET STRING
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION
+                "This attribute presents a trap identifier"
+        ::= { zteuSyncInfo  1 }
+
+creationObjectName OBJECT-TYPE
+        SYNTAX          NamingAttributes-T 
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION
+                "This attribute presents object name,
+                For details,please refer NamingAttributes-T's definition"
+        ::= { zteuSyncInfo  2 }
+
+creationObjectType OBJECT-TYPE
+        SYNTAX          ObjectType-TC 
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION
+                " This attribute presents object type"
+        ::= { zteuSyncInfo  3 }
+
+creationTime  OBJECT-TYPE
+        SYNTAX          Time-TC 
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION
+                " This attribute presents creation time "
+    ::= { zteuSyncInfo 4 }
+
+creationObjectInfo  OBJECT-TYPE
+        SYNTAX          ObjectNVSList-T 
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION
+                " This attribute presents object information,it is consist of
+				a list of parameters,represented in name-value pairs format:
+				<'',''>[,<'',''>,......]for ObjectNVSList-T,NamingAttributes-T,
+				LayeredParameterList-T type parameters,the value should be 
+				wrapped with '[]' if it isn't null,e.g. <'emsAdditionalInfo',
+				'[<'egParaName','for example'>]'>
+				Object: EMS			
+						Name                      Value
+						'emsUserLabel'            DisplayString, 
+                        'emsType'                 DisplayString,      
+                        'emsVersion'              DisplayString,
+                        'emsAddress'              DisplayString,  
+				        'emsCommState'			  Refer to 'CommunicationState-TC',represented in string format.
+                        'emsAdditionalInfo'   	  Refer to 'ObjectNVSList-T'
+                Object: ManagedElement
+						'meUserLabel'                     DisplayString, 
+						'meOwner'							DisplayString,
+						'meLocation'                      DisplayString,
+						'meVersion'                       DisplayString,
+						'meProductName'					DisplayString,
+						'meCommunicationState'			Refer to 'CommunicationState-TC,represented in string format.
+						'meInSyncState'					Refer to 'BOOL-TC',represented in string format.           
+						'meAddress'                       DisplayString,              
+						'ifGateMe'                      Refer to 'BOOL-TC',represented in string format.
+						'meCreatedTime'					Refer to 'Time-TC',represented in string format.            
+						'meAdditionalInfo'				Refer to 'ObjectNVSList-T'
+                Object: Equipment
+						'eqUserLabel'             DisplayString,          
+						'eqOwner'                 DisplayString,              
+						'eqServiceState'          Refer to 'ServiceState-TC',represented in string format.
+						'eqExpectedEquipmentObjectType'   Refer to 'EquipmentObjectType-TC',represented in string format.
+						'eqInstalledEquipmentObjectType'  Refer to 'EquipmentObjectType-TC',represented in string format.
+						'eqInstalledVersion'    DisplayString,
+						'eqAdminStatus'         'INTEGER',represented in string format.
+						'boardParameters'       Refer to 'ObjectNVSList-T',
+						'eqAdditionalInfo'      Refer to 'ObjectNVSList-T'  
+				Object: EquipmentHolder		
+						'ehUserLabel'                    DisplayString,          
+						'ehOwner'                        DisplayString,      
+						'ehHolderType'                   Refer to 'EquipmentHolderType-TC',represented in string format. 
+						'ehVersion'					     DisplayString,
+						'ehExpectedOrInstalledEquipment' Refer to 'NamingAttributes-T',
+						'ehAcceptableEquipmentTypeList'  Refer to 'EquipmentObjectTypeList-T',represented in string format.   
+						'holderState'                    Refer to 'HolderState-TC',represented in string format.
+						'ehAdditionalInfo'               Refer to 'ObjectNVSList-T'  
+                Object: TerminationPoint
+				   	    'tpUserLabel'           DisplayString,
+						'tpType'                Refer to 'TPType-TC',represented in string format.        
+						'tpConnectionState'     Refer to 'TPConnectionState-TC',represented in string format.
+						'tpMappingMode'         Refer to 'TerminationMode-TC',represented in string format. 
+						'tpDirection'           Refer to 'Directionality-TC',represented in string format. 
+						'tpTransmissionParams'  Refer to 'LayeredParameterList-T',represented in string format.
+						'tpAdminStatus'         INTEGER,represented in string format.
+						'tpOperStatus'          INTEGER,represented in string format.
+						'tpAdditionalInfo'      Refer to 'ObjectNVSList-T' 	
+                Object: TopologicalLink
+						'tlUserLabel'            DisplayString, 
+						'tlDirection'            INTEGER,represented in string format.      
+						'tlLayerRate'            Refer to 'LayerRate-TC',represented in string format.
+						'tlAEnd'				   Refer to 'NamingAttributes-T',
+						'tlZEnd'				   Refer to 'NamingAttributes-T',
+						'tlAdditionalInfo'   	  Refer to ' ObjectNVSList-T'.      
+				"
+        ::= { zteuSyncInfo 5 }
+
+creationAdditionalInfo OBJECT-TYPE
+        SYNTAX          ObjectNVSList-T 
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION
+                " This attribute presents additional information
+                "
+        ::= { zteuSyncInfo 6 } 
+
+    
+zteuObjectDeletionTrap  NOTIFICATION-TYPE
+        OBJECTS
+        {
+                deletionTrapID,        
+                deletionObjectName,
+                deletionObjectType,
+                deletionTime,           
+                deletionAdditionalInfo
+        }
+        STATUS  current
+        DESCRIPTION
+                "This trap presents Object Deletion Trap "
+        ::= { zteuSyncTrapAndInfo 2 }                       
+
+deletionTrapID  OBJECT-TYPE
+        SYNTAX          OCTET STRING
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION
+                "This attribute presents trap identifier"
+        ::= { zteuSyncInfo 7 }
+
+deletionObjectName OBJECT-TYPE
+        SYNTAX          NamingAttributes-T 
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION
+                " This attribute presents object name,
+                For details,please refer NamingAttributes-T's definition"
+        ::= { zteuSyncInfo 8 }
+
+deletionObjectType OBJECT-TYPE
+        SYNTAX          ObjectType-TC 
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION
+                " This attribute presents object type"
+        ::= { zteuSyncInfo 9 }
+
+deletionTime  OBJECT-TYPE
+        SYNTAX          Time-TC 
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION
+                "  "
+    ::= { zteuSyncInfo 10 }
+
+deletionAdditionalInfo OBJECT-TYPE
+        SYNTAX          ObjectNVSList-T 
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION
+                " This attribute presents additional information
+                "
+        ::= { zteuSyncInfo 11 } 
+
+
+zteuObjectAVCTrap  NOTIFICATION-TYPE
+        OBJECTS
+        {
+                avcTrapID,        
+                avcObjectName,
+                avcObjectType,
+                avcChangeTime,
+                avcAttributesList,              
+                avcAdditionalInfo
+        }
+        STATUS  current
+        DESCRIPTION
+                " This trap presents Object Attribute Change Trap,refer to  zteuObjectCreationTrap"
+        ::= { zteuSyncTrapAndInfo 3 }                      
+
+avcTrapID  OBJECT-TYPE
+        SYNTAX          OCTET STRING
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION
+                "This attribute presents trap identifier"
+        ::= { zteuSyncInfo 12}
+
+avcObjectName OBJECT-TYPE
+        SYNTAX          NamingAttributes-T 
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION
+                " This attribute presents object name,
+                For details,please refer NamingAttributes-T's definition"
+        ::= { zteuSyncInfo 13 }
+
+avcObjectType OBJECT-TYPE
+        SYNTAX          ObjectType-TC 
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION
+                " This attribute presents object type"
+        ::= { zteuSyncInfo 14 }
+
+avcChangeTime  OBJECT-TYPE
+        SYNTAX          Time-TC 
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION
+                " This attribute presents AVC change time "
+    ::= { zteuSyncInfo 15 }
+
+avcAttributesList  OBJECT-TYPE
+        SYNTAX          ObjectNVSList-T 
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION
+                " This attribute presents object information,it is consist of
+				a list of parameters formatted in name-value pair
+				Object: EMS			
+						Name                      Value
+						'emsUserLabel'            DisplayString, 
+                        'emsAdditionalInfo'   	  Refer to 'ObjectNVSList-T'
+                Object: ManagedElement
+						'meUserLabel'                    DisplayString, 
+						'meOwner'						 DisplayString,
+						'meVersion'                      DisplayString,
+						'meAddress'                      DisplayString,              
+						'ifGateMe'                       Refer to 'BOOL-TC',represented in string format.					
+						'meAdditionalInfo'				 Refer to 'ObjectNVSList-T'
+                Object: Equipment
+						'eqUserLabel'                    DisplayString,          
+						'eqInstalledVersion'             DisplayString,
+						'boardParameters'                Refer to 'ObjectNVSList-T',
+						'eqAdditionalInfo'               Refer to 'ObjectNVSList-T'  
+				Object: EquipmentHolder		
+						'ehUserLabel'                    DisplayString,          
+						'ehHolderType'                   Refer to 'EquipmentHolderType-TC',represented in string format. 
+						'ehVersion'					     DisplayString,
+						'ehExpectedOrInstalledEquipment' Refer to 'NamingAttributes-T',
+						'ehAcceptableEquipmentTypeList'  Refer to 'EquipmentObjectTypeList-T',represented in string format.   
+						'ehAdditionalInfo'               Refer to 'ObjectNVSList-T'  
+                Object: TerminationPoint
+				   	    'tpUserLabel'           DisplayString,
+						'tpMappingMode'         Refer to 'TerminationMode-TC',represented in string format. 
+						'tpTransmissionParams'  Refer to 'LayeredParameterList-T',represented in string format.
+						'tpAdditionalInfo'      Refer to 'ObjectNVSList-T' 	
+                Object: TopologicalLink
+						'tlUserLabel'            DisplayString, 
+						'tlAdditionalInfo'   	  Refer to ' ObjectNVSList-T'. 
+				"
+        ::= { zteuSyncInfo 16 }
+
+avcAdditionalInfo OBJECT-TYPE
+        SYNTAX          ObjectNVSList-T 
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION
+                " This attribute presents additional information
+                "
+        ::= { zteuSyncInfo 17 } 
+
+
+zteuObjectStateChangeTrap  NOTIFICATION-TYPE
+        OBJECTS
+        {
+                scTrapID,        
+                scObjectName,
+                scObjectType,
+                scChangeTime,
+                scAttributesList,               
+                scAdditionalInfo
+        }
+        STATUS  current
+        DESCRIPTION
+                " This trap presents Object State Change Trap "
+        ::= { zteuSyncTrapAndInfo 4 }       
+                        
+scTrapID  OBJECT-TYPE
+        SYNTAX          OCTET STRING
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION
+                "This attribute presents trap identifier"
+        ::= { zteuSyncInfo 18 }
+
+scObjectName OBJECT-TYPE
+        SYNTAX          NamingAttributes-T 
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION
+                " This attribute presents object name,
+                For details,please refer NamingAttributes-T's definition"
+        ::= { zteuSyncInfo 19 }
+
+scObjectType OBJECT-TYPE
+        SYNTAX          ObjectType-TC 
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION
+                " This attribute presents object type"
+        ::= { zteuSyncInfo 20 }
+
+scChangeTime  OBJECT-TYPE
+        SYNTAX          Time-TC 
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION
+                " This attribute presents creation time"
+    ::= { zteuSyncInfo 21 }
+
+scAttributesList  OBJECT-TYPE
+        SYNTAX          ObjectNVSList-T 
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION
+                " This attribute presents object attributes.,it is consist of
+				a list of parameters formatted in name-value pair
+				Object: EMS			
+						Name                      Value
+				        'emsCommState'			  Refer to 'CommunicationState-TC',represented in string format.
+                Object: ManagedElement
+						'meCommunicationState'			Refer to 'CommunicationState-TC,represented in string format.
+				Object: Equipment						
+						'eqServiceState'          Refer to 'ServiceState-TC',represented in string format.						
+				Object: EquipmentHolder							
+						'holderState'                    Refer to 'HolderState-TC',represented in string format.
+                Object: TerminationPoint
+				   	   	'tpConnectionState'     Refer to 'TPConnectionState-TC',represented in string format.						
+				"
+        ::= { zteuSyncInfo 22 }
+
+scAdditionalInfo OBJECT-TYPE
+        SYNTAX          ObjectNVSList-T 
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION
+                " This attribute presents additional information
+                "
+        ::= { zteuSyncInfo 23 } 
+ 
+zteuAlarmSyncTrap NOTIFICATION-TYPE
+		OBJECTS
+        {
+				astAlarmSyncTrapID,
+	            astAlarmSyncType,
+				astAlarmTotalNum,
+			    astAdditionalInfo 
+        }
+        STATUS  current
+        DESCRIPTION
+                " This trap presents alarm synchronization trap. When the synchronization alarm operation is excuted
+				  the trap will be published.
+                "
+::= { zteuAlarmTrapAndInfo 5 }  
+
+astAlarmSyncTrapID  OBJECT-TYPE
+
+		SYNTAX          OCTET STRING
+		MAX-ACCESS      read-only
+		STATUS          current
+		DESCRIPTION
+			"This attribute presents trap identifier"
+		::= { zteuAlarmSyncInfo 1 } 
+
+astAlarmSyncType  OBJECT-TYPE
+
+		SYNTAX          AlarmSyncTrapType-TC
+		MAX-ACCESS      read-only
+		STATUS          current
+		DESCRIPTION
+			"This attribute presents the AlarmSyncType."
+		::= { zteuAlarmSyncInfo 2 } 		
+		
+astAlarmTotalNum  OBJECT-TYPE
+
+		SYNTAX          INTEGER(0..32767)
+        MAX-ACCESS      read-only
+        STATUS          current
+		DESCRIPTION
+			"This attribute presents the total current alarms to be published."
+		::= { zteuAlarmSyncInfo 3 } 
+
+astAdditionalInfo  OBJECT-TYPE
+
+		SYNTAX          DisplayString 
+        MAX-ACCESS      read-only
+        STATUS          current
+		DESCRIPTION
+			"This attribute presents the addition information."
+		::= { zteuAlarmSyncInfo 4 } 
+	
+		
+zteuAlarmTrap  NOTIFICATION-TYPE
+        OBJECTS
+        {
+				atAlarmTrapID,
+	            atSource,
+				atDetector,
+                atLayerRate,
+                atServerity,
+				atProbableCause,
+				atVendorProbableCause,
+                atAlarmType,
+				atTime,  
+				atIsClearable,
+				atPMLocation,
+                atGranularity,
+                atThresholdType,
+                atThresholdValue,
+				atPMValue,
+                atUnit,  
+				atProtectionType,
+                atSwitchReason,
+                atPGName,
+                atProtectedTP,
+                atSwitchAwayFromTP,
+				atSwitchToTP,
+				atCorrelated,
+				atDescInfo,
+                atAdditionalInfo
+        }
+        STATUS  current
+        DESCRIPTION
+                " This trap presents alarm trap.This trap reserved for future usage.
+                  We provide alarm traps for each alarm serverity,It's convenience 
+				  for some trap monitors.
+                 "
+        ::= { zteuAlarmTrapAndInfo 7 }                   
+
+	
+atAlarmTrapID  OBJECT-TYPE
+
+        SYNTAX          OCTET STRING
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION
+
+                "This trap presents trap identifier"
+
+        ::= { zteuAlarmInfo 1 } 
+
+	 
+atSource  OBJECT-TYPE
+        SYNTAX          NamingAttributes-T
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION
+                "This attribute presents alarm source
+                For details,please refer NamingAttributes-T's definition
+                "
+        ::= { zteuAlarmInfo 2 } 
+		
+atDetector OBJECT-TYPE
+		 SYNTAX NamingAttributes-T
+		 MAX-ACCESS read-only
+		 STATUS current
+		 DESCRIPTION "
+		 This attribute presents the detector of the alarm, 
+		 For details,please refer NamingAttributes-T definition
+		 It can be null if the alarm source and the detector is the same object.
+		 "
+		 ::= {zteuAlarmInfo 3} 
+         
+atLayerRate OBJECT-TYPE
+        SYNTAX          LayerRate-TC 
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION
+                "This attribute presents layer rate "
+        ::= { zteuAlarmInfo 4 }    
+        
+atServerity OBJECT-TYPE
+        SYNTAX          PerceivedSeverity-TC 
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION
+                " This attribute presents alarm serverity"
+        ::= { zteuAlarmInfo 5 }
+
+
+atProbableCause OBJECT-TYPE
+        SYNTAX          ProbableCause-TC 
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION
+        " This attribute presents probable cause of alarm.If the alarm is a TCA,it 
+		can also represents 
+		the performance parameter name"
+        ::= { zteuAlarmInfo 6 }  
+
+atVendorProbableCause OBJECT-TYPE
+        SYNTAX          DisplayString 
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION
+        " This attribute presents probable cause of alarm.If the alarm is a TCA,it 
+		can also represents 
+		the performance parameter name"
+        ::= { zteuAlarmInfo 7 }  
+
+atAlarmType OBJECT-TYPE
+        SYNTAX AlarmType-TC
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION
+                " This attribute presents alarm type "
+        ::= { zteuAlarmInfo 8 }
+        
+atTime  OBJECT-TYPE
+        SYNTAX          Time-TC 
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION
+                " This attribute presents raise or clear time of alarm,alarm clear 
+				identified by atServerity"
+        ::= { zteuAlarmInfo 9 }
+
+atIsClearable  OBJECT-TYPE
+         SYNTAX INTEGER 
+	   {
+		  ic-False(0),
+		  ic-True(1)       
+	   }
+        MAX-ACCESS      read-only
+		STATUS          current
+        DESCRIPTION
+        " This variable Indicates if the event is clearable (or is itself a clear),This field is used to 
+		identify the clearing of an alarm"
+
+        ::= { zteuAlarmInfo 10 } 	
+		
+atPMLocation  OBJECT-TYPE
+        SYNTAX          PMLocation-TC
+        MAX-ACCESS      read-only
+		STATUS          current
+        DESCRIPTION
+        " This variable presents monitor location of performance,reserved"
+
+        ::= { zteuAlarmInfo 11 } 
+
+atGranularity    OBJECT-TYPE
+     SYNTAX Granularity-TC
+     MAX-ACCESS read-only
+     STATUS current
+     DESCRIPTION "
+     This attribute presents monitor granuarity of
+     the performance value
+     "
+     ::= {zteuAlarmInfo 12}             
+
+atThresholdType    OBJECT-TYPE
+     SYNTAX PMThresholdType-TC
+     MAX-ACCESS read-only
+     STATUS current
+     DESCRIPTION "
+     This attribute presents threshold
+     type of performance
+     "
+     ::= {zteuAlarmInfo 13}               
+
+atThresholdValue   OBJECT-TYPE
+     SYNTAX PMValue-TC
+     MAX-ACCESS read-only
+     STATUS current
+     DESCRIPTION "
+     This attribute presents threshold value
+     of performance
+	 "
+     ::= {zteuAlarmInfo 14}              
+
+atPMValue           OBJECT-TYPE
+     SYNTAX PMValue-TC
+     MAX-ACCESS read-only
+     STATUS current
+     DESCRIPTION "
+     This attribute presents performance value
+     "
+     ::= {zteuAlarmInfo 15}             
+
+atUnit     OBJECT-TYPE
+     SYNTAX Unit-TC
+     MAX-ACCESS read-only
+     STATUS current
+     DESCRIPTION "
+     This attribute presents unit of
+     performance value
+     "
+     ::= {zteuAlarmInfo 16}         
+
+atProtectionType  OBJECT-TYPE
+        SYNTAX          INTEGER(0..32767)
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION
+                "This attribute presents protection type of protection group
+                "
+        ::= { zteuAlarmInfo 17 } 
+
+
+atSwitchReason OBJECT-TYPE
+        SYNTAX          DisplayString 
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION
+                "This attribute presents switch reason of PSE"
+        ::= { zteuAlarmInfo 18 }   
+
+atPGName OBJECT-TYPE
+        SYNTAX          NamingAttributes-T 
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION
+                " This attribute presents protection group name"
+        ::= { zteuAlarmInfo 19 }
+
+
+atProtectedTP OBJECT-TYPE
+        SYNTAX NamingAttributes-T
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION
+                " This attribute presents protected TP of protection group,reserved."
+        ::= { zteuAlarmInfo 20 }
+
+atSwitchAwayFromTP OBJECT-TYPE
+        SYNTAX NamingAttributes-T
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION
+                "Identifies the TP being switched away from."
+        ::= { zteuAlarmInfo 21 }  
+
+atSwitchToTP OBJECT-TYPE
+        SYNTAX NamingAttributes-T
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION
+                "Identifies the TP which is being switched to."
+        ::= { zteuAlarmInfo 22 }  
+
+atCorrelated     OBJECT-TYPE
+     SYNTAX DisplayString
+     MAX-ACCESS read-only
+     STATUS current
+     DESCRIPTION "
+     This attribute presents the correlated alarms identifiers of the specific alarm,
+	 the alarm should formated in a string,','is used to seperate discrete items,'-' 
+	 is used to seperate continuous items.
+     "
+     ::= {zteuAlarmInfo 23} 
+
+atDescInfo     OBJECT-TYPE
+     SYNTAX DisplayString
+     MAX-ACCESS read-only
+     STATUS current
+     DESCRIPTION "
+     This variable presents description information for the alarm.
+     "
+     ::= {zteuAlarmInfo 24}
+	 
+atAdditionalInfo  OBJECT-TYPE 
+        SYNTAX          ObjectNVSList-T 
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION
+                "  This attribute presents additional information,,it is consist of
+				a list of parameters,represented in name-value pairs format
+				(see example in creationObjectInfo of zteuObjectCreationTrap):
+						Name                      Value
+						'ServiceAffecting'        DisplayString,the optional values are:'Impact','No Impact', 
+						'VendorAlarmCode'         DisplayString,filled with the alarm code of the vendor
+            'MEUserLabel'             Display alarm-related Managed Element Information "
+        ::= { zteuAlarmInfo 25 } 
+
+                          
+zteuSystemTrap   NOTIFICATION-TYPE
+        OBJECTS
+        {
+                systemTrapID,
+                systemTrapSource,
+                systemTrapSourceType,                               
+                systemNotifyType,                               
+                systemAdditionalInfo
+        }
+        STATUS  current
+        DESCRIPTION
+                "  This trap presents System Trap "
+        ::= { zteuSystemTrapAndInfo 1 }
+        
+systemTrapID  OBJECT-TYPE
+        SYNTAX          OCTET STRING
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION
+                " This attribute presents trap identifier"
+        ::= { zteuSystemInfo 1 }
+                          
+    
+systemTrapSource  OBJECT-TYPE
+        SYNTAX          NamingAttributes-T
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION
+                "This attribute presents system trap source,
+                For details,please refer NamingAttributes-T's definition"
+        ::= { zteuSystemInfo 2 }
+
+systemTrapSourceType OBJECT-TYPE
+        SYNTAX          DisplayString 
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION
+                " This attribute presents object type"
+        ::= { zteuSystemInfo  3 }
+    
+systemNotifyType   OBJECT-TYPE
+        SYNTAX          SystemNotifyType-TC             
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION
+                " This attribute presents system trap type"
+        ::= { zteuSystemInfo 4 }           
+        
+systemAdditionalInfo  OBJECT-TYPE
+        SYNTAX          ObjectNVSList-T 
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION
+                "  This attribute presents additional information"
+        ::= { zteuSystemInfo 5 }      
+
+
+
+
+zteuMECommTrap NOTIFICATION-TYPE
+   OBJECTS {    meCommTrapID,
+                metName,
+                meCommStatus,
+                meCommTime,                
+                meCommAdditionalInfo } 
+   
+				STATUS       current
+   
+				DESCRIPTION          
+      "This trap is used to present status change about communication
+	  between EMS and ME.The trap will raise when the communication between 
+	  EMS and ME is broken down or is recovered.This trap will only be used
+	  in management system and not in agent.
+	  "
+   
+				::= { zteuMECommTrapAndInfo 1 }
+				
+meCommTrapID  OBJECT-TYPE
+        SYNTAX          OCTET STRING
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION
+                " This attribute presents trap identifier"
+        ::= { zteuMECommInfo 1 }
+                          
+    
+metName  OBJECT-TYPE
+        SYNTAX          NamingAttributes-T
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION
+                "This attribute presents ME name,EMS's communication status 
+				with which changes."
+        ::= { zteuMECommInfo 2 }
+
+meCommStatus OBJECT-TYPE
+        SYNTAX INTEGER 
+		{
+	      ct-Normal(1),
+		  ct-Released(2)
+		}
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION
+                " This attribute presents communication status between EMS 
+				and ME,ct-Normal(1) presents communication is available,
+				ct-Released presents communication is broken down.
+				"
+        ::= { zteuMECommInfo  3 }
+    
+meCommTime   OBJECT-TYPE
+        SYNTAX          Time-TC              
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION
+                " This attribute presents the occur time of this trap"
+        ::= { zteuMECommInfo 4 }           
+        
+meCommAdditionalInfo  OBJECT-TYPE
+        SYNTAX          ObjectNVSList-T 
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION
+                "  This attribute presents additional information"
+        ::= { zteuMECommInfo 5 }
+
+zteuHeartBeatTrap NOTIFICATION-TYPE
+   OBJECTS {    heartBeatTrapID,
+                heartBeatTime } 
+   
+				STATUS       current
+   
+				DESCRIPTION          
+      "This trap is used to present HeartBeart Trap.
+	  "
+   
+				::= { zteuHeartBeatTrapAndInfo 1 }
+				
+heartBeatTrapID  OBJECT-TYPE
+        SYNTAX          OCTET STRING
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION
+                " This attribute presents trap identifier"
+        ::= { zteuHeartBeartInfo 1 }
+                          
+    
+heartBeatTime   OBJECT-TYPE
+        SYNTAX          Time-TC              
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION
+                " This attribute presents the occur time of this trap"
+        ::= { zteuHeartBeartInfo 2 }           
+
+zteuNotificationGroup NOTIFICATION-GROUP
+                NOTIFICATIONS
+                {
+                zteuObjectCreationTrap,
+                zteuObjectDeletionTrap,
+                zteuObjectAVCTrap,
+                zteuObjectStateChangeTrap,
+				zteuAlarmSyncTrap,
+                zteuAlarmTrap,
+                zteuSystemTrap,
+				zteuMECommTrap,
+				zteuHeartBeatTrap
+                }        
+       STATUS current
+       DESCRIPTION 
+       "
+       This group presents zte unitrans notifications
+       "  
+       ::= { zteuTrap 1000}  
+       
+zteuObjectCreationTrapObjectGroup  OBJECT-GROUP
+        OBJECTS
+        {
+                creationTrapID,        
+                creationObjectName,
+                creationObjectType,
+                creationTime,           
+                creationObjectInfo,
+                creationAdditionalInfo
+        }
+        STATUS  current
+        DESCRIPTION
+                " This trap presents Object Creation Trap "
+        ::= { zteuTrap 1001 }
+        
+zteuObjectDeletionTrapObjectGroup  OBJECT-GROUP
+        OBJECTS
+        {
+                deletionTrapID,        
+                deletionObjectName,
+                deletionObjectType,
+                deletionTime,           
+                deletionAdditionalInfo
+        }
+        STATUS  current
+        DESCRIPTION
+                "This trap presents Object Deletion Trap "
+        ::= { zteuTrap 1002 }                       
+zteuObjectAVCTrapObjectGroup  OBJECT-GROUP
+        OBJECTS
+        {
+                avcTrapID,        
+                avcObjectName,
+                avcObjectType,
+                avcChangeTime,
+                avcAttributesList,              
+                avcAdditionalInfo
+        }
+        STATUS  current
+        DESCRIPTION
+                " This trap presents Object Attribute Change Trap "
+        ::= { zteuTrap 1003 }                                             
+zteuObjectStateChangeTrapObjectGroup  OBJECT-GROUP
+        OBJECTS
+        {
+                scTrapID,        
+                scObjectName,
+                scObjectType,
+                scChangeTime,
+                scAttributesList,               
+                scAdditionalInfo
+        }
+        STATUS  current
+        DESCRIPTION
+                " This trap presents Object State Change Trap "
+        ::= { zteuTrap 1004 }               
+zteuAlarmTrapObjectGroup  OBJECT-GROUP
+        OBJECTS
+        {
+ 				atAlarmTrapID,
+                atSource,
+				atDetector,
+                atLayerRate,
+                atServerity,
+				atProbableCause,
+				atVendorProbableCause,
+                atAlarmType,
+				atTime,  
+				atIsClearable,
+				atPMLocation,
+                atGranularity,
+                atThresholdType,
+                atThresholdValue,
+				atPMValue,
+                atUnit, 
+				atProtectionType,
+                atSwitchReason,
+                atPGName,
+                atProtectedTP,
+                atSwitchAwayFromTP,
+				atSwitchToTP,
+				atCorrelated,
+				atDescInfo,
+                atAdditionalInfo
+        }
+        STATUS  current
+        DESCRIPTION
+                " This trap presents alarm trap "
+        ::= { zteuTrap 1005 }   
+		
+zteuAlarmSyncTrapObjectGroup OBJECT-GROUP
+		OBJECTS
+        {
+				astAlarmSyncTrapID,
+	            astAlarmSyncType,
+				astAlarmTotalNum,
+			    astAdditionalInfo 
+        }
+        STATUS  current
+        DESCRIPTION
+                " This trap presents alarm sync trap "
+::= { zteuTrap 1006 } 
+
+zteuSystemTrapObjectGroup   OBJECT-GROUP
+        OBJECTS
+        {
+                systemTrapID,
+                systemTrapSource,
+                systemTrapSourceType,
+                systemNotifyType,                               
+                systemAdditionalInfo
+        }
+        STATUS  current
+        DESCRIPTION
+                "  This trap presents System Trap "
+        ::= { zteuTrap 1007 }       
+
+zteuMECommTrapObjectGroup   OBJECT-GROUP
+        OBJECTS
+        {
+                meCommTrapID,
+                metName,
+                meCommStatus,
+                meCommTime,                
+                meCommAdditionalInfo
+        }
+        STATUS  current
+        DESCRIPTION
+                "  This trap presents Communication Status change Trap of ME  "
+        ::= { zteuTrap 1009 }                         
+
+zteuHeartBeatObjectGroup   OBJECT-GROUP
+        OBJECTS
+        {
+                heartBeatTrapID,
+                heartBeatTime
+        }
+        STATUS  current
+        DESCRIPTION
+                "  This trap presents HeartBeat Trap  "
+        ::= { zteuTrap 1010 }      
+                                
+    END
+   

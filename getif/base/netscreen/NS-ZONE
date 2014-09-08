@@ -1,0 +1,232 @@
+-- These MIBs were created on 05/08/2000
+-- This module defines NetScreen private MIBs for VPN tunnel monitoring
+-- 
+-- Copyright (c) 1999 - 2001 by NetScreen Technologies, Inc.
+-- All rights reserved.
+-- 
+
+-- MODULE-IDENTITY
+--  OrgName
+--    Netscreen Technologies, Inc.
+--  ContactInfo
+--     Customer Support
+--     
+--     2860 San TOmas Expwy
+--     Santa Clara, CA  95051
+--     USA
+--    
+--     Tel: 1.877.NETSCREEN
+--     E-mail: support@netscreen.com
+--     Http://www.netscreen.com
+
+--  Descr
+--    This module defines the object that are used to monitor
+--    all the entries in the Address Book 
+--
+--  Last modified date: 09/28/2001
+--    
+
+NETSCREEN-ZONE-MIB DEFINITIONS ::= BEGIN
+IMPORTS
+
+    IpAddress FROM RFC1155-SMI
+    DisplayString 	FROM RFC1213-MIB 
+    netscreenZone    FROM NETSCREEN-SMI;
+    nsZoneCfg 	OBJECT IDENTIFIER ::= {netscreenZone 1}
+    
+	nsZoneCfgTable OBJECT-TYPE
+		SYNTAX  SEQUENCE OF NsZoneCfgTblEntry
+		ACCESS  not-accessible
+		STATUS  mandatory
+		DESCRIPTION 
+		        "NetScreen device can have lots of secure zone. This table collects
+		        the zones exiting in NetScreen device."
+		::= { nsZoneCfg 1 }
+
+    nsZoneCfgTblEntry OBJECT-TYPE
+        SYNTAX  NsZoneCfgTblEntry
+        ACCESS  not-accessible
+        STATUS  mandatory
+        DESCRIPTION
+               "Each entry in the table holds a set of configuration parameters associated 
+               with an instance of secure zone."
+        INDEX   { nsZoneCfgId }
+        ::= { nsZoneCfgTable 1 }
+
+	NsZoneCfgTblEntry ::=
+		SEQUENCE {
+          nsZoneCfgId
+              INTEGER,
+		  nsZoneCfgName
+		      DisplayString,
+		  nsZoneCfgType
+			  INTEGER,
+		  nsZoneCfgVsys
+			  INTEGER 
+		}
+
+	nsZoneCfgId OBJECT-TYPE
+    	SYNTAX  INTEGER
+        ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION
+             "A unique value for zone table.  Its value
+              ranges between 1 and 65535 and may not be contigous. 
+              the index has no other meaning but a pure index" 
+        ::= { nsZoneCfgTblEntry 1 }
+
+	nsZoneCfgName OBJECT-TYPE
+        SYNTAX  DisplayString (SIZE (0..32))
+    	ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION
+             "secure zone name."
+        ::= { nsZoneCfgTblEntry 2 }       
+    nsZoneCfgType OBJECT-TYPE
+        SYNTAX  INTEGER {
+			regular(0),
+			layer2(1),
+			tunnel(2),
+			null(3)
+		}
+        ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION
+             "secure zone type"
+        ::= { nsZoneCfgTblEntry 3 }
+    nsZoneCfgVsys OBJECT-TYPE
+        SYNTAX  INTEGER
+        ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION
+             "secure zone belongs vsys."
+        ::= { nsZoneCfgTblEntry 4 }
+END
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

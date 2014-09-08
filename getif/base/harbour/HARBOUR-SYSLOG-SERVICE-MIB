@@ -1,0 +1,311 @@
+-- =======================================================================
+-- Syslog Service info 
+--
+-- Version 0.1 Created 2002.04.10 by suxiang
+-- This version of MIB is created just for the use of Network Management Systems
+-- display and config the HammerSeries Switch 's syslog service.
+--
+-- Copyright(c) 2001-2002 by Harbour Networks, Ltd.
+-- =======================================================================
+
+
+-- =======================================================================
+
+--
+-- HARBOUR syslog service objects
+--
+
+	HARBOUR-SYSLOG-SERVICE-MIB DEFINITIONS ::= BEGIN
+
+	IMPORTS
+	        DisplayString                   FROM SNMPv2-TC
+		IpAddress			FROM RFC1155-SMI
+		MODULE-IDENTITY         	FROM SNMPv2-SMI
+		OBJECT-TYPE		FROM SNMPv2-SMI
+		harbourAgent		FROM HARBOUR-BASE-MIB;
+
+
+	--The RowStatus textual convention is used to manage
+	-- the creation and deletion of conceptual rows, and 
+	--is used as the value of the SYNTAX clause for the 
+	--status column of a conceptual row. 
+	
+	RowStatus	::=	INTEGER{	
+					active(1),
+					notInServer(2),
+					notReady(3),
+					creatAndGo(4),
+					creatAndWait(5),
+					destroy(6)
+				}	
+	
+			
+-- =======================================================================
+--
+--  Organization  branches
+--
+	private      			OBJECT IDENTIFIER ::= { internet 4 }
+          	enterprises  			OBJECT IDENTIFIER ::= { private 1 }
+	harbournetworks			OBJECT IDENTIFIER ::= { enterprises 8212 }
+	harbourAgent			OBJECT IDENTIFIER ::= { harbournetworks 1 }
+	
+-- =======================================================================	
+	
+              	--  Syslog Service MIB
+
+	harbourSyslogService MODULE-IDENTITY
+	LAST-UPDATED 	"20020413"
+          	ORGANIZATION 	"Harbour Networks, Ltd."
+          	CONTACT-INFO 	"www.harbournetworks.com"
+          	DESCRIPTION  	
+          		"Harbour Syslog Service objects: objects common to all platforms."
+	::= { harbourAgent 8 }
+
+
+              	harbourSyslogServiceStatus OBJECT-TYPE
+              	SYNTAX INTEGER{
+                	down(0),
+                          	up(1)
+               	}
+
+              	ACCESS read-write
+              	STATUS current
+              	DESCRIPTION
+                  	"The status of the syslog service is up or down."
+              	::= { harbourSyslogService 1 }
+
+
+	harbourSyslogServiceServerStatus OBJECT-TYPE
+	SYNTAX INTEGER{
+                	down(0),
+                          	up(1)
+               	}
+
+              	ACCESS read-write
+              	STATUS current
+              	DESCRIPTION
+                  	"The status of the syslog log to server is up or down."
+              	::= { harbourSyslogService 2 }
+              	
+              	
+	harbourSyslogServiceMonitorStatus OBJECT-TYPE
+              	SYNTAX INTEGER{
+                	down(0),
+                          	up(1)
+               	}
+
+              	ACCESS read-write
+              	STATUS current
+              	DESCRIPTION
+                  	"The status of the syslog service logto monitor-terminal  is up or down."
+              	::= { harbourSyslogService 3 }
+
+
+	harbourSyslogRecordCommandLineStatus OBJECT-TYPE
+              	SYNTAX INTEGER{
+                	down(0),
+                          	up(1)
+               	}
+
+              	ACCESS read-write
+              	STATUS current
+              	DESCRIPTION
+                  	"The status of the recording command-line to syslog service server is up or down."
+              	::= { harbourSyslogService 4 }
+
+
+	harbourSyslogServiceLogLevel OBJECT-TYPE
+              	SYNTAX INTEGER{
+              		EMERG(0),
+              		ALERT(1),
+              		CRIT(2),
+              		ERR(3),
+              		WARNING(4),
+              		NOTICE(5),
+              		INFO(6),
+              		DEBUG(7)
+               	}
+
+              	ACCESS read-write
+              	STATUS current
+              	DESCRIPTION
+                  	"The level of the syslog service. We only log message whose's level equal 
+                  	or higher than it. The DEBUG level is the lowest level and the EMERG level
+                  	is highest level."
+              	::= { harbourSyslogService 5 }
+              	
+              	
+              	-- The Harbour Syslog Service LogTypes Control
+          	--
+          	-- The harbour syslog service server logtypes contains 
+           	-- configing syslog service logtypes setting.
+
+      
+	-- The harbourSyslogServiceLogTypes Table      
+              	
+	harbourSyslogServiceLogTypesTable OBJECT-TYPE
+              	SYNTAX SEQUENCE OF HarbourSyslogServiceLogTypesEntry 
+              	ACCESS not-accessible
+              	STATUS current
+              	DESCRIPTION
+                  	"A list of harbourSyslogServiceServerLogTypesTable entries."
+              	::= { harbourSyslogService 6 }
+              	
+              	
+              	harbourSyslogServiceLogTypesEntry OBJECT-TYPE
+              	SYNTAX HarbourSyslogServiceLogTypesEntry 
+              	ACCESS not-accessible
+              	STATUS current
+              	DESCRIPTION
+                  	"The syslog service log type list group infomation entry."
+              	INDEX { harbourSyslogServiceLogTypesIndex }
+              	::= { harbourSyslogServiceLogTypesTable 1 }
+	HarbourSyslogServiceLogTypesEntry ::= SEQUENCE {
+              		harbourSyslogServiceLogTypesIndex	INTEGER,
+              		harbourSyslogServiceLogTypesName	DisplayString  ( SIZE ( 1 .. 7  ) ) ,
+              		harbourSyslogServiceLogTypesStatus	INTEGER
+  	}
+
+              	
+              	harbourSyslogServiceLogTypesIndex OBJECT-TYPE
+              	SYNTAX INTEGER
+              	ACCESS read-only
+              	STATUS current
+              	DESCRIPTION
+                  	"The value of this object uniquely identifies this
+                  	harbourSyslogServiceLogTypes entry."
+              	::= { harbourSyslogServiceLogTypesEntry 1 }
+              	
+              	
+              	harbourSyslogServiceLogTypesName OBJECT-TYPE
+              	SYNTAX DisplayString  ( SIZE ( 1 .. 7  ) )
+              	ACCESS read-only
+              	STATUS current
+              	DESCRIPTION
+                  	"The name of the syslog service log types, include AUTH, BGP, CLI, SYSLOG
+                  	DEVCTRL, OSPF, PORT, RIP, ROUTE, SNMP, STP, SYSTEM, VLAN, WEB, 
+                  	etc."
+              	::= { harbourSyslogServiceLogTypesEntry 2 }
+              		
+ 
+ 	harbourSyslogServiceLogTypesStatus OBJECT-TYPE
+	SYNTAX INTEGER{
+                	down(0),
+                          	up(1)
+               	}
+              	ACCESS read-write
+              	STATUS current
+              	DESCRIPTION
+                  	"The status of the syslog service log types is up or down."
+              	::= { harbourSyslogServiceLogTypesEntry 3 }
+              	
+ 
+	-- The Harbour Syslog Service Server Control
+          	--
+          	-- The harbour syslog service server control contains 
+           	-- configing syslog service logto server setting.
+
+      
+	-- The harbourSyslogServiceServerControl Table                
+
+
+	harbourSyslogServiceServerTable OBJECT-TYPE
+              	SYNTAX SEQUENCE OF HarbourSyslogServiceServerEntry 
+              	ACCESS not-accessible
+              	STATUS current
+              	DESCRIPTION
+                  	"A list of harbourSyslogServiceServer entries."
+              	::= { harbourSyslogService 7 }
+
+
+	harbourSyslogServiceServerEntry OBJECT-TYPE
+              	SYNTAX HarbourSyslogServiceServerEntry 
+              	ACCESS not-accessible
+              	STATUS current
+              	DESCRIPTION
+                  	"The syslog service server list group infomation entry."
+              	INDEX { harbourSyslogServiceServerIndex }
+              	::= { harbourSyslogServiceServerTable 1 }
+	HarbourSyslogServiceServerEntry ::= SEQUENCE {
+              		harbourSyslogServiceServerIndex	INTEGER,
+              		harbourSyslogServiceServerIpAddress	IpAddress,
+              		harbourSyslogServiceServerPort	INTEGER ( 1 .. 65535  ),
+              		harbourSyslogServiceServerFacility	INTEGER ( 0 .. 7),
+              		harbourSyslogServiceServerRowStatus	RowStatus
+          	}
+
+
+	harbourSyslogServiceServerIndex OBJECT-TYPE
+              	SYNTAX INTEGER
+              	ACCESS read-only
+              	STATUS current
+              	DESCRIPTION
+                  	"The value of this object uniquely identifies this
+                  	harbourSyslogServiceServer entry."
+              	::= { harbourSyslogServiceServerEntry 1 }
+              
+              
+              	harbourSyslogServiceServerIpAddress OBJECT-TYPE
+              	SYNTAX IpAddress
+              	ACCESS read-write
+              	STATUS current
+              	DESCRIPTION
+                  	"The value of this object is the IpAddress of the server to which
+                  	the syslog messages will be sent."
+              	::= { harbourSyslogServiceServerEntry 2 }
+
+
+	harbourSyslogServiceServerPort OBJECT-TYPE
+              	SYNTAX INTEGER ( 1 .. 65535  )
+              	ACCESS read-write
+              	STATUS current
+              	DESCRIPTION
+                  	"The value of this object is the port of the server to which
+                  	the syslog messages will be sent."
+              	::= { harbourSyslogServiceServerEntry 3 }
+
+
+	harbourSyslogServiceServerFacility OBJECT-TYPE
+              	SYNTAX INTEGER{
+              		local0(0),
+              		local1(1),
+              		local2(2),
+              		local3(3),
+              		local4(4),
+              		local5(5),
+              		local6(6),
+              		local7(7)
+               	}
+
+              	ACCESS read-write
+              	STATUS current
+              	DESCRIPTION
+                  	"The facility is one of the following keywords: local0 through local7.
+                  	The facility specifies the subsystem that produced the message, i.e. 
+                  	all mail programs log with the mail facility (LOG_MAIL) if they log 
+                  	using syslog."
+              	::= { harbourSyslogServiceServerEntry 4 }
+
+
+	harbourSyslogServiceServerRowStatus 	OBJECT-TYPE
+  	SYNTAX RowStatus 	
+	ACCESS read-create
+	STATUS current
+	DESCRIPTION
+		"This object indicates the status of this entry."
+	::= { harbourSyslogServiceServerEntry 5 }
+
+
+	harbourSyslogRecordValidAccessStatus OBJECT-TYPE
+              	SYNTAX INTEGER{
+                	down(0),
+                          	up(1)
+               	}
+
+              	ACCESS read-write
+              	STATUS current
+              	DESCRIPTION
+                  	"The status of the recording valid access to syslog service server is up or down."
+              	::= { harbourSyslogService 8 }
+
+END

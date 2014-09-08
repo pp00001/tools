@@ -1,0 +1,224 @@
+-- =========================================================
+-- Copyright (c) 2001-2004, Harbour Networks Limited
+-- All rights reserved.
+--
+-- Name     : HARBOUR-BASE-MIB
+-- Intro    : The base MIB of all other private MIBS of Harbournetworks.
+-- History  : When          Who         What & Why
+--            2001.08.10    Chenbin     Create
+--            2003.10.27    Lida        Clean up for Hos
+--            2003.12.11    Lida        Add MicroHammer2E
+--                                      Add microHammer24EDv2
+--                                      Add microHammer2EDv2
+--            2004.03.01    Lida        Add microHammer2Ev2
+--            2004.03.13    Lida        Add bigHammer6805
+--            2004.04.08    Lida        Add powerHammerESR
+--            2004.04.09    Lida        Add netHammerM582
+--            2004.04.10    Lida        Add flexHammer5210 etc.
+--            2004.04.27    Liaoyuxia   Add harbourPortMonitor
+--            2004.05.31    Liaoyuxia   Add NetHammerM562
+-- =========================================================
+
+HARBOUR-BASE-MIB    DEFINITIONS ::= BEGIN
+
+IMPORTS
+    enterprises     FROM RFC1155-SMI;
+
+
+harbournetworks         OBJECT IDENTIFIER ::= { enterprises 8212 }
+--sagem                    OBJECT IDENTIFIER ::= { enterprises 1038 }
+
+--harbournetworks         OBJECT IDENTIFIER ::= { sagem 500 }
+-- Harbour Agent
+harbourAgent            OBJECT IDENTIFIER ::= { harbournetworks 1 }
+
+-- Harbour Products
+harbourProduct          OBJECT IDENTIFIER ::= { harbournetworks 2 }
+
+-- Harbour Products Series
+MicroHammerSeries       OBJECT IDENTIFIER ::= { harbourProduct 1 }
+FlexHammerSeries        OBJECT IDENTIFIER ::= { harbourProduct 2 }
+BigHammerSeries         OBJECT IDENTIFIER ::= { harbourProduct 3 }
+Hammer10000Series       OBJECT IDENTIFIER ::= { harbourProduct 4 }
+HammerDSLSeries         OBJECT IDENTIFIER ::= { harbourProduct 5 }
+NetHammerSeries         OBJECT IDENTIFIER ::= { harbourProduct 6 }
+AirSeries               OBJECT IDENTIFIER ::= { harbourProduct 7 }
+PowerHammerSeries       OBJECT IDENTIFIER ::= { harbourProduct 8 }
+IntegrativeSeries       OBJECT IDENTIFIER ::= { harbourProduct 9 }
+acSeries                OBJECT IDENTIFIER ::= { harbourProduct 10 }
+SoftCoSeries            OBJECT IDENTIFIER ::= { harbourProduct 11 }
+
+-- MicroHammer Series
+MicroHammer24           OBJECT IDENTIFIER ::= { MicroHammerSeries 1}
+MicroHammer2            OBJECT IDENTIFIER ::= { MicroHammerSeries 2}
+MicroHammer1            OBJECT IDENTIFIER ::= { MicroHammerSeries 3}
+MicroHammer2024E        OBJECT IDENTIFIER ::= { MicroHammerSeries 4}
+MicroHammer24E          OBJECT IDENTIFIER ::= { MicroHammerSeries 5}
+MicroHammer2024         OBJECT IDENTIFIER ::= { MicroHammerSeries 6}
+MicroHammer3024         OBJECT IDENTIFIER ::= { MicroHammerSeries 7}
+MicroHammer3024M        OBJECT IDENTIFIER ::= { MicroHammerSeries 8}
+MicroHammer24Ev2        OBJECT IDENTIFIER ::= { MicroHammerSeries 9}
+MicroHammer2E           OBJECT IDENTIFIER ::= { MicroHammerSeries 10}
+microHammer24EDv2       OBJECT IDENTIFIER ::= { MicroHammerSeries 11}
+microHammer2EDv2        OBJECT IDENTIFIER ::= { MicroHammerSeries 12}
+microHammer2v1          OBJECT IDENTIFIER ::= { MicroHammerSeries 13}
+microHammer24v1         OBJECT IDENTIFIER ::= { MicroHammerSeries 14}
+microHammer2024v1       OBJECT IDENTIFIER ::= { MicroHammerSeries 15}
+microHammer2Dv1         OBJECT IDENTIFIER ::= { MicroHammerSeries 16}
+microHammer24Dv1        OBJECT IDENTIFIER ::= { MicroHammerSeries 17}
+microHammer2Ev1         OBJECT IDENTIFIER ::= { MicroHammerSeries 18}
+microHammer24Ev1        OBJECT IDENTIFIER ::= { MicroHammerSeries 19}
+microHammer2024Ev1      OBJECT IDENTIFIER ::= { MicroHammerSeries 20}
+microHammer2EDv1        OBJECT IDENTIFIER ::= { MicroHammerSeries 21}
+microHammer24EDv1       OBJECT IDENTIFIER ::= { MicroHammerSeries 22}
+microHammer2024Ev2      OBJECT IDENTIFIER ::= { MicroHammerSeries 23}
+microHammer2Ev2         OBJECT IDENTIFIER ::= { MicroHammerSeries 24}
+microHammer3550E-24     OBJECT IDENTIFIER ::= { MicroHammerSeries 25}
+microHammer3550E-48     OBJECT IDENTIFIER ::= { MicroHammerSeries 26}
+microHammer3550E-24-DC  OBJECT IDENTIFIER ::= { MicroHammerSeries 27}
+microHammer3550E-48-DC  OBJECT IDENTIFIER ::= { MicroHammerSeries 28}
+
+-- B Series (Based Broadcom Chip)
+MicroHammer3550-48      OBJECT IDENTIFIER ::= { MicroHammerSeries 101}
+MicroHammer3550-24      OBJECT IDENTIFIER ::= { MicroHammerSeries 102}
+microHammer3550-24v2    OBJECT IDENTIFIER ::= { MicroHammerSeries 103}
+
+-- FlexHammer Series
+FlexHammer24            OBJECT IDENTIFIER ::= { FlexHammerSeries 1 }
+FlexHammer16i           OBJECT IDENTIFIER ::= { FlexHammerSeries 2 }
+FlexHammer5260          OBJECT IDENTIFIER ::= { FlexHammerSeries 3 }
+FlexHammer16iv2         OBJECT IDENTIFIER ::= { FlexHammerSeries 4 }
+flexHammer5210-24       OBJECT IDENTIFIER ::= { FlexHammerSeries 5 }
+flexHammer5210-24-DC    OBJECT IDENTIFIER ::= { FlexHammerSeries 6 }
+flexHammer5210-48       OBJECT IDENTIFIER ::= { FlexHammerSeries 7 }
+flexHammer5210-48-DC    OBJECT IDENTIFIER ::= { FlexHammerSeries 8 }
+flexHammer5210-24S      OBJECT IDENTIFIER ::= { FlexHammerSeries 9 }
+flexHammer5210-24S-DC   OBJECT IDENTIFIER ::= { FlexHammerSeries 10 }
+flexHammer5210-24G      OBJECT IDENTIFIER ::= { FlexHammerSeries 11 }
+flexHammer5710-48       OBJECT IDENTIFIER ::= { FlexHammerSeries 12 }
+flexHammer5710-48-DC    OBJECT IDENTIFIER ::= { FlexHammerSeries 13 }
+flexHammerFH5710-24     OBJECT IDENTIFIER ::= { FlexHammerSeries 14 }
+flexHammerFH5710-24-DC  OBJECT IDENTIFIER ::= { FlexHammerSeries 15 }
+flexHammerFH5710-24S    OBJECT IDENTIFIER ::= { FlexHammerSeries 16 }
+flexHammerFH5710-24S-DC OBJECT IDENTIFIER ::= { FlexHammerSeries 17 }
+flexHammerFH5210-24G-DC OBJECT IDENTIFIER ::= { FlexHammerSeries 18 }
+
+-- B Series (Based Broadcom Chip)
+FlexHammer5010          OBJECT IDENTIFIER ::= { FlexHammerSeries 101 }
+FlexHammer5020          OBJECT IDENTIFIER ::= { FlexHammerSeries 102 }
+FlexHammer5610          OBJECT IDENTIFIER ::= { FlexHammerSeries 103 }
+FlexHammer5610T         OBJECT IDENTIFIER ::= { FlexHammerSeries 104 }
+FlexHammer5030          OBJECT IDENTIFIER ::= { FlexHammerSeries 105 }
+FlexHammer5610E         OBJECT IDENTIFIER ::= { FlexHammerSeries 106 }
+flexHammer5010v2        OBJECT IDENTIFIER ::= { FlexHammerSeries 107 }
+
+-- BigHammer Series
+BigHammer800            OBJECT IDENTIFIER ::= { BigHammerSeries 1 }
+BigHammer400            OBJECT IDENTIFIER ::= { BigHammerSeries 2 }
+-- B Series (Based Broadcom Chip)
+BigHammer6802           OBJECT IDENTIFIER ::= { BigHammerSeries 101 }
+BigHammer6808           OBJECT IDENTIFIER ::= { BigHammerSeries 102 }
+bigHammer6805           OBJECT IDENTIFIER ::= { BigHammerSeries 103 }
+
+-- Hammer10000Series
+IpdslamHammer           OBJECT IDENTIFIER ::= { Hammer10000Series 1 }
+IpdslamHammer2          OBJECT IDENTIFIER ::= { Hammer10000Series 2 }
+
+-- HammerDSLSeries
+Hammer3100              OBJECT IDENTIFIER ::= { HammerDSLSeries 1 }
+Hammer3110              OBJECT IDENTIFIER ::= { HammerDSLSeries 2 }
+U20plus2                OBJECT IDENTIFIER ::= { HammerDSLSeries 3 }
+U20plus4                OBJECT IDENTIFIER ::= { HammerDSLSeries 4 }
+Hammer3300              OBJECT IDENTIFIER ::= { HammerDSLSeries 5 }
+Hammer3100S             OBJECT IDENTIFIER ::= { HammerDSLSeries 6 }
+Hammer3300-48           OBJECT IDENTIFIER ::= { HammerDSLSeries 7 }
+
+-- NetHammerSeries
+NetHammer1760           OBJECT IDENTIFIER ::= { NetHammerSeries 1 }
+NetHammer1720           OBJECT IDENTIFIER ::= { NetHammerSeries 2 }
+NetHammer1728           OBJECT IDENTIFIER ::= { NetHammerSeries 3 }
+NetHammerM162           OBJECT IDENTIFIER ::= { NetHammerSeries 4 }
+netHammerM582           OBJECT IDENTIFIER ::= { NetHammerSeries 5 }
+NetHammerM562           OBJECT IDENTIFIER ::= { NetHammerSeries 6 }
+NetHammer2651           OBJECT IDENTIFIER ::= { NetHammerSeries 101 }
+NetHammer2641           OBJECT IDENTIFIER ::= { NetHammerSeries 102 }
+NetHammer3680           OBJECT IDENTIFIER ::= { NetHammerSeries 201 }
+NetHammerG704           OBJECT IDENTIFIER ::= { NetHammerSeries 301 }
+NetHammerG708           OBJECT IDENTIFIER ::= { NetHammerSeries 302 }
+NetHammerG908           OBJECT IDENTIFIER ::= { NetHammerSeries 303 }
+
+-- AirSeries
+Ap2000                  OBJECT IDENTIFIER ::= { AirSeries 1 }
+LinkHammer5800          OBJECT IDENTIFIER ::= { AirSeries 2 }
+
+-- PowerHammer Series
+PowerHammerP40          OBJECT IDENTIFIER ::= { PowerHammerSeries 1 }
+PowerHammerP80          OBJECT IDENTIFIER ::= { PowerHammerSeries 2 }
+PowerHammerP160         OBJECT IDENTIFIER ::= { PowerHammerSeries 3 }
+PowerHammerP320         OBJECT IDENTIFIER ::= { PowerHammerSeries 4 }
+PowerHammerP640         OBJECT IDENTIFIER ::= { PowerHammerSeries 5 }
+powerHammerESR20        OBJECT IDENTIFIER ::= { PowerHammerSeries 6 }
+powerHammerESR50        OBJECT IDENTIFIER ::= { PowerHammerSeries 7 }
+powerHammerESR80        OBJECT IDENTIFIER ::= { PowerHammerSeries 8 }
+
+-- IntegrativeSeries
+Ione                    OBJECT IDENTIFIER ::= { IntegrativeSeries 1 }
+
+-- acSeries
+hammerAC3026            OBJECT IDENTIFIER ::= { acSeries 1 }
+
+-- SoftCoSeries
+SoftCoV2                OBJECT IDENTIFIER ::= { SoftCoSeries 1 }
+softCo9500              OBJECT IDENTIFIER ::= { SoftCoSeries 2 }
+softCo9200              OBJECT IDENTIFIER ::= { SoftCoSeries 3 }
+softCo5816              OBJECT IDENTIFIER ::= { SoftCoSeries 4 }
+-- Harbour Private MIB Objects
+harbourSystem           OBJECT IDENTIFIER ::= { harbourAgent 1 }
+harbourCc               OBJECT IDENTIFIER ::= { harbourAgent 3 }
+harbourAcl              OBJECT IDENTIFIER ::= { harbourAgent 4 }
+harbourLink             OBJECT IDENTIFIER ::= { harbourAgent 5 }
+harbourport             OBJECT IDENTIFIER ::= { harbourAgent 6 }
+vdslQAMMib              OBJECT IDENTIFIER ::= { harbourAgent 7 }
+harbourSyslogService    OBJECT IDENTIFIER ::= { harbourAgent 8 }
+harbourNMSAccessControl OBJECT IDENTIFIER ::= { harbourAgent 9 }
+harbourVlan             OBJECT IDENTIFIER ::= { harbourAgent 10 }
+harbourMirror           OBJECT IDENTIFIER ::= { harbourAgent 11 }
+harbourFdb              OBJECT IDENTIFIER ::= { harbourAgent 12 }
+harbourOnlineUpdate     OBJECT IDENTIFIER ::= { harbourAgent 13 }
+harbourLoopback         OBJECT IDENTIFIER ::= { harbourAgent 14 }
+harbourH3100Char        OBJECT IDENTIFIER ::= { harbourAgent 15 }
+harbourTrunk            OBJECT IDENTIFIER ::= { harbourAgent 16 }
+harbourPortSecure       OBJECT IDENTIFIER ::= { harbourAgent 17 }
+harbourBaseManagement   OBJECT IDENTIFIER ::= { harbourAgent 18 }
+harbourRoute            OBJECT IDENTIFIER ::= { harbourAgent 19 }
+harbourDhcpRelay        OBJECT IDENTIFIER ::= { harbourAgent 20 }
+harbourIgmpSnooping     OBJECT IDENTIFIER ::= { harbourAgent 21 }
+harbourHsrpMIB          OBJECT IDENTIFIER ::= { harbourAgent 22 }
+portBand                OBJECT IDENTIFIER ::= { harbourAgent 23 }
+harbourBroadcastRestrain    OBJECT IDENTIFIER ::= { harbourAgent 24 }
+harbourPPPoEConf        OBJECT IDENTIFIER ::= { harbourAgent 26 }
+harbour802dot1x         OBJECT IDENTIFIER ::= { harbourAgent 29 }
+harbourRadius           OBJECT IDENTIFIER ::= { harbourAgent 30 }
+pimMIB                  OBJECT IDENTIFIER ::= { harbourAgent 31 }
+ipMrouteMIB             OBJECT IDENTIFIER ::= { harbourAgent 32 }
+igmpMIB                 OBJECT IDENTIFIER ::= { harbourAgent 33 }
+lldpMIB                 OBJECT IDENTIFIER ::= { harbourAgent 34 }
+harbourInterfaceIp      OBJECT IDENTIFIER ::= { harbourAgent 37 }
+harbourPortMonitor      OBJECT IDENTIFIER ::= { harbourAgent 38 }
+harbourPoe              OBJECT IDENTIFIER ::= { harbourAgent 39 }
+
+-- Harbour Products Series Private MIBS
+harbourAgentSeries      OBJECT IDENTIFIER ::= { harbourAgent 100 }
+
+MicroSeries             OBJECT IDENTIFIER ::= { harbourAgentSeries 1 }
+GSeries                 OBJECT IDENTIFIER ::= { harbourAgentSeries 2 }
+DSLAMSeries             OBJECT IDENTIFIER ::= { harbourAgentSeries 3 }
+BSeries                 OBJECT IDENTIFIER ::= { harbourAgentSeries 4 }
+AirSeries               OBJECT IDENTIFIER ::= { harbourAgentSeries 5 }
+RouterSeries            OBJECT IDENTIFIER ::= { harbourAgentSeries 6 }
+PowerSeries             OBJECT IDENTIFIER ::= { harbourAgentSeries 7 }
+acSeries                OBJECT IDENTIFIER ::= { harbourAgentSeries 9 }
+SoftCoSeries            OBJECT IDENTIFIER ::= { harbourAgentSeries 10 }
+
+
+END

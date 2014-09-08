@@ -1,0 +1,39 @@
+-- These MIBs were created on 08/02/2000
+--
+-- Copyright (c) 1999 - 2000 by NetScreen Technologies, Inc.
+-- All rights reserved.
+-- 
+-- MODULE-IDENTITY
+--  OrgName
+--    NetScreen Technologies, Inc.
+--  ContactInfo
+--     Customer Support
+--     
+--     2860 San TOmas Expwy
+--     Santa Clara, CA  95051
+--     USA
+--    
+--     Tel: 1.877.NETSCREEN
+--     E-mail: support@netscreen.com
+--     Http://www.netscreen.com
+
+--  Descr
+--    This module defines the object identifiers that are
+--    assigned to various hardware platforms, and hence are
+--    returned as values for sysObjectID
+
+NETSCREEN-PRODUCTS-MIB DEFINITIONS ::= BEGIN
+IMPORTS
+  netscreenProducts FROM NETSCREEN-SMI;
+    
+  netscreenGeneric OBJECT IDENTIFIER ::= { netscreenProducts 1 }
+  netscreenNs5 	OBJECT IDENTIFIER ::= { netscreenProducts 2 }
+  netscreenNs10 	OBJECT IDENTIFIER ::= { netscreenProducts 3 }
+  netscreenNs100 	OBJECT IDENTIFIER ::= { netscreenProducts 4 }
+  netscreenNs1000 OBJECT IDENTIFIER ::= { netscreenProducts 5 }
+  netscreenNs500 	OBJECT IDENTIFIER ::= { netscreenProducts 6 }
+  netscreenNs50 	OBJECT IDENTIFIER ::= { netscreenProducts 7 }
+
+END
+
+

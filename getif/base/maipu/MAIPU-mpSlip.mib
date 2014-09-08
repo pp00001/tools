@@ -1,0 +1,81 @@
+-- *****************************************************************
+-- MAIPU-SLIP.mib:  Maipu enterprise device SLIP MIB file
+--
+--version 1.0.0.0, Feb 26, 2001 Huanglulu
+--
+-- Copyright (c)  by Maipu DataComm Inc.
+-- All rights reserved.
+-- 
+-- *****************************************************************
+--
+
+MAIPU-SLIP-MIB DEFINITIONS ::= BEGIN
+
+IMPORTS
+    MODULE-IDENTITY, OBJECT-TYPE		FROM SNMPv2-SMI
+    mpMgmt                              FROM MAIPU-SMI;
+
+mpSlipMib MODULE-IDENTITY
+    LAST-UPDATED "0102260000Z"
+    ORGANIZATION "Maipu DataComm"
+    CONTACT-INFO
+	"   Maipu DataComm
+		Customer Service
+
+		Postal: Consulate Drive
+			Chengdu, Sichuan  610041
+			China
+
+		Tel: 86-028-5161006
+
+		E-mail: office@maipu.com"
+    DESCRIPTION
+		"The assignments for Maipu router's MIB of SLIP infomation!"
+    ::= {mpMgmt 9 }
+
+slipConfTable OBJECT-TYPE
+    SYNTAX SEQUENCE OF SlipConfEntry
+    MAX-ACCESS not-accessible
+    STATUS current
+    DESCRIPTION
+		"SLIP的配置表."
+    ::= { mpSlipMib 1 }
+
+slipConfEntry OBJECT-TYPE
+    SYNTAX SlipConfEntry
+    MAX-ACCESS not-accessible
+    STATUS current
+    DESCRIPTION
+		"SLIP配置表条目."
+    INDEX { slipConfIfIndex }    
+    ::= { slipConfTable 1 }
+
+SlipConfEntry ::=
+    SEQUENCE {
+		slipConfIfIndex
+			INTEGER,
+		slipConfMode
+			INTEGER
+				}
+				
+slipConfIfIndex	OBJECT-TYPE
+	SYNTAX	INTEGER
+	MAX-ACCESS	read-only
+	STATUS	current
+	DESCRIPTION
+		"SLIP配置表的接口索引,与ifIndex相同."
+	::= { slipConfEntry 1 }
+	
+slipConfMode	OBJECT-TYPE
+	SYNTAX	INTEGER {
+				maipu(1),
+				noMaipu(2)
+					}
+	MAX-ACCESS	read-write
+	STATUS	current
+	DESCRIPTION
+		"SLIP的工作模式."
+	::= { slipConfEntry 2 }
+	
+END
+ 

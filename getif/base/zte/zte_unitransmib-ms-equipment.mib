@@ -1,0 +1,243 @@
+-- ********************************************************************
+
+--  UnitransMib-MS-equipment.mib
+
+--  Copyright (c) 2008 ZTE CORPORATION.All rights reserved.
+
+--  Description: This file includes the equipment related difinitions 
+
+--  Version     v1.0
+
+--  Modification Record:
+
+--********************************************************************
+UnitransMib-MS-equipment 
+DEFINITIONS ::= BEGIN
+IMPORTS
+    MODULE-IDENTITY, OBJECT-TYPE, NOTIFICATION-TYPE,
+    enterprises, Integer32, Unsigned32, IpAddress
+        FROM SNMPv2-SMI
+    TEXTUAL-CONVENTION, DisplayString, TimeStamp, DateAndTime
+        FROM SNMPv2-TC  
+    MODULE-COMPLIANCE, OBJECT-GROUP, NOTIFICATION-GROUP
+        FROM SNMPv2-CONF        
+  zteUnitransMS
+        FROM 
+        UnitransMib-MS-root 
+	BOOL-TC,Time-TC,Unit-TC,       
+        ObjectNVSList-T,NamingAttributes-T
+        FROM 
+        UnitransMib-MS-common;   
+        
+--*********************************************************************
+--
+--*********************************************************************         
+zteuEquipment MODULE-IDENTITY
+        LAST-UPDATED   "0602130000Z"
+        ORGANIZATION   "ZTE"
+        CONTACT-INFO   "
+           ZTE Corporation
+           
+           Postal: 518057      
+           
+           via the WEB:  http://www.zte.com.cn                           
+            
+           via phone:    86-755-26773000"
+   DESCRIPTION
+      "This module describes ZTE Unitrans MIB."
+   ::= { zteUnitransMS 5 }
+
+ 
+   EquipmentObjectType-TC ::= TEXTUAL-CONVENTION
+   STATUS current
+   DESCRIPTION "
+   This textual convention presents device type
+   "            
+   SYNTAX OCTET STRING
+
+   ServiceState-TC ::= TEXTUAL-CONVENTION
+   STATUS current
+   DESCRIPTION "
+   This textual convention presents service state:   
+    ss-IN-SERVICE(1)                   :in service
+    ss-OUT-OF-SERVICE(2)               :out of service
+    ss-OUT-OF-SERVICE-BY-MAINTENANCE(3) :out of service by maintenance
+    ss-SERV-NA(4)                       :service state is unknown
+
+   "
+   SYNTAX INTEGER 
+   {
+        ss-IN-SERVICE(1),
+        ss-OUT-OF-SERVICE(2),
+        ss-OUT-OF-SERVICE-BY-MAINTENANCE(3),
+        ss-SERV-NA(4) 
+   }
+-- ********************************************************************
+-- SEQUENCE And SEQUENCE OF  Definition
+-- ********************************************************************
+        
+        EquipmentObjectTypeList-T ::= TEXTUAL-CONVENTION
+    	STATUS current
+        DESCRIPTION " This textual convention presents equipment type,use digital with comma format,just like '10,120,300'.
+        "
+        SYNTAX OCTET STRING
+        
+-- ********************************************************************
+-- Table And Object  Definition
+-- ********************************************************************
+    
+   
+   zteuEquipmentTable    OBJECT-TYPE
+        SYNTAX          SEQUENCE OF     ZTEUEquipmentEntry
+        MAX-ACCESS      not-accessible
+        STATUS          current
+        DESCRIPTION
+                "
+                This object presents euqipment table
+                "
+        ::= { zteuEquipment 5}
+    
+    zteuEquipmentEntry  OBJECT-TYPE
+        SYNTAX  ZTEUEquipmentEntry
+        MAX-ACCESS  not-accessible
+        STATUS  current
+        DESCRIPTION
+                "This object presents equipment entry "
+        INDEX  {eqName }
+        ::= { zteuEquipmentTable 1 }
+        
+    ZTEUEquipmentEntry ::= SEQUENCE 
+    {                              
+        eqName					NamingAttributes-T,        
+        eqUserLabel             DisplayString,          
+        eqOwner                 DisplayString,              
+        eqServiceState          ServiceState-TC,
+        eqExpectedEquipmentObjectType   EquipmentObjectType-TC,
+        eqInstalledEquipmentObjectType  EquipmentObjectType-TC,
+        eqInstalledVersion    DisplayString,
+		eqAdminStatus         INTEGER,
+        boardParameters       ObjectNVSList-T,
+        eqAdditionalInfo      ObjectNVSList-T           
+    }
+    
+     eqName OBJECT-TYPE
+     SYNTAX NamingAttributes-T
+     MAX-ACCESS read-only
+     STATUS current
+     DESCRIPTION "
+     This variable presents equipment identifier
+     For details,please refer NamingAttributes-T's definition
+     "
+     ::= {zteuEquipmentEntry 1}  
+     
+         
+     eqUserLabel OBJECT-TYPE
+     SYNTAX DisplayString
+     MAX-ACCESS read-write
+     STATUS current
+     DESCRIPTION "
+     This variable presents userlabel,for the mibs supported directly by devices,this field can be reserved.
+     "
+     ::= {zteuEquipmentEntry 2}
+     
+     eqOwner  OBJECT-TYPE
+     SYNTAX DisplayString
+     MAX-ACCESS read-only
+     STATUS current
+     DESCRIPTION "
+     This variable presents owner of equipment,for the mibs supported directly by devices,this field can be reserved.
+     "
+     ::= {zteuEquipmentEntry 3}
+     
+     eqServiceState   OBJECT-TYPE
+     SYNTAX ServiceState-TC
+     MAX-ACCESS read-only
+     STATUS current
+     DESCRIPTION "
+     This variable presents service state of equipment
+     "
+     ::= {zteuEquipmentEntry 4}
+     
+     eqExpectedEquipmentObjectType  OBJECT-TYPE
+     SYNTAX EquipmentObjectType-TC
+     MAX-ACCESS read-only
+     STATUS current
+     DESCRIPTION "
+     This variable presents expected equipment object type
+     "
+     ::= {zteuEquipmentEntry 5}     
+     
+     eqInstalledEquipmentObjectType    OBJECT-TYPE
+     SYNTAX EquipmentObjectType-TC
+     MAX-ACCESS read-only
+     STATUS current
+     DESCRIPTION "
+     This variable presents installed equipment type
+     "
+     ::= {zteuEquipmentEntry 6}     
+
+     eqInstalledVersion     OBJECT-TYPE
+     SYNTAX DisplayString
+     MAX-ACCESS read-only
+     STATUS current
+     DESCRIPTION "
+     This variable presents installed version of equipment,it should be formated as :
+	 '/<VersionType>=<Version>/<VersionType>=<Version>',where the VersionType can be substituted as:'FPGA','Software','Hardware',the Version can
+	 be substitued as the real version string.
+     
+     "
+     ::= {zteuEquipmentEntry 7}  
+
+	 eqAdminStatus OBJECT-TYPE
+                        SYNTAX INTEGER
+                                {
+								locked(1),
+                                unlocked(2)                                      
+                                }
+                        MAX-ACCESS read-only
+                        STATUS current
+                        DESCRIPTION
+                                "Equipment administrative status."
+                        ::= { zteuEquipmentEntry 8 }
+     
+     boardParameters        OBJECT-TYPE
+     SYNTAX ObjectNVSList-T
+     MAX-ACCESS read-only
+     STATUS current
+     DESCRIPTION "
+     This variable presents equipment parameters,reserved.     
+	 "
+     ::= {zteuEquipmentEntry 9}  
+     
+     eqAdditionalInfo OBJECT-TYPE
+     SYNTAX ObjectNVSList-T
+     MAX-ACCESS read-write
+     STATUS current
+     DESCRIPTION "
+     This variable presents additional information
+     " 
+     ::= {zteuEquipmentEntry 10}
+  	
+  	zteuEquipmentEntryGroup OBJECT-GROUP
+  	OBJECTS 
+    {                              
+        eqName,
+        eqUserLabel,          
+        eqOwner,              
+        eqServiceState,
+        eqExpectedEquipmentObjectType,
+        eqInstalledEquipmentObjectType,
+        eqInstalledVersion,
+		eqAdminStatus,
+        boardParameters,		
+        eqAdditionalInfo           
+    }
+    STATUS current
+    DESCRIPTION
+    "A collection of zteuEquipmentEntry objects"  	
+  	::= {zteuEquipment 23}	
+
+     
+   
+		
+    END
